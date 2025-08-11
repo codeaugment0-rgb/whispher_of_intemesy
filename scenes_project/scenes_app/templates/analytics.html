@@ -1,0 +1,404 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/analytics.css' %}">
+<div class="analytics-dashboard">
+  <!-- Header Section -->
+  <div class="mb-4 sm:mb-6 lg:mb-8 mobile-mb-6">
+    <div class="flex flex-col gap-4 sm:gap-6">
+      <div class="min-w-0">
+        <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 mobile-text-xl mobile-mb-2">Analytics Dashboard</h1>
+        <p class="text-gray-600 text-sm sm:text-base mobile-text-sm">Comprehensive insights into your scene collection</p>
+      </div>
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 mobile-gap-3">
+        <button id="refresh-analytics" class="inline-flex items-center justify-center px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors text-sm font-medium touch-target mobile-px-4 mobile-py-3 mobile-text-sm">
+          <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          <span class="truncate">Refresh Data</span>
+        </button>
+        <button id="export-analytics" class="inline-flex items-center justify-center px-4 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium touch-target mobile-px-4 mobile-py-3 mobile-text-sm">
+          <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <span class="truncate">Export Report</span>
+        </button>
+        <button id="test-features" class="inline-flex items-center justify-center px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium touch-target mobile-px-4 mobile-py-3 mobile-text-sm">
+          <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span class="truncate">Test Features</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div id="loading-state" class="hidden">
+    <div class="flex items-center justify-center py-8 sm:py-12">
+      <div class="animate-spin rounded-full h-8 sm:h-12 w-8 sm:w-12 border-b-2 border-primary"></div>
+      <span class="ml-3 text-gray-600 text-sm sm:text-base">Loading analytics data...</span>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div id="error-state" class="hidden">
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4 sm:p-6 text-center">
+      <svg class="w-8 sm:w-12 h-8 sm:h-12 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <h3 class="text-lg font-medium text-red-800 mb-2">Error Loading Analytics</h3>
+      <p id="error-message" class="text-red-600 mb-4 text-sm sm:text-base"></p>
+      <button onclick="loadAnalytics()" class="bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm sm:text-base">
+        Try Again
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Analytics Content -->
+  <div id="analytics-content">
+    <!-- Filters will be inserted here by JavaScript -->
+    <div id="filters-container"></div>
+    
+    <!-- Comparison will be inserted here by JavaScript -->
+    <div id="comparison-container"></div>
+    
+    <!-- Insights will be inserted here by JavaScript -->
+    <div id="insights-container"></div>
+    
+    <!-- Key Statistics Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-8 mobile-gap-4 mobile-mb-6">
+      <div class="analytics-card bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 lg:p-6 mobile-p-4">
+        <div class="flex items-center justify-between">
+          <div class="min-w-0 flex-1">
+            <p class="text-xs sm:text-sm font-medium text-gray-600 mb-1 mobile-text-xs">Total Scenes</p>
+            <p id="total-scenes" class="stat-number text-lg sm:text-xl lg:text-2xl mobile-text-lg">{{ total_scenes|default:0 }}</p>
+          </div>
+          <div class="p-2 sm:p-2.5 lg:p-3 bg-blue-100 rounded-full flex-shrink-0 ml-3">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="mt-2 sm:mt-3 lg:mt-4 mobile-mt-3">
+          <span class="text-xs sm:text-sm text-green-600 font-medium mobile-text-xs">+12% from last month</span>
+        </div>
+      </div>
+
+      <div class="analytics-card bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 lg:p-6 mobile-p-4">
+        <div class="flex items-center justify-between">
+          <div class="min-w-0 flex-1">
+            <p class="text-xs sm:text-sm font-medium text-gray-600 mb-1 mobile-text-xs">Total Favorites</p>
+            <p id="total-favorites" class="stat-number text-lg sm:text-xl lg:text-2xl mobile-text-lg">{{ total_favorites|default:0 }}</p>
+          </div>
+          <div class="p-2 sm:p-2.5 lg:p-3 bg-red-100 rounded-full flex-shrink-0 ml-3">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="mt-2 sm:mt-3 lg:mt-4 mobile-mt-3">
+          <span class="text-xs sm:text-sm text-green-600 font-medium mobile-text-xs">{{ favorite_rate|default:0 }}% favorite rate</span>
+        </div>
+      </div>
+
+      <div class="analytics-card bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 lg:p-6 mobile-p-4">
+        <div class="flex items-center justify-between">
+          <div class="min-w-0 flex-1">
+            <p class="text-xs sm:text-sm font-medium text-gray-600 mb-1 mobile-text-xs">Avg Effeminate Age</p>
+            <p id="avg-effeminate-age" class="stat-number text-lg sm:text-xl lg:text-2xl mobile-text-lg">{{ avg_effeminate_age|default:0 }}</p>
+          </div>
+          <div class="p-2 sm:p-2.5 lg:p-3 bg-purple-100 rounded-full flex-shrink-0 ml-3">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="mt-2 sm:mt-3 lg:mt-4 mobile-mt-3">
+          <span class="text-xs sm:text-sm text-gray-500 mobile-text-xs">years average</span>
+        </div>
+      </div>
+
+      <div class="analytics-card bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 lg:p-6 mobile-p-4">
+        <div class="flex items-center justify-between">
+          <div class="min-w-0 flex-1">
+            <p class="text-xs sm:text-sm font-medium text-gray-600 mb-1 mobile-text-xs">Avg Masculine Age</p>
+            <p id="avg-masculine-age" class="stat-number text-lg sm:text-xl lg:text-2xl mobile-text-lg">{{ avg_masculine_age|default:0 }}</p>
+          </div>
+          <div class="p-2 sm:p-2.5 lg:p-3 bg-green-100 rounded-full flex-shrink-0 ml-3">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="mt-2 sm:mt-3 lg:mt-4 mobile-mt-3">
+          <span class="text-xs sm:text-sm text-gray-500 mobile-text-xs">years average</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
+      <!-- Country Distribution Chart -->
+      <div class="analytics-card bg-white rounded-xl p-4 sm:p-6">
+        <div class="flex items-center justify-between mb-4 sm:mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">Country Distribution</h3>
+          <div class="flex items-center space-x-2">
+            <button class="chart-type-btn active" data-chart="countries" data-type="doughnut">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5z"></path>
+              </svg>
+            </button>
+            <button class="chart-type-btn" data-chart="countries" data-type="bar">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="countries-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Settings Distribution Chart -->
+      <div class="analytics-card bg-white rounded-xl p-4 sm:p-6">
+        <div class="flex items-center justify-between mb-4 sm:mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">Setting Distribution</h3>
+          <div class="flex items-center space-x-2">
+            <button class="chart-type-btn active" data-chart="settings" data-type="doughnut">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5z"></path>
+              </svg>
+            </button>
+            <button class="chart-type-btn" data-chart="settings" data-type="bar">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="settings-chart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emotions and Age Range Charts -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
+      <!-- Emotions Distribution Chart -->
+      <div class="analytics-card bg-white rounded-xl p-4 sm:p-6">
+        <div class="flex items-center justify-between mb-4 sm:mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">Emotion Distribution</h3>
+          <div class="flex items-center space-x-2">
+            <button class="chart-type-btn active" data-chart="emotions" data-type="doughnut">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5z"></path>
+              </svg>
+            </button>
+            <button class="chart-type-btn" data-chart="emotions" data-type="bar">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="emotions-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Age Range Distribution Chart -->
+      <div class="analytics-card bg-white rounded-xl p-4 sm:p-6">
+        <div class="flex items-center justify-between mb-4 sm:mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">Age Range Distribution</h3>
+          <div class="flex items-center space-x-2">
+            <button class="chart-type-btn active" data-chart="age-ranges" data-type="bar">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+              </svg>
+            </button>
+            <button class="chart-type-btn" data-chart="age-ranges" data-type="line">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="age-ranges-chart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Most Favorited Scenes -->
+    <div class="analytics-card bg-white rounded-xl p-4 sm:p-6 mb-6 sm:mb-8">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4 sm:mb-6">Most Favorited Scenes</h3>
+      <div id="most-favorited-scenes" class="space-y-3 sm:space-y-4">
+        {% if most_favorited %}
+          {% for scene in most_favorited %}
+            <div class="flex items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              <div class="flex items-center space-x-3 sm:space-x-4 min-w-0">
+                <div class="flex-shrink-0">
+                  <div class="w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-full flex items-center justify-center text-white font-semibold text-sm sm:text-base">
+                    {{ forloop.counter }}
+                  </div>
+                </div>
+                <div class="min-w-0">
+                  <h4 class="font-medium text-gray-900 text-sm sm:text-base truncate">{{ scene.title }}</h4>
+                  <p class="text-sm text-gray-600 truncate">{{ scene.country }} • {{ scene.setting }}</p>
+                </div>
+              </div>
+              <div class="flex items-center space-x-3 sm:space-x-4 flex-shrink-0">
+                <div class="text-right">
+                  <p class="font-semibold text-gray-900 text-sm sm:text-base">{{ scene.favorite_count }}</p>
+                  <p class="text-sm text-gray-600">favorites</p>
+                </div>
+                <a href="{% url 'scene_detail' scene.id %}" class="text-primary hover:text-primary-dark">
+                  <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="text-center py-6 sm:py-8 text-gray-500">
+            <svg class="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+            </svg>
+            <p class="text-sm sm:text-base">No favorited scenes yet</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Detailed Analytics Tables -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
+      <!-- Appearance Analytics -->
+      <div class="analytics-card bg-white rounded-xl p-4 sm:p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 sm:mb-6">Appearance Trends</h3>
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-medium text-gray-700 mb-2 text-sm sm:text-base">Effeminate Appearance</h4>
+            <div class="data-table space-y-2">
+              {% if appearance_stats.effeminate %}
+                {% for appearance, count in appearance_stats.effeminate.items %}
+                  <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-sm text-gray-600 capitalize truncate">{{ appearance }}</span>
+                    <span class="font-medium text-gray-900 text-sm sm:text-base">{{ count }}</span>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <p class="text-sm text-gray-500">No data available</p>
+              {% endif %}
+            </div>
+          </div>
+          <div>
+            <h4 class="font-medium text-gray-700 mb-2 text-sm sm:text-base">Masculine Appearance</h4>
+            <div class="data-table space-y-2">
+              {% if appearance_stats.masculine %}
+                {% for appearance, count in appearance_stats.masculine.items %}
+                  <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-sm text-gray-600 capitalize truncate">{{ appearance }}</span>
+                    <span class="font-medium text-gray-900 text-sm sm:text-base">{{ count }}</span>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <p class="text-sm text-gray-500">No data available</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Atmosphere Analytics -->
+      <div class="analytics-card bg-white rounded-xl p-4 sm:p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 sm:mb-6">Atmosphere Trends</h3>
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-medium text-gray-700 mb-2 text-sm sm:text-base">Lighting</h4>
+            <div class="data-table space-y-2">
+              {% if atmosphere_stats.lighting %}
+                {% for lighting, count in atmosphere_stats.lighting.items %}
+                  <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-sm text-gray-600 capitalize truncate">{{ lighting }}</span>
+                    <span class="font-medium text-gray-900 text-sm sm:text-base">{{ count }}</span>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <p class="text-sm text-gray-500">No data available</p>
+              {% endif %}
+            </div>
+          </div>
+          <div>
+            <h4 class="font-medium text-gray-700 mb-2 text-sm sm:text-base">Scent</h4>
+            <div class="data-table space-y-2">
+              {% if atmosphere_stats.scent %}
+                {% for scent, count in atmosphere_stats.scent.items %}
+                  <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-sm text-gray-600 capitalize truncate">{{ scent }}</span>
+                    <span class="font-medium text-gray-900 text-sm sm:text-base">{{ count }}</span>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <p class="text-sm text-gray-500">No data available</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insights Section -->
+    <div class="insight-card rounded-xl p-4 sm:p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4 sm:mb-6">Key Insights</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div class="text-center">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+          </div>
+          <h4 class="font-medium text-gray-900 mb-2 text-sm sm:text-base">Most Popular Country</h4>
+          <p id="popular-country" class="text-sm text-gray-600">
+            {% if country_data %}{{ country_data.0.country }}{% else %}N/A{% endif %}
+          </p>
+        </div>
+        <div class="text-center">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+            </svg>
+          </div>
+          <h4 class="font-medium text-gray-900 mb-2 text-sm sm:text-base">Most Popular Emotion</h4>
+          <p id="popular-emotion" class="text-sm text-gray-600">
+            {% if emotion_data %}{{ emotion_data.0.emotion }}{% else %}N/A{% endif %}
+          </p>
+        </div>
+        <div class="text-center sm:col-span-2 lg:col-span-1">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+          </div>
+          <h4 class="font-medium text-gray-900 mb-2 text-sm sm:text-base">Most Popular Setting</h4>
+          <p id="popular-setting" class="text-sm text-gray-600">
+            {% if setting_data %}{{ setting_data.0.setting }}{% else %}N/A{% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="{% static 'js/analytics-filters.js' %}"></script>
+<script src="{% static 'js/analytics-comparison.js' %}"></script>
+<script src="{% static 'js/analytics.js' %}"></script>
+
+
+{% endblock %}

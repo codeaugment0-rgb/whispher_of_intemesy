@@ -1,0 +1,162 @@
+{% load static %}
+{% if page_obj.paginator.num_pages > 1 %}
+<div class="pagination-container mt-8 sm:mt-12">
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-4 sm:px-8 py-4 sm:py-6">
+      <!-- Page Size Selector -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4 sm:mb-6">
+        <div class="flex items-center gap-3">
+          <label for="page-size-selector" class="text-sm font-medium text-gray-700">Items per page:</label>
+          <select id="page-size-selector" 
+                  class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                  data-current-size="{{ page_size }}">
+            <option value="10" {% if page_size == 10 %}selected{% endif %}>10</option>
+            <option value="25" {% if page_size == 25 %}selected{% endif %}>25</option>
+            <option value="50" {% if page_size == 50 %}selected{% endif %}>50</option>
+            <option value="100" {% if page_size == 100 %}selected{% endif %}>100</option>
+          </select>
+        </div>
+        
+        <!-- Jump to Page -->
+        <div class="flex items-center gap-3">
+          <label for="jump-to-page" class="text-sm font-medium text-gray-700">Go to page:</label>
+          <div class="flex items-center gap-2">
+            <input type="number" 
+                   id="jump-to-page" 
+                   min="1" 
+                   max="{{ page_obj.paginator.num_pages }}" 
+                   value="{{ page_obj.number }}"
+                   class="w-16 sm:w-20 px-3 py-2 border border-gray-300 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200">
+            <button id="jump-to-page-btn" 
+                    class="px-3 sm:px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all duration-200">
+              Go
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Pagination Controls -->
+      <div class="flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-6">
+        <!-- Navigation Buttons -->
+        <div class="flex items-center gap-1 sm:gap-2">
+          <!-- First Page -->
+          {% if page_obj.has_previous and page_obj.number > 2 %}
+          <button class="pagination-btn btn-secondary"
+                  data-page="1"
+                  title="First page">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+          {% endif %}
+
+          <!-- Previous Page -->
+          {% if page_obj.has_previous %}
+          <button class="pagination-btn btn-secondary group"
+                  data-page="{{ page_obj.previous_page_number }}"
+                  title="Previous page">
+            <svg class="w-4 h-4 mr-1 sm:mr-2 group-hover:-translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="hidden sm:inline">Previous</span>
+          </button>
+          {% else %}
+          <span class="pagination-btn btn-disabled">
+            <svg class="w-4 h-4 mr-1 sm:mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="hidden sm:inline">Previous</span>
+          </span>
+          {% endif %}
+
+          <!-- Next Page -->
+          {% if page_obj.has_next %}
+          <button class="pagination-btn btn-primary group"
+                  data-page="{{ page_obj.next_page_number }}"
+                  title="Next page">
+            <span class="hidden sm:inline">Next</span>
+            <svg class="w-4 h-4 ml-1 sm:ml-2 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+          {% else %}
+          <span class="pagination-btn btn-disabled">
+            <span class="hidden sm:inline">Next</span>
+            <svg class="w-4 h-4 ml-1 sm:ml-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+            </svg>
+          </span>
+          {% endif %}
+
+          <!-- Last Page -->
+          {% if page_obj.has_next and page_obj.number < page_obj.paginator.num_pages|add:"-1" %}
+          <button class="pagination-btn btn-secondary"
+                  data-page="{{ page_obj.paginator.num_pages }}"
+                  title="Last page">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414zm6 0a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L14.586 10l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+          {% endif %}
+        </div>
+
+        <!-- Page Numbers -->
+        <div class="flex items-center gap-1 flex-wrap justify-center">
+          {% for page_num in page_range %}
+            {% if page_num == '...' %}
+              <span class="px-2 sm:px-3 py-2 text-gray-400">...</span>
+            {% elif page_num == page_obj.number %}
+              <span class="pagination-btn btn-current">{{ page_num }}</span>
+            {% else %}
+              <button class="pagination-btn btn-secondary"
+                      data-page="{{ page_num }}">
+                {{ page_num }}
+              </button>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <!-- Page Info -->
+        <div class="text-center">
+          <div class="text-sm text-gray-500 mb-1">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</div>
+          <div class="text-xs text-gray-400">{{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ page_obj.paginator.count }} items</div>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="mt-4 sm:mt-6">
+        <div class="flex items-center justify-between text-xs text-gray-500 mb-2">
+          <span>Progress</span>
+          <span>{{ page_obj.number }} of {{ page_obj.paginator.num_pages }} pages</span>
+        </div>
+        <div class="pagination-progress">
+          {% widthratio page_obj.number page_obj.paginator.num_pages 100 as progress_width %}
+          <div class="pagination-progress-bar" style="width: {{ progress_width }}%"></div>
+        </div>
+      </div>
+
+      <!-- Keyboard Shortcuts Info -->
+      <div class="keyboard-shortcuts">
+        <div class="keyboard-shortcut">
+          <kbd>←</kbd>
+          <span>Previous</span>
+        </div>
+        <div class="keyboard-shortcut">
+          <kbd>→</kbd>
+          <span>Next</span>
+        </div>
+        <div class="keyboard-shortcut">
+          <kbd>Home</kbd>
+          <span>First</span>
+        </div>
+        <div class="keyboard-shortcut">
+          <kbd>End</kbd>
+          <span>Last</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endif %}
