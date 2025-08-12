@@ -72,6 +72,66 @@
     }
   }
 
+  // Copy random scene functionality
+  async function copyRandomScene(button) {
+    const originalContent = button.innerHTML;
+    
+    try {
+      // Show loading state
+      button.innerHTML = `
+        <svg class="w-4 h-4 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        <span class="hidden lg:inline">Loading...</span>
+      `;
+      button.disabled = true;
+
+      const scene = await getRandomScene();
+      await navigator.clipboard.writeText(scene.full_text || '');
+      
+      // Show success state
+      button.innerHTML = `
+        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="hidden lg:inline">Copied!</span>
+      `;
+      button.classList.add('text-green-600');
+
+      Toastify({
+        text: `Copied "${scene.title}" to clipboard`,
+        duration: 3000,
+        gravity: 'top',
+        position: 'right',
+        backgroundColor: '#10b981',
+        close: true
+      }).showToast();
+
+      // Reset button after 2 seconds
+      setTimeout(() => {
+        button.innerHTML = originalContent;
+        button.classList.remove('text-green-600');
+        button.disabled = false;
+      }, 2000);
+
+    } catch (err) {
+      // Show error state
+      button.innerHTML = `
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+        <span class="hidden lg:inline">Failed</span>
+      `;
+      button.classList.add('text-red-600');
+
+      setTimeout(() => {
+        button.innerHTML = originalContent;
+        button.classList.remove('text-red-600');
+        button.disabled = false;
+      }, 2000);
+    }
+  }
+
   // Keyboard shortcut for random scene (R key)
   document.addEventListener('keydown', function(e) {
     // Only trigger if not typing in an input field
@@ -229,11 +289,7 @@
       if (data.success) {
         updateFavoriteButton(button, data.is_favorited);
         
-        // Update favorite count if it exists
-        const favoriteCount = document.getElementById('favorite-count');
-        if (favoriteCount) {
-          favoriteCount.textContent = `(${data.favorite_count})`;
-        }
+        // Favorite count removed as requested
 
         // Update navigation favorite count
         updateNavFavoriteCount(data.is_favorited);
@@ -356,6 +412,13 @@
       if (sceneId) {
         toggleFavorite(sceneId, favoriteBtn);
       }
+    }
+
+    // Copy random scene buttons
+    const copyRandomBtn = e.target.closest('#copy-random-scene-btn, #mobile-copy-random-scene-btn');
+    if (copyRandomBtn) {
+      e.preventDefault();
+      copyRandomScene(copyRandomBtn);
     }
   });
 })();

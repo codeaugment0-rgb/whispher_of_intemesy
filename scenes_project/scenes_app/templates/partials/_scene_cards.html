@@ -122,6 +122,16 @@
           </svg>
         </a>
 
+        <!-- Delete Button -->
+        <button class="scene-card-icon-button quick-delete-btn group/delete flex-shrink-0 inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-r from-red-100 to-red-200 text-red-600 hover:from-red-200 hover:to-red-300 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md touch-target-sm"
+                data-scene-id="{{ scene.id }}"
+                data-scene-title="{{ scene.title }}"
+                title="Delete scene">
+          <svg class="w-4 h-4 group-hover/delete:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"></path>
+          </svg>
+        </button>
+
         <!-- Explore Button -->
         <a href="{% url 'scene_detail' scene.id %}"
           class="scene-card-main-button group/btn inline-flex items-center justify-center flex-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl bg-gradient-to-r from-primary to-primary-dark text-white font-medium hover:from-primary-dark hover:to-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md touch-target mobile-text-sm">
