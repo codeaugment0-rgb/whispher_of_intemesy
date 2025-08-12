@@ -161,22 +161,50 @@
     }
   });
 
-  // Simple mobile touch feedback (no interference with menu)
+  // Enhanced mobile touch feedback with better performance and no menu interference
   if ('ontouchstart' in window) {
+    let touchStartTime = 0;
+    let touchTarget = null;
+
     document.addEventListener('touchstart', function(e) {
-      const target = e.target.closest('.scene-card-main-button, .scene-card-icon-button, .hero-button, .pagination-btn');
-      if (target && !target.disabled) {
-        target.style.transform = 'scale(0.95)';
-        target.style.transition = 'transform 0.1s ease';
+      touchStartTime = Date.now();
+      touchTarget = e.target.closest('.scene-card-main-button, .scene-card-icon-button, .hero-button, .pagination-btn, .mobile-nav-item');
+
+      if (touchTarget && !touchTarget.disabled && !touchTarget.closest('#mobile-menu-button')) {
+        touchTarget.style.transform = 'scale(0.96)';
+        touchTarget.style.transition = 'transform 0.1s ease';
+        touchTarget.style.willChange = 'transform';
       }
     }, { passive: true });
 
     document.addEventListener('touchend', function(e) {
-      const target = e.target.closest('.scene-card-main-button, .scene-card-icon-button, .hero-button, .pagination-btn');
-      if (target) {
-        setTimeout(() => {
-          target.style.transform = '';
-        }, 100);
+      if (touchTarget) {
+        const touchDuration = Date.now() - touchStartTime;
+
+        // Only apply feedback if it was a quick touch (not a scroll)
+        if (touchDuration < 200) {
+          setTimeout(() => {
+            if (touchTarget) {
+              touchTarget.style.transform = '';
+              touchTarget.style.willChange = 'auto';
+            }
+          }, 100);
+        } else {
+          // Immediate reset for longer touches (likely scrolling)
+          touchTarget.style.transform = '';
+          touchTarget.style.willChange = 'auto';
+        }
+
+        touchTarget = null;
+      }
+    }, { passive: true });
+
+    // Reset on touch cancel (when scrolling interrupts touch)
+    document.addEventListener('touchcancel', function(e) {
+      if (touchTarget) {
+        touchTarget.style.transform = '';
+        touchTarget.style.willChange = 'auto';
+        touchTarget = null;
       }
     }, { passive: true });
   }
@@ -401,79 +429,63 @@
     });
   }
 
-  // Enhanced mobile menu accessibility
-  function enhanceMobileMenuAccessibility() {
-    const mobileMenu = document.getElementById('mobile-menu');
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    
-    if (mobileMenu && mobileMenuButton) {
-      // Set ARIA attributes
-      mobileMenuButton.setAttribute('aria-expanded', 'false');
-      mobileMenuButton.setAttribute('aria-controls', 'mobile-menu');
-      mobileMenu.setAttribute('aria-labelledby', 'mobile-menu-button');
-      
-      // Update ARIA state when menu toggles
-      const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-          if (mutation.attributeName === 'class') {
-            const isHidden = mobileMenu.classList.contains('hidden');
-            mobileMenuButton.setAttribute('aria-expanded', !isHidden);
-          }
-        });
-      });
-      
-      observer.observe(mobileMenu, { attributes: true, attributeFilter: ['class'] });
-    }
-  }
+  // Mobile menu accessibility is now handled in base.html template
 
   // Initialize mobile enhancements
   document.addEventListener('DOMContentLoaded', function() {
-    enhanceMobileMenuAccessibility();
-    
-    // Add swipe gesture support for mobile navigation
+    // Add swipe gesture support for mobile navigation (simplified and improved)
     if ('ontouchstart' in window) {
       let startX = 0;
       let startY = 0;
       let isScrolling = false;
-      
+
       document.addEventListener('touchstart', function(e) {
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
-        isScrolling = false;
-      });
-      
+        // Only track swipes from the edge of the screen
+        if (e.touches[0].clientX > window.innerWidth - 50) {
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          isScrolling = false;
+        }
+      }, { passive: true });
+
       document.addEventListener('touchmove', function(e) {
         if (!startX || !startY) return;
-        
+
         const diffX = Math.abs(e.touches[0].clientX - startX);
         const diffY = Math.abs(e.touches[0].clientY - startY);
-        
-        if (diffY > diffX) {
+
+        // Detect if user is scrolling vertically
+        if (diffY > diffX && diffY > 10) {
           isScrolling = true;
         }
-      });
-      
+      }, { passive: true });
+
       document.addEventListener('touchend', function(e) {
-        if (!startX || !startY || isScrolling) return;
-        
+        if (!startX || !startY || isScrolling) {
+          startX = 0;
+          startY = 0;
+          isScrolling = false;
+          return;
+        }
+
         const endX = e.changedTouches[0].clientX;
         const diffX = startX - endX;
-        
+
         // Swipe left to open menu (from right edge)
-        if (diffX < -50 && startX > window.innerWidth - 50) {
+        if (diffX < -50) {
           const mobileMenuButton = document.getElementById('mobile-menu-button');
           const mobileMenu = document.getElementById('mobile-menu');
-          
-          if (mobileMenuButton && mobileMenu && mobileMenu.classList.contains('hidden')) {
+
+          if (mobileMenuButton && mobileMenu && !mobileMenu.classList.contains('show')) {
             mobileMenuButton.click();
           }
         }
-        
+
         // Reset values
         startX = 0;
         startY = 0;
         isScrolling = false;
-      });
+      }, { passive: true });
     }
   });
 

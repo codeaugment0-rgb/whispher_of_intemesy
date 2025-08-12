@@ -1,80 +1,124 @@
-/* Mobile-First Responsive CSS - Clean and Focused */
+/* Mobile-First Responsive CSS - Enhanced and Consolidated */
 
 /* Essential Mobile Variables */
 :root {
   --touch-target: 44px;
+  --touch-target-large: 48px;
   --mobile-padding: 1rem;
   --mobile-gap: 0.75rem;
+  --mobile-border-radius: 0.75rem;
 }
 
 /* Core Mobile Fixes */
 @media (max-width: 768px) {
-  /* Ensure all interactive elements are touch-friendly */
-  button, 
-  a, 
-  input, 
-  select, 
+  /* Prevent accidental touches during scroll - Apply to main content areas */
+  body {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  main,
+  .main-content,
+  .scene-list,
+  .edit-form,
+  .scroll-container {
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+  }
+
+  /* Ensure all interactive elements are touch-friendly with proper touch handling */
+  button,
+  a,
+  input,
+  select,
   textarea,
   .touch-target {
     min-height: var(--touch-target);
     min-width: var(--touch-target);
     touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   /* Prevent iOS zoom on form inputs */
-  input, 
-  textarea, 
+  input,
+  textarea,
   select {
     font-size: 16px !important;
+    user-select: text;
+    -webkit-user-select: text;
   }
 
-  /* Mobile button improvements */
-  button, 
+  /* Enhanced mobile button improvements */
+  button,
   .btn,
   a[role="button"] {
     padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
+    border-radius: var(--mobile-border-radius);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
+    position: relative;
+    overflow: hidden;
   }
 
-  /* Scene card mobile optimization */
+  /* Improved button active states for better feedback */
+  button:active,
+  .btn:active,
+  a[role="button"]:active {
+    transform: scale(0.96);
+    transition: transform 0.1s ease;
+  }
+
+  /* Enhanced Scene card mobile optimization */
   .scene-card {
     margin-bottom: 1rem;
+    touch-action: pan-y;
   }
 
   .scene-card-icon-button {
     width: var(--touch-target) !important;
     height: var(--touch-target) !important;
     padding: 0.75rem !important;
+    touch-action: manipulation;
+    border-radius: var(--mobile-border-radius) !important;
   }
 
   .scene-card-main-button {
     min-height: var(--touch-target);
     padding: 0.75rem 1rem;
+    touch-action: manipulation;
+    border-radius: var(--mobile-border-radius) !important;
   }
 
-  /* Mobile navigation */
+  /* Enhanced Mobile navigation */
   .mobile-nav-item {
     padding: 1rem;
     min-height: var(--touch-target);
     display: flex;
     align-items: center;
+    touch-action: manipulation;
+    border-radius: var(--mobile-border-radius);
   }
 
-  /* Hero buttons */
+  /* Enhanced Hero buttons */
   .hero-button {
     min-height: var(--touch-target);
     padding: 0.75rem 1rem;
+    touch-action: manipulation;
+    border-radius: var(--mobile-border-radius) !important;
   }
 
-  /* Pagination buttons */
+  /* Enhanced Pagination buttons */
   .pagination-btn {
     min-height: var(--touch-target);
     min-width: var(--touch-target);
     padding: 0.75rem;
+    touch-action: manipulation;
+    border-radius: var(--mobile-border-radius) !important;
   }
 
   /* Grid layout - single column on mobile */
@@ -95,24 +139,37 @@
   }
 }
 
-/* Touch feedback */
+/* Enhanced Touch feedback with better performance */
 @media (max-width: 768px) {
   .touch-feedback {
     transition: transform 0.1s ease;
+    will-change: transform;
   }
 
   .touch-feedback:active {
-    transform: scale(0.95);
+    transform: scale(0.96);
   }
 
-  /* Apply to interactive elements */
+  /* Apply consistent touch feedback to all interactive elements */
   button:active,
   a:active,
   .scene-card-main-button:active,
   .scene-card-icon-button:active,
   .hero-button:active,
-  .pagination-btn:active {
-    transform: scale(0.95);
+  .pagination-btn:active,
+  .mobile-nav-item:active {
+    transform: scale(0.96);
+    transition: transform 0.1s ease;
+  }
+
+  /* Prevent double-tap zoom on buttons */
+  button,
+  .scene-card-main-button,
+  .scene-card-icon-button,
+  .hero-button,
+  .pagination-btn {
+    touch-action: manipulation;
+    -ms-touch-action: manipulation;
   }
 }
 
@@ -137,17 +194,15 @@
   }
 }
 
-/* Mobile menu enhancements */
+/* Simple Mobile Menu Styles - Like web app */
 @media (max-width: 768px) {
-  #mobile-menu {
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(10px);
+  /* Mobile menu items hover effects */
+  #mobile-menu a:hover {
+    background: #f9fafb !important;
   }
 
-  .mobile-nav-divider {
-    height: 1px;
-    background: #e5e7eb;
-    margin: 0.5rem 1rem;
+  #mobile-menu a:active {
+    background: #f3f4f6 !important;
   }
 }/* Mobil
 e-Optimized Edit Scene Page */
@@ -252,55 +307,20 @@ e-Optimized Edit Scene Page */
   }
 }
 
-/* Mobile Menu Button Fix */
+/* Old mobile menu button styles removed - now handled in Enhanced Mobile Menu Styles section */
+
+/* Enhanced Touch Handling for Better Scroll Experience */
 @media (max-width: 768px) {
-  #mobile-menu-button {
-    width: 48px !important;
-    height: 48px !important;
-    min-width: 44px !important;
-    min-height: 44px !important;
-    padding: 0.75rem !important;
-    border-radius: 0.75rem !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: transparent !important;
-    border: none !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
-  }
-
-  #mobile-menu-button:hover {
-    background: #f3f4f6 !important;
-  }
-
-  #mobile-menu-button:active {
-    transform: scale(0.95) !important;
-    background: #e5e7eb !important;
-  }
-
-  /* Menu icons */
-  #menu-icon,
-  #close-icon {
-    width: 24px !important;
-    height: 24px !important;
-    stroke-width: 2 !important;
-  }
-}
-
-/* Enhanced Touch Handling */
-@media (max-width: 768px) {
-  /* Prevent accidental touches during scroll */
-  .scroll-safe {
-    touch-action: pan-y;
-  }
-
-  /* Apply to main content areas */
+  /* Prevent accidental touches during scroll - Apply to scrollable areas */
+  .scroll-safe,
   main,
   .main-content,
   .scene-list,
-  .edit-form {
+  .edit-form,
+  .grid {
     touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
   }
 
   /* Allow manipulation only on interactive elements */
@@ -309,14 +329,57 @@ e-Optimized Edit Scene Page */
   input,
   textarea,
   select,
-  .touch-target {
+  .touch-target,
+  .scene-card-main-button,
+  .scene-card-icon-button,
+  .hero-button,
+  .pagination-btn,
+  .mobile-nav-item {
     touch-action: manipulation;
+    -ms-touch-action: manipulation;
   }
 
-  /* Improve scroll performance */
+  /* Improve scroll performance and prevent momentum scrolling issues */
   .scroll-container {
     -webkit-overflow-scrolling: touch;
     overflow-scrolling: touch;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+
+  /* Prevent text selection on buttons during touch */
+  button,
+  .scene-card-main-button,
+  .scene-card-icon-button,
+  .hero-button,
+  .pagination-btn {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  /* Add scroll margin to prevent content hiding behind fixed headers */
+  .scene-card,
+  .hero-section {
+    scroll-margin-top: 80px;
+  }
+
+  /* Improve touch target spacing to prevent accidental touches */
+  .scene-card-actions {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .scene-card-button-group {
+    gap: 0.75rem;
+  }
+
+  /* Add safe area for devices with notches */
+  .mobile-safe-area {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 }
 
@@ -338,68 +401,7 @@ e-Optimized Edit Scene Page */
   .mobile-safe-right {
     padding-right: max(1rem, env(safe-area-inset-right));
   }
-}/* Cri
-tical Mobile Menu Button Fix */
-#mobile-menu-button {
-  width: 48px !important;
-  height: 48px !important;
-  min-width: 44px !important;
-  min-height: 44px !important;
-  padding: 12px !important;
-  border: none !important;
-  background: transparent !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  border-radius: 8px !important;
-  transition: all 0.2s ease !important;
-  -webkit-tap-highlight-color: transparent !important;
-  touch-action: manipulation !important;
-  user-select: none !important;
-  -webkit-user-select: none !important;
 }
 
-#mobile-menu-button:hover {
-  background-color: #f3f4f6 !important;
-}
-
-#mobile-menu-button:active {
-  background-color: #e5e7eb !important;
-  transform: scale(0.95) !important;
-}
-
-#mobile-menu-button svg {
-  pointer-events: none !important;
-  width: 24px !important;
-  height: 24px !important;
-}
-
-/* Ensure mobile menu is properly styled */
-#mobile-menu {
-  background: white !important;
-  border-top: 1px solid #e5e7eb !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* Mobile menu items */
-.mobile-nav-item {
-  min-height: 44px !important;
-  padding: 12px 16px !important;
-  display: flex !important;
-  align-items: center !important;
-  touch-action: manipulation !important;
-  -webkit-tap-highlight-color: transparent !important;
-}
-
-.mobile-nav-item:active {
-  background-color: #f3f4f6 !important;
-}
-
-/* Ensure menu button is always visible and clickable */
-@media (max-width: 768px) {
-  #mobile-menu-button {
-    z-index: 1000 !important;
-    position: relative !important;
-  }
-}
+/* Duplicate mobile menu styles removed - consolidated above */
+/* All mobile menu button and navigation styles are now consolidated in the Enhanced Mobile Menu Styles section above */

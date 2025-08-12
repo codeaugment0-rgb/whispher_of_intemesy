@@ -518,36 +518,8 @@
   }
 }
 
-/* Touch-friendly button sizes for mobile */
-@media (max-width: 640px) {
-  .touch-target {
-    min-height: 44px !important;
-    min-width: 44px !important;
-  }
-  
-  .touch-target-sm {
-    min-height: 36px !important;
-    min-width: 36px !important;
-  }
-  
-  .touch-target-lg {
-    min-height: 48px !important;
-    min-width: 48px !important;
-  }
-}
-
-/* Improved form responsiveness */
-@media (max-width: 640px) {
-  input, textarea, select {
-    font-size: 16px !important; /* Prevents zoom on iOS */
-  }
-  
-  .form-input-mobile {
-    padding: 0.75rem !important;
-    font-size: 1rem !important;
-    line-height: 1.5rem !important;
-  }
-}
+/* Touch-friendly button sizes for mobile - Consolidated in mobile-responsive.css */
+/* Form responsiveness - Consolidated in mobile-responsive.css */
 
 /* Analytics-specific styles */
 .analytics-card {

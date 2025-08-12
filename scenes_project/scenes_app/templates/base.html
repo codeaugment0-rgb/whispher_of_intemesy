@@ -73,7 +73,7 @@
           </a>
         </nav>
 
-        <!-- Simple Mobile menu button -->
+        <!-- Simple Mobile menu button (like web app) -->
         <button onclick="toggleMobileMenu()" class="md:hidden bg-gray-100 hover:bg-gray-200 p-3 rounded-lg" style="width: 48px; height: 48px; border: none; cursor: pointer;">
           <div id="menu-bars" style="display: block;">
             <div style="width: 20px; height: 2px; background: #374151; margin: 3px 0;"></div>
@@ -84,28 +84,50 @@
         </button>
       </div>
 
-      <!-- Simple Mobile Navigation Menu -->
-      <div id="mobile-menu" style="display: none;" class="md:hidden border-t border-gray-200 py-4 bg-white">
-        <nav>
-          <a href="{% url 'scene_list' %}" style="display: block; padding: 16px; color: #374151; text-decoration: none; border-bottom: 1px solid #f3f4f6; font-size: 16px; min-height: 44px;">
-            🏠 All Scenes
-          </a>
+      <!-- Mobile Navigation Menu -->
+      <div id="mobile-menu" class="md:hidden border-t border-gray-200 bg-white shadow-lg rounded-b-2xl hidden">
+        <nav class="flex flex-col divide-y divide-gray-100">
           
-          <a href="{% url 'analytics' %}" style="display: block; padding: 16px; color: #374151; text-decoration: none; border-bottom: 1px solid #f3f4f6; font-size: 16px; min-height: 44px;">
-            📊 Analytics
+          <a href="{% url 'scene_list' %}" 
+            class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200">
+            <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1h-5a1 1 0 01-1-1v-6H10v6a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z"/>
+            </svg>
+            <span class="text-base font-medium">Home</span>
           </a>
-          
-          <a href="{% url 'favorites_list' %}" style="display: block; padding: 16px; color: #374151; text-decoration: none; border-bottom: 1px solid #f3f4f6; font-size: 16px; min-height: 44px;">
-            ❤️ Favorites
+
+          <a href="{% url 'analytics' %}" 
+            class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200">
+            <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M4 8a1 1 0 011-1h14a1 1 0 011 1v1a1 1 0 01-1 1H5a1 1 0 01-1-1V8zm3 4a1 1 0 011-1h8a1 1 0 011 1v6a1 1 0 01-1 1H8a1 1 0 01-1-1v-6zm8 0a1 1 0 00-1 1v4a1 1 0 001 1h2a1 1 0 001-1v-4a1 1 0 00-1-1h-2z"/>
+            </svg>
+            <span class="text-base font-medium">Analytics</span>
           </a>
-          
-          <a href="{% url 'add_scene' %}" style="display: block; padding: 16px; color: #374151; text-decoration: none; border-bottom: 1px solid #f3f4f6; font-size: 16px; min-height: 44px;">
-            ➕ Add New Scene
+
+          <a href="{% url 'favorites_list' %}" 
+            class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200">
+            <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="text-base font-medium">Favorites</span>
           </a>
-          
-          <a href="{% url 'random_scene' %}" style="display: block; padding: 16px; color: #374151; text-decoration: none; font-size: 16px; min-height: 44px;">
-            🎲 Random Scene
+
+          <a href="{% url 'add_scene' %}" 
+            class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200">
+            <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+            </svg>
+            <span class="text-base font-medium">Add Scene</span>
           </a>
+
+          <a href="{% url 'random_scene' %}" 
+            class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200">
+            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            <span class="text-base font-medium">Random Scene</span>
+          </a>
+
         </nav>
       </div>
     </div>
@@ -141,12 +163,12 @@
     // Make total favorites count available globally
     window.totalFavorites = {{ total_favorites|default:0 }};
     
-    // Simple mobile menu function
+    // Simple mobile menu function (like web app)
     function toggleMobileMenu() {
       const menu = document.getElementById('mobile-menu');
       const bars = document.getElementById('menu-bars');
       const x = document.getElementById('menu-x');
-      
+
       if (menu.style.display === 'none' || menu.style.display === '') {
         // Open menu
         menu.style.display = 'block';
@@ -162,13 +184,21 @@
       }
     }
     
-    // Close menu when clicking on links
+    // Close menu when clicking on links (like web app)
     document.addEventListener('DOMContentLoaded', function() {
       const menuLinks = document.querySelectorAll('#mobile-menu a');
       menuLinks.forEach(link => {
         link.addEventListener('click', function() {
           toggleMobileMenu();
         });
+      });
+
+      // Close menu on window resize
+      window.addEventListener('resize', function() {
+        const menu = document.getElementById('mobile-menu');
+        if (window.innerWidth >= 768 && menu.style.display === 'block') {
+          toggleMobileMenu();
+        }
       });
     });
   </script>
