@@ -172,10 +172,14 @@ class SceneManager {
   }
 
   async confirmDelete(sceneId, sceneTitle) {
-    // Create a more elegant confirmation modal
-    const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-    modal.innerHTML = `
+    this.showFirstDeleteConfirmation(sceneId, sceneTitle);
+  }
+
+  showFirstDeleteConfirmation(sceneId, sceneTitle) {
+    // Create first confirmation modal
+    const modal1 = document.createElement('div');
+    modal1.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    modal1.innerHTML = `
       <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
         <div class="text-center">
           <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
@@ -185,43 +189,91 @@ class SceneManager {
           </div>
           <h3 class="text-xl font-bold text-gray-900 mb-2">Delete Scene</h3>
           <p class="text-gray-600 mb-6">Are you sure you want to delete "<strong>${sceneTitle}</strong>"? This action cannot be undone.</p>
-          
+
           <div class="flex items-center justify-center space-x-4">
             <button class="cancel-delete px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors">
               Cancel
             </button>
-            <button class="confirm-delete px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-              Delete Scene
+            <button class="confirm-first-delete px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+              Yes, Delete
             </button>
           </div>
         </div>
       </div>
     `;
 
-    document.body.appendChild(modal);
+    document.body.appendChild(modal1);
 
-    // Handle modal interactions
-    const cancelBtn = modal.querySelector('.cancel-delete');
-    const confirmBtn = modal.querySelector('.confirm-delete');
+    // Handle first modal interactions
+    const cancelBtn1 = modal1.querySelector('.cancel-delete');
+    const confirmBtn1 = modal1.querySelector('.confirm-first-delete');
 
-    const closeModal = () => {
-      document.body.removeChild(modal);
+    const closeModal1 = () => {
+      document.body.removeChild(modal1);
     };
 
-    cancelBtn.addEventListener('click', closeModal);
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal();
+    cancelBtn1.addEventListener('click', closeModal1);
+    modal1.addEventListener('click', (e) => {
+      if (e.target === modal1) closeModal1();
     });
 
-    confirmBtn.addEventListener('click', async () => {
+    confirmBtn1.addEventListener('click', () => {
+      closeModal1();
+      this.showSecondDeleteConfirmation(sceneId, sceneTitle);
+    });
+  }
+
+  showSecondDeleteConfirmation(sceneId, sceneTitle) {
+    // Create second confirmation modal (final warning)
+    const modal2 = document.createElement('div');
+    modal2.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    modal2.innerHTML = `
+      <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+        <div class="text-center">
+          <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+            <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Final Warning</h3>
+          <p class="text-gray-600 mb-6">Last chance! This will permanently delete "<strong>${sceneTitle}</strong>". This action cannot be undone. Continue?</p>
+
+          <div class="flex items-center justify-center space-x-4">
+            <button class="cancel-final-delete px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+              Cancel
+            </button>
+            <button class="confirm-final-delete px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+              Delete Permanently
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal2);
+
+    // Handle second modal interactions
+    const cancelBtn2 = modal2.querySelector('.cancel-final-delete');
+    const confirmBtn2 = modal2.querySelector('.confirm-final-delete');
+
+    const closeModal2 = () => {
+      document.body.removeChild(modal2);
+    };
+
+    cancelBtn2.addEventListener('click', closeModal2);
+    modal2.addEventListener('click', (e) => {
+      if (e.target === modal2) closeModal2();
+    });
+
+    confirmBtn2.addEventListener('click', async () => {
       try {
-        confirmBtn.innerHTML = `
+        confirmBtn2.innerHTML = `
           <svg class="w-4 h-4 mr-2 animate-spin inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
           </svg>
           Deleting...
         `;
-        confirmBtn.disabled = true;
+        confirmBtn2.disabled = true;
 
         const response = await fetch(`/api/scene/${sceneId}/delete/`, {
           method: 'DELETE',
@@ -234,8 +286,8 @@ class SceneManager {
 
         if (result.status === 'success') {
           this.showToast('Scene deleted successfully!', 'success');
-          closeModal();
-          
+          closeModal2();
+
           // Remove the scene card from the page with animation
           const sceneCard = document.querySelector(`[data-scene-id="${sceneId}"]`)?.closest('article');
           if (sceneCard) {
@@ -258,7 +310,7 @@ class SceneManager {
       } catch (error) {
         console.error('Error deleting scene:', error);
         this.showToast('Error deleting scene: ' + error.message, 'error');
-        closeModal();
+        closeModal2();
       }
     });
   }

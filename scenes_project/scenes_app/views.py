@@ -2,7 +2,9 @@ from typing import Any, Dict
 from django.core.paginator import Paginator, Page
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
+from django.template.loader import render_to_string
 from django.utils import timezone
+from django.db.models import Q, Min, Max
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import random
@@ -11,7 +13,7 @@ import os
 import sys
 from django.conf import settings
 
-from .models import Scene, FavoriteScene
+from .models import Scene, FavoriteScene, SearchSuggestion, SearchQuery
 from .static.py.analytics import analyze_scenes
 
 import logging
@@ -722,3 +724,300 @@ def favorites_list(request: HttpRequest) -> HttpResponse:
         })
 
     return render(request, 'favorites_list.html', context)
+
+
+def search_results(request: HttpRequest) -> HttpResponse:
+    """Simple search results page"""
+    query = request.GET.get('q', '').strip()
+    page_number = request.GET.get('page', '1')
+    page_size = int(request.GET.get('page_size', '10'))
+
+    # Validate page size
+    if page_size not in [10, 25, 50, 100]:
+        page_size = 10
+
+    # Start with all scenes
+    scenes_qs = Scene.objects.all()
+
+    # Apply search query if provided
+    if query:
+        # Search in multiple fields
+        scenes_qs = scenes_qs.filter(
+            Q(title__icontains=query) |
+            Q(country__icontains=query) |
+            Q(setting__icontains=query) |
+            Q(emotion__icontains=query) |
+            Q(full_text__icontains=query)
+        )
+
+    # Order by most recent first
+    scenes_qs = scenes_qs.order_by('-id')
+
+    # Pagination
+    paginator = Paginator(scenes_qs, page_size)
+    try:
+        page_obj = paginator.get_page(page_number)
+    except:
+        page_obj = paginator.get_page(1)
+
+    # Smart pagination range calculation (same as home page)
+    current_page = page_obj.number
+    total_pages = paginator.num_pages
+
+    if total_pages <= 7:
+        page_range = range(1, total_pages + 1)
+    else:
+        if current_page <= 4:
+            page_range = list(range(1, 6)) + ['...', total_pages]
+        elif current_page >= total_pages - 3:
+            page_range = [1, '...'] + list(range(total_pages - 4, total_pages + 1))
+        else:
+            page_range = [1, '...'] + list(range(current_page - 1, current_page + 2)) + ['...', total_pages]
+
+    # Get favorites for current session
+    if not request.session.session_key:
+        request.session.create()
+
+    favorite_scene_ids = list(
+        FavoriteScene.objects.filter(
+            session_key=request.session.session_key
+        ).values_list('scene_id', flat=True)
+    )
+
+    context = {
+        'page_obj': page_obj,
+        'page_range': page_range,
+        'query': query,
+        'page_size': page_size,
+        'favorite_scene_ids': favorite_scene_ids,
+        'total_results': paginator.count,
+    }
+
+    # Handle AJAX requests for pagination (same as home page)
+    if is_ajax(request):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+
+        # Render the regular scene cards partial
+        html = render_to_string('partials/_scene_cards.html', context, request=request)
+
+        # Render pagination
+        pagination_html = render_to_string('partials/_pagination.html', context, request=request)
+
+        return JsonResponse({
+            'html': html,
+            'pagination_html': pagination_html,
+            'current_page': current_page,
+            'total_pages': total_pages,
+            'total_items': paginator.count,
+            'page_size': page_size,
+        })
+
+    return render(request, 'search_results.html', context)
+
+
+def search_suggestions_api(request: HttpRequest) -> JsonResponse:
+    """API endpoint for search suggestions and autocomplete"""
+    query = request.GET.get('q', '').strip()
+    suggestion_type = request.GET.get('type', '')  # title, country, setting, emotion, content, character
+    limit = int(request.GET.get('limit', '10'))
+
+    if not query or len(query) < 2:
+        return JsonResponse({'suggestions': []})
+
+    try:
+        # Get suggestions from the model
+        suggestions = SearchSuggestion.get_suggestions(query, suggestion_type, limit)
+
+        # Format suggestions
+        suggestion_list = []
+        for suggestion in suggestions:
+            suggestion_list.append({
+                'term': suggestion.term,
+                'type': suggestion.suggestion_type,
+                'frequency': suggestion.frequency,
+                'display': suggestion.term.title() if suggestion.suggestion_type in ['country', 'setting', 'emotion'] else suggestion.term
+            })
+
+        # If we don't have enough suggestions, add some from actual scene data
+        if len(suggestion_list) < limit:
+            remaining_limit = limit - len(suggestion_list)
+            existing_terms = {s['term'].lower() for s in suggestion_list}
+
+            # Search in actual scene data
+            additional_suggestions = []
+
+            if not suggestion_type or suggestion_type == 'title':
+                titles = Scene.objects.filter(title__icontains=query).values_list('title', flat=True)[:remaining_limit]
+                for title in titles:
+                    if title.lower() not in existing_terms:
+                        additional_suggestions.append({
+                            'term': title,
+                            'type': 'title',
+                            'frequency': 1,
+                            'display': title
+                        })
+                        existing_terms.add(title.lower())
+
+            if not suggestion_type or suggestion_type == 'country':
+                countries = Scene.objects.filter(country__icontains=query).values_list('country', flat=True).distinct()[:remaining_limit]
+                for country in countries:
+                    if country.lower() not in existing_terms:
+                        additional_suggestions.append({
+                            'term': country,
+                            'type': 'country',
+                            'frequency': 1,
+                            'display': country
+                        })
+                        existing_terms.add(country.lower())
+
+            if not suggestion_type or suggestion_type == 'setting':
+                settings = Scene.objects.filter(setting__icontains=query).values_list('setting', flat=True).distinct()[:remaining_limit]
+                for setting in settings:
+                    if setting.lower() not in existing_terms:
+                        additional_suggestions.append({
+                            'term': setting,
+                            'type': 'setting',
+                            'frequency': 1,
+                            'display': setting
+                        })
+                        existing_terms.add(setting.lower())
+
+            if not suggestion_type or suggestion_type == 'emotion':
+                emotions = Scene.objects.filter(emotion__icontains=query).values_list('emotion', flat=True).distinct()[:remaining_limit]
+                for emotion in emotions:
+                    if emotion.lower() not in existing_terms:
+                        additional_suggestions.append({
+                            'term': emotion,
+                            'type': 'emotion',
+                            'frequency': 1,
+                            'display': emotion
+                        })
+                        existing_terms.add(emotion.lower())
+
+            suggestion_list.extend(additional_suggestions[:remaining_limit])
+
+        return JsonResponse({
+            'suggestions': suggestion_list[:limit],
+            'query': query,
+            'count': len(suggestion_list[:limit])
+        })
+
+    except Exception as e:
+        return JsonResponse({'error': str(e), 'suggestions': []}, status=500)
+
+
+def search_api(request: HttpRequest) -> JsonResponse:
+    """API endpoint for search results"""
+    query = request.GET.get('q', '').strip()
+    country = request.GET.get('country', '')
+    setting = request.GET.get('setting', '')
+    emotion = request.GET.get('emotion', '')
+    min_age = request.GET.get('min_age', '')
+    max_age = request.GET.get('max_age', '')
+    page = int(request.GET.get('page', '1'))
+    page_size = int(request.GET.get('page_size', '12'))
+
+    # Validate page size
+    if page_size not in [12, 24, 48, 96]:
+        page_size = 12
+
+    try:
+        # Start with all scenes
+        scenes_qs = Scene.objects.all()
+
+        # Apply text search
+        if query:
+            scenes_qs = scenes_qs.filter(
+                Q(title__icontains=query) |
+                Q(full_text__icontains=query) |
+                Q(country__icontains=query) |
+                Q(setting__icontains=query) |
+                Q(emotion__icontains=query) |
+                Q(details__effeminate__appearance__icontains=query) |
+                Q(details__masculine__appearance__icontains=query) |
+                Q(details__atmosphere__lighting__icontains=query) |
+                Q(details__atmosphere__scent__icontains=query) |
+                Q(details__atmosphere__sound__icontains=query)
+            )
+
+        # Apply filters
+        if country and country != 'all':
+            scenes_qs = scenes_qs.filter(country__iexact=country)
+
+        if setting and setting != 'all':
+            scenes_qs = scenes_qs.filter(setting__iexact=setting)
+
+        if emotion and emotion != 'all':
+            scenes_qs = scenes_qs.filter(emotion__iexact=emotion)
+
+        # Apply age filters
+        if min_age:
+            try:
+                min_age_int = int(min_age)
+                scenes_qs = scenes_qs.filter(
+                    Q(effeminate_age__gte=min_age_int) | Q(masculine_age__gte=min_age_int)
+                )
+            except ValueError:
+                pass
+
+        if max_age:
+            try:
+                max_age_int = int(max_age)
+                scenes_qs = scenes_qs.filter(
+                    Q(effeminate_age__lte=max_age_int) | Q(masculine_age__lte=max_age_int)
+                )
+            except ValueError:
+                pass
+
+        # Order by relevance
+        if query:
+            # For now, just order by ID - we can add relevance scoring later
+            scenes_qs = scenes_qs.order_by('id')
+        else:
+            scenes_qs = scenes_qs.order_by('-id')
+
+        # Pagination
+        paginator = Paginator(scenes_qs, page_size)
+        try:
+            page_obj = paginator.get_page(page)
+        except:
+            page_obj = paginator.get_page(1)
+
+        # Serialize results
+        results = []
+        for scene in page_obj.object_list:
+            results.append({
+                'id': scene.id,
+                'title': scene.title,
+                'effeminate_age': scene.effeminate_age,
+                'masculine_age': scene.masculine_age,
+                'country': scene.country,
+                'setting': scene.setting,
+                'emotion': scene.emotion,
+                'details': scene.details,
+                'favorite_count': scene.favorite_count,
+            })
+
+        return JsonResponse({
+            'results': results,
+            'pagination': {
+                'current_page': page_obj.number,
+                'total_pages': paginator.num_pages,
+                'total_results': paginator.count,
+                'has_next': page_obj.has_next(),
+                'has_previous': page_obj.has_previous(),
+                'page_size': page_size,
+            },
+            'query': query,
+            'filters': {
+                'country': country,
+                'setting': setting,
+                'emotion': emotion,
+                'min_age': min_age,
+                'max_age': max_age,
+            }
+        })
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Search Results Header -->
+<div class="hero-section relative mb-6 sm:mb-8 lg:mb-12 mobile-mb-6">
+  <div class="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl sm:rounded-2xl"></div>
+  <div class="relative px-3 sm:px-4 lg:px-8 py-6 sm:py-8 lg:py-12 text-center mobile-px-4 mobile-py-6">
+    <h1 class="hero-title text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-light text-gray-900 mb-2 sm:mb-3 tracking-tight mobile-text-xl mobile-mb-3">
+      <span class="font-semibold text-primary">Search Results</span>
+      {% if query %}
+        <span class="text-gray-600">for "{{ query }}"</span>
+      {% endif %}
+    </h1>
+    <p class="hero-description text-sm sm:text-base lg:text-lg text-gray-600 mb-4 sm:mb-6 lg:mb-8 max-w-xl sm:max-w-2xl mx-auto leading-relaxed px-2 sm:px-4 mobile-text-sm mobile-mb-6 mobile-px-3">
+      {% if query %}
+        Found {{ total_results }} scene{{ total_results|pluralize }} matching your search
+      {% else %}
+        Showing all {{ total_results }} scene{{ total_results|pluralize }}
+      {% endif %}
+    </p>
+  </div>
+</div>
+
+<!-- Stats Bar (same as home page) -->
+<div class="stats-bar mb-4 sm:mb-6 lg:mb-8 bg-white rounded-lg sm:rounded-xl border border-gray-200 shadow-sm mobile-mb-6">
+  <div class="stats-container px-3 sm:px-4 lg:px-6 py-3 sm:py-4 mobile-px-4 mobile-py-4">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 mobile-gap-4">
+      <div class="stats-group flex items-center space-x-3 sm:space-x-4 lg:space-x-6 w-full sm:w-auto justify-center sm:justify-start mobile-gap-4">
+        <div class="stat-item text-center">
+          <div class="stat-number text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mobile-text-lg" data-stat="total-scenes">{{ page_obj.paginator.count }}</div>
+          <div class="stat-label text-xs text-gray-500 uppercase tracking-wide mobile-text-xs">
+            {% if query %}Results{% else %}Total Scenes{% endif %}
+          </div>
+        </div>
+        <div class="w-px h-6 sm:h-8 bg-gray-200 hidden sm:block"></div>
+        <div class="stat-item text-center">
+          <div class="stat-number text-lg sm:text-xl lg:text-2xl font-bold text-primary mobile-text-lg" data-stat="current-page">{{ page_obj.number }}</div>
+          <div class="stat-label text-xs text-gray-500 uppercase tracking-wide mobile-text-xs">Current Page</div>
+        </div>
+        <div class="w-px h-6 sm:h-8 bg-gray-200 hidden sm:block"></div>
+        <div class="stat-item text-center">
+          <div class="stat-number text-lg sm:text-xl lg:text-2xl font-bold text-accent mobile-text-lg" data-stat="total-pages">{{ page_obj.paginator.num_pages }}</div>
+          <div class="stat-label text-xs text-gray-500 uppercase tracking-wide mobile-text-xs">Total Pages</div>
+        </div>
+        {% if query %}
+        <div class="w-px h-6 sm:h-8 bg-gray-200 hidden sm:block"></div>
+        <div class="search-query-display bg-primary/10 px-3 py-1 rounded-full">
+          <span class="text-xs sm:text-sm text-primary font-medium mobile-text-xs">
+            "{{ query }}"
+          </span>
+        </div>
+        {% endif %}
+      </div>
+      
+      <div class="stats-info hidden sm:flex items-center text-sm text-gray-500 mobile-text-center mobile-text-xs">
+        <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span class="truncate">Showing {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ page_obj.paginator.count }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Search Results -->
+{% include 'partials/_scene_cards.html' %}
+
+{% endblock %}
