@@ -161,37 +161,24 @@
     }
   });
 
-  // Mobile-specific enhancements
+  // Simple mobile touch feedback (no interference with menu)
   if ('ontouchstart' in window) {
-    // Add touch feedback for buttons
     document.addEventListener('touchstart', function(e) {
-      const button = e.target.closest('button, a');
-      if (button && !button.disabled) {
-        button.style.transform = 'scale(0.98)';
-        button.style.transition = 'transform 0.1s ease';
+      const target = e.target.closest('.scene-card-main-button, .scene-card-icon-button, .hero-button, .pagination-btn');
+      if (target && !target.disabled) {
+        target.style.transform = 'scale(0.95)';
+        target.style.transition = 'transform 0.1s ease';
       }
     }, { passive: true });
 
     document.addEventListener('touchend', function(e) {
-      const button = e.target.closest('button, a');
-      if (button) {
+      const target = e.target.closest('.scene-card-main-button, .scene-card-icon-button, .hero-button, .pagination-btn');
+      if (target) {
         setTimeout(() => {
-          button.style.transform = '';
+          target.style.transform = '';
         }, 100);
       }
     }, { passive: true });
-
-    // Prevent double-tap zoom on buttons
-    document.addEventListener('touchend', function(e) {
-      const button = e.target.closest('button, a, .touch-target');
-      if (!button) return;
-      // Ignore disabled/aria-disabled targets
-      if (button.hasAttribute('disabled') || button.getAttribute('aria-disabled') === 'true') return;
-      // Prevent the browser's synthetic click to avoid double-activation
-      e.preventDefault();
-      // Use the native .click() to ensure default actions (like link navigation) fire
-      button.click();
-    }, { passive: false });
   }
 
   // Favorite functionality
@@ -358,6 +345,23 @@
   window.addEventListener('resize', setMobileViewportHeight);
   window.addEventListener('orientationchange', function() {
     setTimeout(setMobileViewportHeight, 100);
+  });
+
+  // Initialize mobile optimizations
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add mobile class to body for easier targeting
+    if (window.innerWidth <= 768) {
+      document.body.classList.add('mobile-device');
+    }
+
+    // Update on resize
+    window.addEventListener('resize', function() {
+      if (window.innerWidth <= 768) {
+        document.body.classList.add('mobile-device');
+      } else {
+        document.body.classList.remove('mobile-device');
+      }
+    });
   });
 
   // Smooth scroll polyfill for older mobile browsers
