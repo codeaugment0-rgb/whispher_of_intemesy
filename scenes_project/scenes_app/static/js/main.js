@@ -3,6 +3,26 @@
   // Copy prompt on detail page
   const copyBtn = document.getElementById('copy-btn');
   if (copyBtn) {
+    copyBtn.addEventListener('click', function() {
+      const originalText = this.innerHTML;
+      this.innerHTML = `
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        Copied!
+      `;
+      this.classList.add('bg-green-600', 'hover:bg-green-700');
+      this.classList.remove('from-primary', 'to-primary-dark', 'hover:from-primary-dark', 'hover:to-primary');
+      
+      setTimeout(() => {
+        this.innerHTML = originalText;
+        this.classList.remove('bg-green-600', 'hover:bg-green-700');
+        this.classList.add('from-primary', 'to-primary-dark', 'hover:from-primary-dark', 'hover:to-primary');
+      }, 2000);
+    });
+  }
+  
+  if (copyBtn) {
     copyBtn.addEventListener('click', async function () {
       const id = this.getAttribute('data-scene-id');
       try {
@@ -68,28 +88,6 @@
   randomButtons.forEach(btn => {
     btn.title = 'Random Scene (Press R)';
   });
-
-  // Enhanced copy button feedback
-  const copyButton = document.getElementById('copy-btn');
-  if (copyButton) {
-    copyButton.addEventListener('click', function() {
-      const originalText = this.innerHTML;
-      this.innerHTML = `
-        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-        </svg>
-        Copied!
-      `;
-      this.classList.add('bg-green-600', 'hover:bg-green-700');
-      this.classList.remove('from-primary', 'to-primary-dark', 'hover:from-primary-dark', 'hover:to-primary');
-      
-      setTimeout(() => {
-        this.innerHTML = originalText;
-        this.classList.remove('bg-green-600', 'hover:bg-green-700');
-        this.classList.add('from-primary', 'to-primary-dark', 'hover:from-primary-dark', 'hover:to-primary');
-      }, 2000);
-    });
-  }
 
   // Smooth scroll for long scene descriptions
   const promptText = document.getElementById('prompt-text');
@@ -172,7 +170,7 @@
         button.style.transform = 'scale(0.98)';
         button.style.transition = 'transform 0.1s ease';
       }
-    });
+    }, { passive: true });
 
     document.addEventListener('touchend', function(e) {
       const button = e.target.closest('button, a');
@@ -181,21 +179,19 @@
           button.style.transform = '';
         }, 100);
       }
-    });
+    }, { passive: true });
 
     // Prevent double-tap zoom on buttons
     document.addEventListener('touchend', function(e) {
       const button = e.target.closest('button, a, .touch-target');
-      if (button) {
-        e.preventDefault();
-        // Trigger click after preventing default
-        setTimeout(() => {
-          if (!e.defaultPrevented) {
-            button.click();
-          }
-        }, 10);
-      }
-    });
+      if (!button) return;
+      // Ignore disabled/aria-disabled targets
+      if (button.hasAttribute('disabled') || button.getAttribute('aria-disabled') === 'true') return;
+      // Prevent the browser's synthetic click to avoid double-activation
+      e.preventDefault();
+      // Use the native .click() to ensure default actions (like link navigation) fire
+      button.click();
+    }, { passive: false });
   }
 
   // Favorite functionality
@@ -347,8 +343,9 @@
       }
     }
   });
-})();  /
-/ Mobile viewport height fix for iOS Safari
+})();
+
+  // Mobile viewport height fix for iOS Safari
   function setMobileViewportHeight() {
     const vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);

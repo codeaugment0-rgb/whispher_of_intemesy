@@ -94,12 +94,6 @@ class AnalyticsDashboard {
       exportBtn.addEventListener('click', () => this.exportAnalytics());
     }
 
-    // Test features button
-    const testBtn = document.getElementById('test-features');
-    if (testBtn) {
-      testBtn.addEventListener('click', () => this.testFeatures());
-    }
-
     // Chart limit selector (if it exists)
     const chartLimitSelect = document.getElementById('chart-limit');
     if (chartLimitSelect) {
@@ -581,64 +575,6 @@ class AnalyticsDashboard {
 
     console.log('Force refreshing all charts');
     this.createCharts(this.analyticsData);
-  }
-
-  // Test all features
-  testFeatures() {
-    console.log('Testing analytics features...');
-
-    // Test filters
-    if (this.filters) {
-      console.log('✅ Filters available');
-      const filtersContainer = document.querySelector('.analytics-filters');
-      if (filtersContainer) {
-        console.log('✅ Filters UI rendered');
-      } else {
-        console.error('❌ Filters UI not rendered');
-      }
-    } else {
-      console.error('❌ Filters not available');
-    }
-
-    // Test comparison
-    if (this.comparison) {
-      console.log('✅ Comparison available');
-      const comparisonContainer = document.querySelector('.analytics-comparison');
-      if (comparisonContainer) {
-        console.log('✅ Comparison UI rendered');
-      } else {
-        console.error('❌ Comparison UI not rendered');
-      }
-    } else {
-      console.error('❌ Comparison not available');
-    }
-
-    // Test insights
-    if (this.insights) {
-      console.log('✅ Insights available');
-      const insightsContainer = document.querySelector('.analytics-insights');
-      if (insightsContainer) {
-        console.log('✅ Insights UI rendered');
-      } else {
-        console.error('❌ Insights UI not rendered');
-      }
-    } else {
-      console.error('❌ Insights not available');
-    }
-
-    // Test charts
-    const chartCount = Object.keys(this.charts).length;
-    console.log(`📊 Charts available: ${chartCount}`);
-
-    // Test data
-    if (this.analyticsData) {
-      console.log('✅ Analytics data loaded');
-      console.log('📊 Data summary:', this.analyticsData.stats);
-    } else {
-      console.error('❌ No analytics data');
-    }
-
-    this.showToast('Feature test completed - check console for results', 'info');
   }
 
   showLoading() {
