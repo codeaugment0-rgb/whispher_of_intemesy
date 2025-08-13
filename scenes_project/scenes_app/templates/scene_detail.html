@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 <!-- Navigation Header -->
 <div class="mb-4 sm:mb-6 lg:mb-8 flex flex-col gap-3 sm:gap-4 mobile-mb-4 mobile-section-spacing">
@@ -156,10 +157,8 @@
               </svg>
               Appearance
             </div>
-            <p class="text-pink-700 text-sm leading-relaxed">{{ scene.details.effeminate.appearance|default:'Classic
-              beauty with delicate features' }}</p>
+            <p class="text-pink-700 text-sm leading-relaxed">{{ scene.details.effeminate.appearance|default:'Classic beauty with delicate features' }}</p>
           </div>
-
           <div class="bg-white/60 rounded-xl p-3 sm:p-4 border border-pink-200/50">
             <div class="text-sm font-medium text-pink-800 mb-2 flex items-center">
               <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -169,8 +168,7 @@
               </svg>
               Hair Style
             </div>
-            <p class="text-pink-700 text-sm leading-relaxed">{{ scene.details.effeminate.hair|default:'Elegantly styled
-              with attention to detail' }}</p>
+            <p class="text-pink-700 text-sm leading-relaxed">{{ scene.details.effeminate.hair|default:'Elegantly styled with attention to detail' }}</p>
           </div>
 
           <div class="bg-white/60 rounded-xl p-3 sm:p-4 border border-pink-200/50">
@@ -181,8 +179,7 @@
               </svg>
               Attire
             </div>
-            <p class="text-pink-700 text-sm leading-relaxed">{{ scene.details.effeminate.clothing|default:'Beautifully
-              crafted traditional garments' }}</p>
+            <p class="text-pink-700 text-sm leading-relaxed">{{ scene.details.effeminate.clothing|default:'Beautifully crafted traditional garments' }}</p>
           </div>
         </div>
       </div>
@@ -213,8 +210,7 @@
               </svg>
               Appearance
             </div>
-            <p class="text-blue-700 text-sm leading-relaxed">{{ scene.details.masculine.appearance|default:'Strong
-              presence with commanding features' }}</p>
+            <p class="text-blue-700 text-sm leading-relaxed">{{ scene.details.masculine.appearance|default:'Strong presence with commanding features' }}</p>
           </div>
 
           <div class="bg-white/60 rounded-xl p-3 sm:p-4 border border-blue-200/50">
@@ -226,8 +222,7 @@
               </svg>
               Hair Style
             </div>
-            <p class="text-blue-700 text-sm leading-relaxed">{{ scene.details.masculine.hair|default:'Well-groomed with
-              distinguished styling' }}</p>
+            <p class="text-blue-700 text-sm leading-relaxed">{{ scene.details.masculine.hair|default:'Well-groomed with distinguished styling' }}</p>
           </div>
 
           <div class="bg-white/60 rounded-xl p-3 sm:p-4 border border-blue-200/50">
@@ -238,8 +233,7 @@
               </svg>
               Attire
             </div>
-            <p class="text-blue-700 text-sm leading-relaxed">{{ scene.details.masculine.clothing|default:'Refined
-              traditional clothing with elegant details' }}</p>
+            <p class="text-blue-700 text-sm leading-relaxed">{{ scene.details.masculine.clothing|default:'Refined traditional clothing with elegant details' }}</p>
           </div>
         </div>
       </div>
@@ -273,8 +267,7 @@
             </svg>
             Lighting
           </div>
-          <p class="text-amber-700 text-sm leading-relaxed">{{ scene.details.atmosphere.lighting|default:'Warm, ambient
-            lighting creating intimacy' }}</p>
+          <p class="text-amber-700 text-sm leading-relaxed">{{ scene.details.atmosphere.lighting|default:'Warm, ambient lighting creating intimacy' }}</p>
         </div>
 
         <div class="bg-white/60 rounded-xl p-3 sm:p-4 border border-amber-200/50">
@@ -286,8 +279,7 @@
             </svg>
             Fragrance
           </div>
-          <p class="text-amber-700 text-sm leading-relaxed">{{ scene.details.atmosphere.scent|default:'Subtle, romantic
-            fragrances in the air' }}</p>
+          <p class="text-amber-700 text-sm leading-relaxed">{{ scene.details.atmosphere.scent|default:'Subtle, romantic fragrances in the air' }}</p>
         </div>
 
         <div class="bg-white/60 rounded-xl p-3 sm:p-4 border border-amber-200/50 sm:col-span-2 lg:col-span-1">
@@ -299,8 +291,7 @@
             </svg>
             Soundscape
           </div>
-          <p class="text-amber-700 text-sm leading-relaxed">{{ scene.details.atmosphere.sound|default:'Gentle, melodious
-            sounds enhancing the mood' }}</p>
+          <p class="text-amber-700 text-sm leading-relaxed">{{ scene.details.atmosphere.sound|default:'Gentle, melodious sounds enhancing the mood' }}</p>
         </div>
       </div>
     </div>
