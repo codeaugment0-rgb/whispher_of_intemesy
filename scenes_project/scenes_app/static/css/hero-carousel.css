@@ -1,0 +1,654 @@
+/* Hero Carousel Styles */
+.hero-carousel {
+  position: relative;
+  width: 100%;
+  height: 60vh;
+  min-height: 300px;
+  max-height: 600px;
+  overflow: hidden;
+  border-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  touch-action: manipulation;
+  user-select: none;
+  contain: layout style paint;
+}
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform: translateX(100%);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.carousel-slide.active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.carousel-slide::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+/* Responsive romantic scene backgrounds */
+.carousel-slide.scene-1 {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-image: url('../images/hero/hero-1.png'),
+    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-2 {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background-image: url('../images/hero/hero-2.png'),
+    radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-3 {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background-image: url('../images/hero/hero-3.png'),
+    radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 60% 40%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-4 {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background-image: url('../images/hero/hero-4.png'),
+    radial-gradient(circle at 25% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-5 {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background-image: url('../images/hero/hero-5.png'),
+    radial-gradient(circle at 25% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-6 {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background-image: url('../images/hero/hero-6.png'),
+    radial-gradient(circle at 25% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-7 {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background-image: url('../images/hero/hero-7.png'),
+    radial-gradient(circle at 25% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-8 {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background-image: url('../images/hero/hero-8.png'),
+    radial-gradient(circle at 25% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-9 {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background-image: url('../images/hero/hero-9.png'),
+    radial-gradient(circle at 25% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-10 {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background-image: url('../images/hero/hero-10.png'),
+    radial-gradient(circle at 25% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+
+
+.carousel-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  color: white;
+  z-index: 2;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.carousel-slide.active .carousel-content {
+  opacity: 1;
+  visibility: visible;
+}
+
+.carousel-title {
+  font-size: 2rem;
+  font-weight: 300;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.carousel-description {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Navigation Controls */
+.carousel-controls {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 3;
+}
+
+.carousel-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.carousel-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.carousel-btn:active {
+  transform: scale(0.95);
+}
+
+/* Indicators completely removed */
+
+/* Responsive Design - Mobile First Approach */
+
+/* Extra Small Devices (phones, 320px and up) */
+@media (max-width: 480px) {
+  .hero-carousel {
+    height: 50vh;
+    min-height: 250px;
+    max-height: 350px;
+    border-radius: 0.5rem;
+    cursor: grab;
+    touch-action: manipulation;
+  }
+
+  .hero-carousel:active {
+    cursor: grabbing;
+  }
+
+  .carousel-slide {
+    background-size: cover;
+    background-position: center center;
+  }
+
+  .carousel-content {
+    padding: 1rem;
+  }
+
+  .carousel-title {
+    font-size: 1.25rem;
+  }
+
+  .carousel-description {
+    font-size: 0.9rem;
+  }
+
+  .carousel-controls {
+    bottom: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .carousel-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Small Devices (landscape phones, 481px and up) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .hero-carousel {
+    height: 55vh;
+    min-height: 300px;
+    max-height: 400px;
+    border-radius: 0.75rem;
+  }
+
+  .carousel-slide {
+    background-size: cover;
+    background-position: center center;
+  }
+
+  .carousel-content {
+    padding: 1.5rem;
+  }
+
+  .carousel-title {
+    font-size: 1.5rem;
+  }
+
+  .carousel-description {
+    font-size: 1rem;
+  }
+
+  .carousel-controls {
+    bottom: 0.75rem;
+    right: 0.75rem;
+  }
+
+  .carousel-btn {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Medium Devices (tablets, 769px and up) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hero-carousel {
+    height: 60vh;
+    min-height: 350px;
+    max-height: 500px;
+    border-radius: 1rem;
+  }
+
+  .carousel-slide {
+    background-size: cover;
+    background-position: center center;
+  }
+
+  .carousel-content {
+    padding: 2rem;
+  }
+
+  .carousel-title {
+    font-size: 1.75rem;
+  }
+
+  .carousel-description {
+    font-size: 1.1rem;
+  }
+
+  .carousel-controls {
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  .carousel-btn {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Large Devices (desktops, 1025px and up) */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  .hero-carousel {
+    height: 65vh;
+    min-height: 400px;
+    max-height: 600px;
+    border-radius: 1.25rem;
+  }
+
+  .carousel-slide {
+    background-size: cover;
+    background-position: center center;
+  }
+
+  .carousel-content {
+    padding: 2.5rem;
+  }
+
+  .carousel-title {
+    font-size: 2rem;
+  }
+
+  .carousel-description {
+    font-size: 1.2rem;
+  }
+
+  .carousel-controls {
+    bottom: 1.25rem;
+    right: 1.25rem;
+  }
+
+  .carousel-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Extra Large Devices (large desktops, 1441px and up) */
+@media (min-width: 1441px) {
+  .hero-carousel {
+    height: 70vh;
+    min-height: 500px;
+    max-height: 700px;
+    border-radius: 1.5rem;
+  }
+
+  .carousel-slide {
+    background-size: cover;
+    background-position: center center;
+  }
+
+  .carousel-content {
+    padding: 3rem;
+  }
+
+  .carousel-title {
+    font-size: 2.25rem;
+  }
+
+  .carousel-description {
+    font-size: 1.3rem;
+  }
+
+  .carousel-controls {
+    bottom: 1.5rem;
+    right: 1.5rem;
+  }
+
+  .carousel-btn {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* Ultra-wide screens (aspect ratio considerations) */
+@media (min-aspect-ratio: 21/9) {
+  .hero-carousel {
+    height: 50vh;
+    max-height: 500px;
+  }
+}
+
+/* Portrait orientation adjustments */
+@media (orientation: portrait) and (max-width: 768px) {
+  .hero-carousel {
+    height: 45vh;
+    min-height: 280px;
+    max-height: 400px;
+  }
+}
+
+/* Landscape orientation adjustments for mobile */
+@media (orientation: landscape) and (max-height: 500px) {
+  .hero-carousel {
+    height: 80vh;
+    min-height: 200px;
+    max-height: 350px;
+  }
+
+  .carousel-content {
+    padding: 1rem;
+  }
+
+  .carousel-title {
+    font-size: 1.25rem;
+  }
+
+  .carousel-description {
+    font-size: 0.9rem;
+  }
+}
+
+/* Enhanced directional slide animations */
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutToLeft {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutToRight {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Initial positions for slides */
+.carousel-slide.slide-in-right {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.carousel-slide.slide-in-left {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+/* Animation classes */
+.carousel-slide.animate-in-right {
+  animation: slideInFromRight 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.carousel-slide.animate-in-left {
+  animation: slideInFromLeft 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.carousel-slide.animate-out-left {
+  animation: slideOutToLeft 0.7s cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
+}
+
+.carousel-slide.animate-out-right {
+  animation: slideOutToRight 0.7s cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
+}
+
+/* Content animation - only for active slides */
+.carousel-slide.active .carousel-content {
+  opacity: 1;
+  visibility: visible;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Perform
+ance optimizations */
+.carousel-slide {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* Image loading optimization */
+.carousel-slide::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.carousel-slide:not(.active)::after {
+  opacity: 1;
+}
+
+/* High DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+
+  .carousel-slide.scene-1,
+  .carousel-slide.scene-2,
+  .carousel-slide.scene-3,
+  .carousel-slide.scene-4 {
+    background-size: cover;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .carousel-slide {
+    transition: none;
+  }
+
+  .carousel-slide.animate-in-right,
+  .carousel-slide.animate-in-left,
+  .carousel-slide.animate-out-left,
+  .carousel-slide.animate-out-right {
+    animation: none;
+  }
+
+  .carousel-slide.active {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .carousel-content {
+    animation: none;
+  }
+}
+
+/* Focus management for accessibility */
+.hero-carousel:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* Loading state */
+.hero-carousel.loading .carousel-slide {
+  background-color: #f3f4f6;
+}
+
+.hero-carousel.loading .carousel-slide::before {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Print styles */
+@media print {
+  .hero-carousel {
+    height: 200px;
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+
+  .carousel-slide:not(.active) {
+    display: none;
+  }
+
+  .carousel-controls {
+    display: none;
+  }
+}

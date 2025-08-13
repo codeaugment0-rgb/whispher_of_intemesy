@@ -1,8 +1,24 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
-<!-- Hero Section -->
+<!-- Hero Carousel Section -->
 <div class="hero-section relative mb-6 sm:mb-8 lg:mb-12 mobile-mb-6">
-  <div class="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl sm:rounded-2xl"></div>
+  <div class="hero-carousel" role="region" aria-label="Romantic scenes carousel" tabindex="0">
+    <div class="carousel-container">
+      <div class="carousel-slide scene-1 active" role="img" aria-label="Romantic sunset scene"></div>
+      <div class="carousel-slide scene-2" role="img" aria-label="Intimate candlelit scene"></div>
+      <div class="carousel-slide scene-3" role="img" aria-label="Serene lakeside scene"></div>
+      <div class="carousel-slide scene-4" role="img" aria-label="Garden romance scene"></div>
+      <div class="carousel-slide scene-5" role="img" aria-label="Romantic beach scene"></div>
+      <div class="carousel-slide scene-6" role="img" aria-label="Romantic forest scene"></div>
+      <div class="carousel-slide scene-7" role="img" aria-label="Romantic forest scene"></div>
+      <div class="carousel-slide scene-8" role="img" aria-label="Romantic forest scene"></div>
+      <div class="carousel-slide scene-9" role="img" aria-label="Romantic forest scene"></div>
+      <div class="carousel-slide scene-10" role="img" aria-label="Romantic forest scene"></div>
+    </div>
+  </div>
+  
+  <!-- Hero Content Below Carousel -->
   <div class="relative px-3 sm:px-4 lg:px-8 py-6 sm:py-8 lg:py-12 text-center mobile-px-4 mobile-py-6">
     <h1 class="hero-title text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-light text-gray-900 mb-2 sm:mb-3 tracking-tight mobile-text-xl mobile-mb-3">
       Romantic <span class="font-semibold text-primary">Scenes</span>
