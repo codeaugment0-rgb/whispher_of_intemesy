@@ -53,6 +53,11 @@
           <span class="text-sm text-gray-900">{{ scene.effeminate_age }} / {{ scene.masculine_age }}</span>
         </div>
         
+        <div class="flex items-center justify-between py-3 border-b border-gray-100">
+          <span class="text-sm font-medium text-gray-600">Images</span>
+          <span class="text-sm text-gray-900">{{ image_count }} image(s)</span>
+        </div>
+        
         <div class="flex items-center justify-between py-3">
           <span class="text-sm font-medium text-gray-600">Favorites</span>
           <span class="text-sm text-gray-900">{{ scene.favorite_count }} user(s)</span>
@@ -71,6 +76,8 @@
         <h3 class="text-lg font-semibold text-red-800 mb-2">Warning: Permanent Deletion</h3>
         <ul class="text-sm text-red-700 space-y-1">
           <li>• This scene will be permanently removed from the database</li>
+          <li>• All {{ image_count }} associated image(s) will be deleted</li>
+          <li>• The scene's image folder will be completely removed</li>
           <li>• All associated favorites will be deleted</li>
           <li>• This action cannot be undone</li>
           <li>• Make sure you really want to delete this scene</li>
@@ -126,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </svg>
           </div>
           <h3 class="text-xl font-bold text-gray-900 mb-2">Delete Scene</h3>
-          <p class="text-gray-600 mb-6">Are you absolutely sure you want to delete "<strong>{{ scene.title }}</strong>"? This action cannot be undone.</p>
+          <p class="text-gray-600 mb-6">Are you absolutely sure you want to delete "<strong>{{ scene.title }}</strong>" and its {{ image_count }} image(s)? This action cannot be undone.</p>
 
           <div class="flex items-center justify-center space-x-4">
             <button class="cancel-delete px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors">
@@ -174,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </svg>
           </div>
           <h3 class="text-xl font-bold text-gray-900 mb-2">Final Warning</h3>
-          <p class="text-gray-600 mb-6">Last chance! This will permanently delete "<strong>{{ scene.title }}</strong>". This action cannot be undone. Continue?</p>
+          <p class="text-gray-600 mb-6">Last chance! This will permanently delete "<strong>{{ scene.title }}</strong>" and its {{ image_count }} image(s). This action cannot be undone. Continue?</p>
 
           <div class="flex items-center justify-center space-x-4">
             <button class="cancel-final-delete px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors">
