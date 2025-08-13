@@ -23,4 +23,11 @@ urlpatterns = [
     path('analytics/', views.analytics, name='analytics'),
     path('api/analytics/', views.analytics_api, name='analytics_api'),
     path('api/debug/', views.debug_api, name='debug_api'),
+    
+    # Image upload endpoints
+    path('scene/<int:pk>/upload-images/', views.upload_scene_images, name='upload_scene_images'),
+    path('scene/<int:pk>/image/<int:image_id>/delete/', views.delete_scene_image, name='delete_scene_image'),
+    path('scene/<int:pk>/bulk-delete-images/', views.bulk_delete_images, name='bulk_delete_images'),
+    path('scene/<int:pk>/update-image-order/', views.update_image_order, name='update_image_order'),
+    path('scene/<int:pk>/image/<int:image_id>/update-caption/', views.update_image_caption, name='update_image_caption'),
 ]

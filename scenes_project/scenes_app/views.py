@@ -1,10 +1,14 @@
 from typing import Any, Dict
 from django.core.paginator import Paginator, Page
 from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.db.models import Q, Min, Max
+from django.db import models
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import random
@@ -13,7 +17,7 @@ import os
 import sys
 from django.conf import settings
 
-from .models import Scene, FavoriteScene, SearchSuggestion, SearchQuery
+from .models import Scene, FavoriteScene, SearchSuggestion, SearchQuery, SceneImage
 from .static.py.analytics import analyze_scenes
 
 import logging
@@ -1021,3 +1025,292 @@ def search_api(request: HttpRequest) -> JsonResponse:
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+# Image Upload Views
+@csrf_exempt
+@require_http_methods(["POST"])
+def upload_scene_images(request: HttpRequest, pk: int) -> JsonResponse:
+    """Handle multiple image uploads for a scene"""
+    scene = get_object_or_404(Scene, pk=pk)
+    
+    if not request.FILES:
+        return JsonResponse({'error': 'No files uploaded'}, status=400)
+    
+    uploaded_images = []
+    errors = []
+    
+    # Get the highest order number for existing images
+    max_order = scene.scene_images.aggregate(models.Max('order'))['order__max'] or 0
+    
+    for file_key in request.FILES:
+        files = request.FILES.getlist(file_key)
+        
+        for uploaded_file in files:
+            try:
+                # Validate file type
+                if not uploaded_file.content_type.startswith('image/'):
+                    errors.append(f'{uploaded_file.name}: Not a valid image file')
+                    continue
+                
+                # Validate file size (max 10MB)
+                if uploaded_file.size > 10 * 1024 * 1024:
+                    errors.append(f'{uploaded_file.name}: File too large (max 10MB)')
+                    continue
+                
+                # Create SceneImage instance
+                max_order += 1
+                scene_image = SceneImage(
+                    scene=scene,
+                    image=uploaded_file,
+                    order=max_order
+                )
+                scene_image.save()
+                
+                uploaded_images.append({
+                    'id': scene_image.id,
+                    'url': scene_image.image.url,
+                    'thumbnail_url': scene_image.thumbnail.url if scene_image.thumbnail else scene_image.image.url,
+                    'filename': uploaded_file.name,
+                    'size': scene_image.file_size_human,
+                    'dimensions': f"{scene_image.width}x{scene_image.height}",
+                    'order': scene_image.order
+                })
+                
+            except Exception as e:
+                errors.append(f'{uploaded_file.name}: {str(e)}')
+    
+    response_data = {
+        'success': len(uploaded_images) > 0,
+        'uploaded_images': uploaded_images,
+        'total_uploaded': len(uploaded_images),
+        'errors': errors
+    }
+    
+    if errors and not uploaded_images:
+        return JsonResponse(response_data, status=400)
+    
+    return JsonResponse(response_data)
+
+
+@require_http_methods(["DELETE"])
+def delete_scene_image(request: HttpRequest, pk: int, image_id: int) -> JsonResponse:
+    """Delete a specific scene image"""
+    scene = get_object_or_404(Scene, pk=pk)
+    scene_image = get_object_or_404(SceneImage, id=image_id, scene=scene)
+    
+    try:
+        scene_image.delete()
+        return JsonResponse({
+            'success': True,
+            'message': 'Image deleted successfully'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@require_http_methods(["POST"])
+def update_image_order(request: HttpRequest, pk: int) -> JsonResponse:
+    """Update the order of scene images"""
+    scene = get_object_or_404(Scene, pk=pk)
+    
+    try:
+        import json
+        data = json.loads(request.body)
+        image_orders = data.get('image_orders', [])
+        
+        for item in image_orders:
+            image_id = item.get('id')
+            new_order = item.get('order')
+            
+            if image_id and new_order is not None:
+                SceneImage.objects.filter(
+                    id=image_id, 
+                    scene=scene
+                ).update(order=new_order)
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Image order updated successfully'
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@require_http_methods(["POST"])
+def update_image_caption(request: HttpRequest, pk: int, image_id: int) -> JsonResponse:
+    """Update image caption"""
+    scene = get_object_or_404(Scene, pk=pk)
+    scene_image = get_object_or_404(SceneImage, id=image_id, scene=scene)
+    
+    try:
+        import json
+        data = json.loads(request.body)
+        caption = data.get('caption', '').strip()
+        
+        scene_image.caption = caption
+        scene_image.save(update_fields=['caption'])
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Caption updated successfully',
+            'caption': caption
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+def search_suggestions_api(request: HttpRequest) -> JsonResponse:
+    """API endpoint for search suggestions"""
+    try:
+        query = request.GET.get('q', '').strip()
+        suggestion_type = request.GET.get('type', None)
+        limit = int(request.GET.get('limit', 10))
+        
+        if not query or len(query) < 2:
+            return JsonResponse({'suggestions': []})
+        
+        suggestions = SearchSuggestion.get_suggestions(query, suggestion_type, limit)
+        
+        suggestions_data = [{
+            'term': s.term,
+            'type': s.suggestion_type,
+            'frequency': s.frequency
+        } for s in suggestions]
+        
+        return JsonResponse({
+            'suggestions': suggestions_data,
+            'query': query,
+            'type': suggestion_type
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+def search_api(request: HttpRequest) -> JsonResponse:
+    """API endpoint for search functionality"""
+    try:
+        query = request.GET.get('q', '').strip()
+        page = int(request.GET.get('page', 1))
+        page_size = int(request.GET.get('page_size', 10))
+        
+        # Validate page size
+        if page_size not in [10, 25, 50, 100]:
+            page_size = 10
+        
+        # Record search query
+        if query and request.session.session_key:
+            SearchQuery.objects.create(
+                query=query,
+                session_key=request.session.session_key,
+                results_count=0  # Will be updated below
+            )
+        
+        # Start with all scenes
+        scenes_qs = Scene.objects.all()
+        
+        # Apply search query if provided
+        if query:
+            scenes_qs = scenes_qs.filter(
+                Q(title__icontains=query) |
+                Q(country__icontains=query) |
+                Q(setting__icontains=query) |
+                Q(emotion__icontains=query) |
+                Q(full_text__icontains=query)
+            )
+            
+            # Update search suggestions
+            SearchSuggestion.add_or_update_suggestion(query, 'content')
+        
+        # Order by most recent first
+        scenes_qs = scenes_qs.order_by('-id')
+        
+        # Pagination
+        paginator = Paginator(scenes_qs, page_size)
+        page_obj = paginator.get_page(page)
+        
+        # Update search query results count
+        if query and request.session.session_key:
+            SearchQuery.objects.filter(
+                query=query,
+                session_key=request.session.session_key
+            ).update(results_count=paginator.count)
+        
+        # Serialize scenes
+        scenes_data = []
+        for scene in page_obj:
+            scenes_data.append({
+                'id': scene.id,
+                'title': scene.title,
+                'country': scene.country,
+                'setting': scene.setting,
+                'emotion': scene.emotion,
+                'effeminate_age': scene.effeminate_age,
+                'masculine_age': scene.masculine_age,
+                'favorite_count': scene.favorite_count
+            })
+        
+        return JsonResponse({
+            'scenes': scenes_data,
+            'pagination': {
+                'current_page': page_obj.number,
+                'total_pages': paginator.num_pages,
+                'total_items': paginator.count,
+                'has_previous': page_obj.has_previous,
+                'has_next': page_obj.has_next,
+                'page_size': page_size
+            },
+            'query': query
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def bulk_delete_images(request: HttpRequest, pk: int) -> JsonResponse:
+    """Handle bulk deletion of scene images"""
+    scene = get_object_or_404(Scene, pk=pk)
+    
+    try:
+        import json
+        data = json.loads(request.body)
+        image_ids = data.get('image_ids', [])
+        
+        if not image_ids:
+            return JsonResponse({'error': 'No images selected'}, status=400)
+        
+        # Get images that belong to this scene
+        images_to_delete = SceneImage.objects.filter(
+            id__in=image_ids, 
+            scene=scene
+        )
+        
+        deleted_count = images_to_delete.count()
+        
+        # Delete the images
+        for image in images_to_delete:
+            image.delete()  # This will also delete the files
+        
+        return JsonResponse({
+            'success': True,
+            'deleted_count': deleted_count,
+            'message': f'Successfully deleted {deleted_count} image(s)'
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)

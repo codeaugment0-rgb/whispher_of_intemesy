@@ -1,7 +1,13 @@
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
+from django.core.files.storage import default_storage
+from django.conf import settings
 import re
+import os
+from PIL import Image
+from io import BytesIO
+from django.core.files.base import ContentFile
 
 
 class Scene(models.Model):
@@ -28,6 +34,115 @@ class Scene(models.Model):
     @property
     def favorite_count(self):
         return self.favorites.count()
+    
+    @property
+    def image_folder_path(self):
+        """Get the folder path for this scene's images"""
+        # Clean the title for use as folder name
+        clean_title = re.sub(r'[^\w\s-]', '', self.title).strip()
+        clean_title = re.sub(r'[-\s]+', '-', clean_title)
+        return f"scene_images/{clean_title}_{self.id}"
+    
+    @property
+    def images(self):
+        """Get all images for this scene"""
+        return self.scene_images.all().order_by('order', 'uploaded_at')
+
+
+def scene_image_upload_path(instance, filename):
+    """Generate upload path for scene images"""
+    # Clean filename
+    name, ext = os.path.splitext(filename)
+    clean_name = re.sub(r'[^\w\s-]', '', name).strip()
+    clean_name = re.sub(r'[-\s]+', '-', clean_name)
+    clean_filename = f"{clean_name}{ext.lower()}"
+    
+    return f"{instance.scene.image_folder_path}/{clean_filename}"
+
+
+class SceneImage(models.Model):
+    scene = models.ForeignKey(Scene, on_delete=models.CASCADE, related_name='scene_images')
+    image = models.ImageField(upload_to=scene_image_upload_path)
+    thumbnail = models.ImageField(upload_to=scene_image_upload_path, blank=True, null=True)
+    caption = models.CharField(max_length=255, blank=True)
+    order = models.PositiveIntegerField(default=0)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    file_size = models.PositiveIntegerField(default=0)  # Size in bytes
+    width = models.PositiveIntegerField(default=0)
+    height = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order', 'uploaded_at']
+        indexes = [
+            models.Index(fields=['scene', 'order']),
+        ]
+
+    def __str__(self):
+        return f"Image for {self.scene.title} - {self.image.name}"
+
+    def save(self, *args, **kwargs):
+        if self.image and not self.thumbnail:
+            self.create_thumbnail()
+        
+        # Get image dimensions and file size
+        if self.image:
+            try:
+                with Image.open(self.image) as img:
+                    self.width, self.height = img.size
+                self.file_size = self.image.size
+            except Exception:
+                pass
+        
+        super().save(*args, **kwargs)
+
+    def create_thumbnail(self):
+        """Create a thumbnail for the image"""
+        if not self.image:
+            return
+
+        try:
+            with Image.open(self.image) as image:
+                # Convert to RGB if necessary
+                if image.mode in ('RGBA', 'LA', 'P'):
+                    image = image.convert('RGB')
+                
+                # Create thumbnail
+                image.thumbnail((300, 300), Image.Resampling.LANCZOS)
+                
+                # Save thumbnail
+                thumb_io = BytesIO()
+                image.save(thumb_io, format='JPEG', quality=85, optimize=True)
+                thumb_io.seek(0)
+                
+                # Generate thumbnail filename
+                name, ext = os.path.splitext(self.image.name)
+                thumb_name = f"{name}_thumb.jpg"
+                
+                self.thumbnail.save(
+                    thumb_name,
+                    ContentFile(thumb_io.read()),
+                    save=False
+                )
+        except Exception as e:
+            print(f"Error creating thumbnail: {e}")
+
+    def delete(self, *args, **kwargs):
+        """Delete image files when model is deleted"""
+        if self.image:
+            default_storage.delete(self.image.name)
+        if self.thumbnail:
+            default_storage.delete(self.thumbnail.name)
+        super().delete(*args, **kwargs)
+
+    @property
+    def file_size_human(self):
+        """Return human readable file size"""
+        if self.file_size < 1024:
+            return f"{self.file_size} B"
+        elif self.file_size < 1024 * 1024:
+            return f"{self.file_size / 1024:.1f} KB"
+        else:
+            return f"{self.file_size / (1024 * 1024):.1f} MB"
 
 
 class FavoriteScene(models.Model):

@@ -93,66 +93,264 @@
 }
 
 .carousel-slide.scene-5 {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background: linear-gradient(135deg, #ff9a8b 0%, #ff6a88 100%);
   background-image: url('../images/hero/hero-5.png'),
-    radial-gradient(circle at 25% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 35% 65%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 65% 35%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
   background-size: cover, 100% 100%, 100% 100%;
   background-position: center center, center center, center center;
   background-repeat: no-repeat, no-repeat, no-repeat;
 }
 
 .carousel-slide.scene-6 {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
   background-image: url('../images/hero/hero-6.png'),
-    radial-gradient(circle at 25% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 15% 85%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
   background-size: cover, 100% 100%, 100% 100%;
   background-position: center center, center center, center center;
   background-repeat: no-repeat, no-repeat, no-repeat;
 }
 
 .carousel-slide.scene-7 {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background: linear-gradient(135deg, #ff6f61 0%, #de6262 100%);
   background-image: url('../images/hero/hero-7.png'),
-    radial-gradient(circle at 25% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 45% 55%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 55% 45%, rgba(255, 255, 255, 0.12) 0%, transparent 50%);
   background-size: cover, 100% 100%, 100% 100%;
   background-position: center center, center center, center center;
   background-repeat: no-repeat, no-repeat, no-repeat;
 }
 
 .carousel-slide.scene-8 {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background: linear-gradient(135deg, #88d3ce 0%, #6dd5fa 100%);
   background-image: url('../images/hero/hero-8.png'),
-    radial-gradient(circle at 25% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 20% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
   background-size: cover, 100% 100%, 100% 100%;
   background-position: center center, center center, center center;
   background-repeat: no-repeat, no-repeat, no-repeat;
 }
 
 .carousel-slide.scene-9 {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
   background-image: url('../images/hero/hero-9.png'),
-    radial-gradient(circle at 25% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 30% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
   background-size: cover, 100% 100%, 100% 100%;
   background-position: center center, center center, center center;
   background-repeat: no-repeat, no-repeat, no-repeat;
 }
 
 .carousel-slide.scene-10 {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background: linear-gradient(135deg, #d4a5a5 0%, #f4c4c4 100%);
   background-image: url('../images/hero/hero-10.png'),
-    radial-gradient(circle at 25% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 25% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
   background-size: cover, 100% 100%, 100% 100%;
   background-position: center center, center center, center center;
   background-repeat: no-repeat, no-repeat, no-repeat;
 }
 
+.carousel-slide.scene-11 {
+  background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+  background-image: url('../images/hero/hero-11.png'),
+    radial-gradient(circle at 35% 75%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 65% 25%, rgba(255, 255, 255, 0.12) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
 
+.carousel-slide.scene-12 {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+  background-image: url('../images/hero/hero-12.png'),
+    radial-gradient(circle at 40% 65%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 60% 35%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-13 {
+  background: linear-gradient(135deg, #f3e7e9 0%, #e3eeff 100%);
+  background-image: url('../images/hero/hero-13.png'),
+    radial-gradient(circle at 15% 75%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 85% 25%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-14 {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background-image: url('../images/hero/hero-14.png'),
+    radial-gradient(circle at 20% 85%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 15%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-15 {
+  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+  background-image: url('../images/hero/hero-15.png'),
+    radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.12) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-16 {
+  background: linear-gradient(135deg, #d5adf6 0%, #f6b8f6 100%);
+  background-image: url('../images/hero/hero-16.png'),
+    radial-gradient(circle at 25% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-17 {
+  background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+  background-image: url('../images/hero/hero-17.png'),
+    radial-gradient(circle at 35% 60%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 65% 40%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-18 {
+  background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+  background-image: url('../images/hero/hero-18.png'),
+    radial-gradient(circle at 40% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 60% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-19 {
+  background: linear-gradient(135deg, #ff9a8b 0%, #ff6a88 100%);
+  background-image: url('../images/hero/hero-19.png'),
+    radial-gradient(circle at 20% 75%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 80% 25%, rgba(255, 255, 255, 0.12) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-20 {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  background-image: url('../images/hero/hero-20.png'),
+    radial-gradient(circle at 30% 65%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 35%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-21 {
+  background: linear-gradient(135deg, #ff6f91 0%, #ff9a9e 100%);
+  background-image: url('../images/hero/hero-21.png'),
+    radial-gradient(circle at 25% 70%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 75% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-22 {
+  background: linear-gradient(135deg, #d5a6bd 0%, #f4c4c4 100%);
+  background-image: url('../images/hero/hero-22.png'),
+    radial-gradient(circle at 35% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 65% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-23 {
+  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+  background-image: url('../images/hero/hero-23.png'),
+    radial-gradient(circle at 40% 75%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 60% 25%, rgba(255, 255, 255, 0.12) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-24 {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3e6cb 100%);
+  background-image: url('../images/hero/hero-24.png'),
+    radial-gradient(circle at 20% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-25 {
+  background: linear-gradient(135deg, #ff6b81 0%, #ffb1c1 100%);
+  background-image: url('../images/hero/hero-25.png'),
+    radial-gradient(circle at 30% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-26 {
+  background: linear-gradient(135deg, #a1c4fd 0%, #d5adf6 100%);
+  background-image: url('../images/hero/hero-26.png'),
+    radial-gradient(circle at 25% 65%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 35%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-27 {
+  background: linear-gradient(135deg, #ff9a9e 0%, #ff6a88 100%);
+  background-image: url('../images/hero/hero-27.png'),
+    radial-gradient(circle at 35% 70%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 65% 30%, rgba(255, 255, 255, 0.12) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-28 {
+  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  background-image: url('../images/hero/hero-28.png'),
+    radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 60% 40%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-29 {
+  background: linear-gradient(135deg, #c2e9fb 0%, #a1c4fd 100%);
+  background-image: url('../images/hero/hero-29.png'),
+    radial-gradient(circle at 20% 75%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 25%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.carousel-slide.scene-30 {
+  background: linear-gradient(135deg, #ff8e53 0%, #ff6f61 100%);
+  background-image: url('../images/hero/hero-30.png'),
+    radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: cover, 100% 100%, 100% 100%;
+  background-position: center center, center center, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+}
 
 .carousel-content {
   position: absolute;

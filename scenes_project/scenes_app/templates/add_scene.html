@@ -2,199 +2,409 @@
 {% load static %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-4 sm:py-8 animate-fadeIn">
-    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-center mb-6 sm:mb-10 gradient-text">Create a New Scene</h1>
-    
-    <form id="scene-form" method="POST" class="max-w-3xl mx-auto glass p-4 sm:p-6 lg:p-8 rounded-lg card-hover">
+<!-- Navigation Header -->
+<div class="mb-6 sm:mb-8 lg:mb-10">
+    <nav class="flex items-center space-x-2 sm:space-x-4">
+        <a href="/" class="group inline-flex items-center px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl bg-gray-50 text-gray-600 font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all duration-200 text-sm">
+            <svg class="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="hidden sm:inline">All Scenes</span>
+            <span class="sm:hidden">Back</span>
+        </a>
+        <div class="text-gray-300 hidden sm:block">/</div>
+        <span class="text-sm text-gray-500 font-medium">Create New Scene</span>
+    </nav>
+</div>
+
+<!-- Page Header -->
+<div class="text-center mb-8 sm:mb-12">
+    <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mb-4 sm:mb-6">
+        <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+    </div>
+    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-light text-gray-900 mb-3 sm:mb-4">Create New Scene</h1>
+    <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">Craft a beautiful romantic scene with detailed characters and atmospheric elements</p>
+</div>
+
+<!-- Progress Indicator -->
+<div class="max-w-4xl mx-auto mb-8 sm:mb-12">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center">
+            <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm font-medium">1</div>
+            <div class="ml-3">
+                <p class="text-sm font-medium text-purple-600">Scene Info</p>
+            </div>
+        </div>
+        <div class="flex-1 mx-4">
+            <div class="h-1 bg-gray-200 rounded-full">
+                <div id="progress-bar" class="h-1 bg-purple-600 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="flex items-center">
+            <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-sm font-medium">2</div>
+            <div class="ml-3">
+                <p class="text-sm font-medium text-gray-500">Complete</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Form -->
+<div class="max-w-4xl mx-auto">
+    <form id="scene-form" method="POST" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         {% csrf_token %}
         
-        <!-- Scene Information -->
-        <div class="mb-6 sm:mb-8">
-            <h2 class="text-xl sm:text-2xl font-serif mb-4 gradient-text">Scene Information</h2>
-            <div class="grid grid-cols-1 gap-4 sm:gap-6">
+        <!-- Scene Information Section -->
+        <div class="px-6 sm:px-8 py-6 sm:py-8 border-b border-gray-100">
+            <div class="flex items-center mb-6">
+                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
                 <div>
-                    <label for="title" class="block text-sm font-medium text-gray-700 font-serif">Scene Title</label>
+                    <h2 class="text-xl sm:text-2xl font-light text-gray-900">Scene Information</h2>
+                    <p class="text-sm text-gray-600">Basic details about your romantic scene</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-6">
+                <div>
+                    <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Scene Title</label>
                     <input type="text" name="title" id="title" required 
                            placeholder="e.g., Rosewood Romance" 
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus-ring text-responsive px-3 py-2 sm:px-4 sm:py-3">
-                    <p class="text-xs text-gray-500 mt-1">Enter a unique title for the scene</p>
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400">
+                    <p class="text-xs text-gray-500 mt-2">Enter a unique and descriptive title for your scene</p>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                        <label for="effeminate_age" class="block text-sm font-medium text-gray-700 font-serif">Effeminate Character Age</label>
-                        <input type="number" name="effeminate_age" id="effeminate_age" required 
+                        <label for="effeminate_age" class="block text-sm font-medium text-gray-700 mb-2">Effeminate Character Age</label>
+                        <input type="number" name="effeminate_age" id="effeminate_age" required min="18" max="100"
+                               placeholder="e.g., 25" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400">
+                    </div>
+                    <div>
+                        <label for="masculine_age" class="block text-sm font-medium text-gray-700 mb-2">Masculine Character Age</label>
+                        <input type="number" name="masculine_age" id="masculine_age" required min="18" max="100"
                                placeholder="e.g., 30" 
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus-ring text-responsive px-3 py-2 sm:px-4 sm:py-3">
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div>
+                        <label for="country" class="block text-sm font-medium text-gray-700 mb-2">Country</label>
+                        <input type="text" name="country" id="country" required 
+                               placeholder="e.g., India" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400">
                     </div>
                     <div>
-                        <label for="masculine_age" class="block text-sm font-medium text-gray-700 font-serif">Masculine Character Age</label>
-                        <input type="number" name="masculine_age" id="masculine_age" required 
-                               placeholder="e.g., 35" 
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus-ring text-responsive px-3 py-2 sm:px-4 sm:py-3">
+                        <label for="setting" class="block text-sm font-medium text-gray-700 mb-2">Setting</label>
+                        <input type="text" name="setting" id="setting" required 
+                               placeholder="e.g., Garden Pavilion" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400">
+                    </div>
+                    <div>
+                        <label for="emotion" class="block text-sm font-medium text-gray-700 mb-2">Primary Emotion</label>
+                        <input type="text" name="emotion" id="emotion" required 
+                               placeholder="e.g., Romance" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400">
                     </div>
                 </div>
-                <div>
-                    <label for="country" class="block text-sm font-medium text-gray-700 font-serif">Country</label>
-                    <input type="text" name="country" id="country" required 
-                           placeholder="e.g., India or Iran" 
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus-ring text-responsive px-3 py-2 sm:px-4 sm:py-3">
-                </div>
-                <div>
-                    <label for="setting" class="block text-sm font-medium text-gray-700 font-serif">Setting</label>
-                    <input type="text" name="setting" id="setting" required 
-                           placeholder="e.g., Traditional Room or Imam Reza Shrine Garden" 
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus-ring text-responsive px-3 py-2 sm:px-4 sm:py-3">
-                </div>
-                <div>
-                    <label for="emotion" class="block text-sm font-medium text-gray-700 font-serif">Primary Emotion</label>
-                    <input type="text" name="emotion" id="emotion" required 
-                           placeholder="e.g., Romance or Desire" 
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus-ring text-responsive px-3 py-2 sm:px-4 sm:py-3">
-                </div>
             </div>
         </div>
 
-        <!-- Effeminate Character Details -->
-        <div class="mb-6 sm:mb-8">
-            <h2 class="text-xl sm:text-2xl font-serif mb-4 gradient-text">Effeminate Character Details</h2>
-            <div class="grid grid-cols-1 gap-4 sm:gap-6">
+        <!-- Effeminate Character Details Section -->
+        <div class="px-6 sm:px-8 py-6 sm:py-8 border-b border-gray-100 bg-gradient-to-r from-pink-50 to-rose-50">
+            <div class="flex items-center mb-6">
+                <div class="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
                 <div>
-                    <label for="effeminate_appearance" class="block text-sm font-medium text-gray-700 font-serif">Appearance</label>
+                    <h2 class="text-xl sm:text-2xl font-light text-gray-900">Effeminate Character</h2>
+                    <p class="text-sm text-gray-600">Describe the appearance and style of the effeminate character</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-6">
+                <div>
+                    <label for="effeminate_appearance" class="block text-sm font-medium text-gray-700 mb-2">Physical Appearance</label>
                     <input type="text" name="effeminate_appearance" id="effeminate_appearance" required 
-                           placeholder="e.g., Radiant, porcelain-like fair skin" 
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus-ring text-responsive px-3 py-2 sm:px-4 sm:py-3">
+                           placeholder="e.g., Radiant, porcelain-like fair skin with delicate features" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 bg-white">
                 </div>
                 <div>
-                    <label for="effeminate_hair" class="block text-sm font-medium text-gray-700 font-serif">Hair</label>
+                    <label for="effeminate_hair" class="block text-sm font-medium text-gray-700 mb-2">Hair Style</label>
                     <input type="text" name="effeminate_hair" id="effeminate_hair" required 
-                           placeholder="e.g., Hip-length, high ponytail with silver chains" 
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus-ring text-responsive px-3 py-2 sm:px-4 sm:py-3">
+                           placeholder="e.g., Long, flowing hair adorned with silver chains" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 bg-white">
                 </div>
                 <div>
-                    <label for="effeminate_clothing" class="block text-sm font-medium text-gray-700 font-serif">Clothing</label>
+                    <label for="effeminate_clothing" class="block text-sm font-medium text-gray-700 mb-2">Clothing & Attire</label>
                     <input type="text" name="effeminate_clothing" id="effeminate_clothing" required 
-                           placeholder="e.g., Deep maroon silk lehenga-choli or Naked" 
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus-ring text-responsive px-3 py-2 sm:px-4 sm:py-3">
+                           placeholder="e.g., Elegant silk dress with intricate embroidery" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 bg-white">
                 </div>
             </div>
         </div>
 
-        <!-- Masculine Character Details -->
-        <div class="mb-6 sm:mb-8">
-            <h2 class="text-xl sm:text-2xl font-serif mb-4 gradient-text">Masculine Character Details</h2>
-            <div class="grid grid-cols-1 gap-4 sm:gap-6">
+        <!-- Masculine Character Details Section -->
+        <div class="px-6 sm:px-8 py-6 sm:py-8 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50">
+            <div class="flex items-center mb-6">
+                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
                 <div>
-                    <label for="masculine_appearance" class="block text-sm font-medium text-gray-700 font-serif">Appearance</label>
+                    <h2 class="text-xl sm:text-2xl font-light text-gray-900">Masculine Character</h2>
+                    <p class="text-sm text-gray-600">Describe the appearance and style of the masculine character</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-6">
+                <div>
+                    <label for="masculine_appearance" class="block text-sm font-medium text-gray-700 mb-2">Physical Appearance</label>
                     <input type="text" name="masculine_appearance" id="masculine_appearance" required 
-                           placeholder="e.g., Powerfully built, granite-hewn jawline" 
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus-ring text-responsive px-3 py-2 sm:px-4 sm:py-3">
+                           placeholder="e.g., Strong build with commanding presence and defined features" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 bg-white">
                 </div>
                 <div>
-                    <label for="masculine_hair" class="block text-sm font-medium text-gray-700 font-serif">Hair</label>
+                    <label for="masculine_hair" class="block text-sm font-medium text-gray-700 mb-2">Hair Style</label>
                     <input type="text" name="masculine_hair" id="masculine_hair" required 
-                           placeholder="e.g., Short, thick, silver-streaked" 
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus-ring text-responsive px-3 py-2 sm:px-4 sm:py-3">
+                           placeholder="e.g., Well-groomed with distinguished styling" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 bg-white">
                 </div>
                 <div>
-                    <label for="masculine_clothing" class="block text-sm font-medium text-gray-700 font-serif">Clothing</label>
+                    <label for="masculine_clothing" class="block text-sm font-medium text-gray-700 mb-2">Clothing & Attire</label>
                     <input type="text" name="masculine_clothing" id="masculine_clothing" required 
-                           placeholder="e.g., Cream silk sherwani or Naked" 
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus-ring text-responsive px-3 py-2 sm:px-4 sm:py-3">
+                           placeholder="e.g., Traditional formal wear with elegant details" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 bg-white">
                 </div>
             </div>
         </div>
 
-        <!-- Atmosphere Details -->
-        <div class="mb-6 sm:mb-8">
-            <h2 class="text-xl sm:text-2xl font-serif mb-4 gradient-text">Atmosphere Details</h2>
-            <div class="grid grid-cols-1 gap-4 sm:gap-6">
+        <!-- Atmosphere Details Section -->
+        <div class="px-6 sm:px-8 py-6 sm:py-8 border-b border-gray-100 bg-gradient-to-r from-amber-50 to-orange-50">
+            <div class="flex items-center mb-6">
+                <div class="w-10 h-10 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
                 <div>
-                    <label for="atmosphere_lighting" class="block text-sm font-medium text-gray-700 font-serif">Lighting</label>
+                    <h2 class="text-xl sm:text-2xl font-light text-gray-900">Scene Atmosphere</h2>
+                    <p class="text-sm text-gray-600">Set the mood with environmental details and ambiance</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div>
+                    <label for="atmosphere_lighting" class="block text-sm font-medium text-gray-700 mb-2">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.477.859h4z"></path>
+                            </svg>
+                            Lighting
+                        </div>
+                    </label>
                     <input type="text" name="atmosphere_lighting" id="atmosphere_lighting" required 
-                           placeholder="e.g., Warm, golden from brass diyas" 
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus-ring text-responsive px-3 py-2 sm:px-4 sm:py-3">
+                           placeholder="e.g., Warm candlelight" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 bg-white">
                 </div>
                 <div>
-                    <label for="atmosphere_scent" class="block text-sm font-medium text-gray-700 font-serif">Scent</label>
+                    <label for="atmosphere_scent" class="block text-sm font-medium text-gray-700 mb-2">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
+                            Fragrance
+                        </div>
+                    </label>
                     <input type="text" name="atmosphere_scent" id="atmosphere_scent" required 
-                           placeholder="e.g., Jasmine or Rosewater and saffron" 
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus-ring text-responsive px-3 py-2 sm:px-4 sm:py-3">
+                           placeholder="e.g., Jasmine flowers" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 bg-white">
                 </div>
                 <div>
-                    <label for="atmosphere_sound" class="block text-sm font-medium text-gray-700 font-serif">Sound</label>
+                    <label for="atmosphere_sound" class="block text-sm font-medium text-gray-700 mb-2">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM15.657 6.343a1 1 0 011.414 0A9.972 9.972 0 0119 12a9.972 9.972 0 01-1.929 5.657 1 1 0 11-1.414-1.414A7.971 7.971 0 0017 12c0-2.21-.896-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 12a5.984 5.984 0 01-.757 2.828 1 1 0 01-1.415-1.414A3.984 3.984 0 0013 12a3.983 3.983 0 00-.172-1.414 1 1 0 010-1.415z" clip-rule="evenodd"></path>
+                            </svg>
+                            Soundscape
+                        </div>
+                    </label>
                     <input type="text" name="atmosphere_sound" id="atmosphere_sound" required 
-                           placeholder="e.g., Soft tabla beats or Melodic daf rhythms" 
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus-ring text-responsive px-3 py-2 sm:px-4 sm:py-3">
+                           placeholder="e.g., Gentle music" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 bg-white">
                 </div>
             </div>
         </div>
 
-        <!-- Full Scene Text -->
-        <div class="mb-6 sm:mb-8">
-            <label for="full_text" class="block text-sm font-medium text-gray-700 font-serif">Full Scene Text</label>
-            <textarea name="full_text" id="full_text" rows="8" required 
-                      placeholder="e.g., In a secluded garden near Mashhad's Imam Reza Shrine, framed by tiled arches and blooming roses..." 
-                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus-ring text-responsive scrollbar-thin px-3 py-2 sm:px-4 sm:py-3"></textarea>
-            <p class="text-xs text-gray-500 mt-1">Describe the scene in detail, capturing the emotion and setting</p>
+        <!-- Full Scene Text Section -->
+        <div class="px-6 sm:px-8 py-6 sm:py-8 bg-gradient-to-r from-gray-50 to-slate-50">
+            <div class="flex items-center mb-6">
+                <div class="w-10 h-10 bg-gradient-to-r from-gray-600 to-slate-600 rounded-full flex items-center justify-center mr-4">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-light text-gray-900">Complete Scene Description</h2>
+                    <p class="text-sm text-gray-600">Write the full narrative that brings your scene to life</p>
+                </div>
+            </div>
+            
+            <div>
+                <label for="full_text" class="block text-sm font-medium text-gray-700 mb-2">Scene Narrative</label>
+                <div class="relative">
+                    <textarea name="full_text" id="full_text" rows="10" required 
+                              placeholder="Describe your romantic scene in vivid detail. Include the setting, characters' interactions, emotions, and atmosphere. Paint a picture with words that captures the essence of the moment..."
+                              class="w-full px-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 bg-white resize-none"></textarea>
+                    <div class="absolute bottom-3 right-3 text-xs text-gray-400">
+                        <span id="char-count">0</span> characters
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">Write a detailed, immersive description that captures the romance, setting, and emotional atmosphere of your scene</p>
+            </div>
         </div>
 
-        <div class="flex justify-center sm:justify-end">
-            <button type="submit" id="submit-btn" 
-                    class="btn-gradient text-white px-4 sm:px-6 py-2 sm:py-3 rounded-md flex items-center disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base">
-                <span>Add Scene</span>
-                <div id="spinner" class="hidden inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin ml-2"></div>
-            </button>
+        <!-- Form Actions -->
+        <div class="px-6 sm:px-8 py-6 sm:py-8 bg-gray-50 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center text-sm text-gray-600">
+                <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span id="form-status">Fill all fields to continue</span>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <button type="button" onclick="window.history.back()" 
+                        class="px-6 py-3 border border-gray-300 rounded-xl text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all duration-200">
+                    Cancel
+                </button>
+                <button type="submit" id="submit-btn" 
+                        class="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium rounded-xl hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center">
+                    <span>Create Scene</span>
+                    <svg id="submit-icon" class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    <div id="spinner" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin ml-2"></div>
+                </button>
+            </div>
         </div>
     </form>
 </div>
 
-<script src="{% static 'main.js' %}"></script>
 <script>
-(function () {
+document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('scene-form');
     const submitBtn = document.getElementById('submit-btn');
+    const submitIcon = document.getElementById('submit-icon');
     const spinner = document.getElementById('spinner');
+    const progressBar = document.getElementById('progress-bar');
+    const formStatus = document.getElementById('form-status');
+    const charCount = document.getElementById('char-count');
+    const fullTextArea = document.getElementById('full_text');
     const inputs = form.querySelectorAll('input, textarea');
 
-    // Client-side validation
+    // Character counter for textarea
+    fullTextArea.addEventListener('input', function() {
+        charCount.textContent = this.value.length;
+    });
+
+    // Form validation with progress tracking
     function validateForm() {
+        let filledFields = 0;
         let isValid = true;
+        const totalFields = inputs.length;
+
         inputs.forEach(input => {
-            if (!input.value.trim()) {
-                isValid = false;
-                input.classList.add('border-red-500');
-                input.classList.remove('border-gray-300');
+            const isFieldValid = input.value.trim() !== '';
+            
+            if (isFieldValid) {
+                filledFields++;
+                input.classList.remove('border-red-300', 'bg-red-50');
+                input.classList.add('border-green-300');
             } else {
-                input.classList.remove('border-red-500');
-                input.classList.add('border-gray-300');
+                isValid = false;
+                input.classList.remove('border-green-300');
+                if (input.dataset.touched) {
+                    input.classList.add('border-red-300', 'bg-red-50');
+                }
             }
         });
+
+        // Update progress bar
+        const progress = (filledFields / totalFields) * 100;
+        progressBar.style.width = progress + '%';
+
+        // Update form status
+        if (isValid) {
+            formStatus.innerHTML = `
+                <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                Ready to create scene
+            `;
+            formStatus.className = 'flex items-center text-sm text-green-600';
+        } else {
+            formStatus.innerHTML = `
+                <svg class="w-4 h-4 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                </svg>
+                ${filledFields}/${totalFields} fields completed
+            `;
+            formStatus.className = 'flex items-center text-sm text-gray-600';
+        }
+
         submitBtn.disabled = !isValid;
         return isValid;
     }
 
+    // Add touch tracking and validation
     inputs.forEach(input => {
-        input.addEventListener('input', validateForm);
+        input.addEventListener('blur', function() {
+            this.dataset.touched = 'true';
+            validateForm();
+        });
+        
+        input.addEventListener('input', function() {
+            validateForm();
+        });
+
+        // Add focus effects
+        input.addEventListener('focus', function() {
+            this.classList.add('ring-2');
+        });
+
+        input.addEventListener('blur', function() {
+            this.classList.remove('ring-2');
+        });
     });
 
+    // Initial validation
     validateForm();
 
-    form.addEventListener('submit', async function (e) {
+    // Form submission
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
+        
         if (!validateForm()) {
-            Toastify({
-                text: 'Please fill all fields',
-                duration: 3000,
-                gravity: 'top',
-                position: 'right',
-                backgroundColor: '#ef4444',
-                close: true
-            }).showToast();
+            showNotification('Please fill in all required fields', 'error');
             return;
         }
 
+        // Update button state
         submitBtn.disabled = true;
+        submitIcon.classList.add('hidden');
         spinner.classList.remove('hidden');
+        submitBtn.querySelector('span').textContent = 'Creating Scene...';
 
         const formData = new FormData(form);
 
@@ -210,32 +420,112 @@
             const result = await response.json();
 
             if (response.ok) {
-                Toastify({
-                    text: 'Scene added successfully!',
-                    duration: 3000,
-                    gravity: 'top',
-                    position: 'right',
-                    backgroundColor: '#10b981',
-                    close: true
-                }).showToast();
-                window.location.href = '{% url "scene_list" %}';
+                showNotification('Scene created successfully!', 'success');
+                
+                // Update progress to complete
+                progressBar.style.width = '100%';
+                progressBar.classList.add('bg-green-500');
+                
+                // Redirect after a short delay
+                setTimeout(() => {
+                    window.location.href = '{% url "scene_list" %}';
+                }, 1500);
             } else {
-                throw new Error(result.message || 'Failed to add scene');
+                throw new Error(result.message || 'Failed to create scene');
             }
-        } catch (err) {
-            Toastify({
-                text: 'Error: ' + err.message,
-                duration: 3000,
-                gravity: 'top',
-                position: 'right',
-                backgroundColor: '#ef4444',
-                close: true
-            }).showToast();
-        } finally {
+        } catch (error) {
+            showNotification('Error: ' + error.message, 'error');
+            
+            // Reset button state
             submitBtn.disabled = false;
+            submitIcon.classList.remove('hidden');
             spinner.classList.add('hidden');
+            submitBtn.querySelector('span').textContent = 'Create Scene';
         }
     });
-})();
+
+    // Notification function
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 z-50 p-4 rounded-xl shadow-lg transition-all duration-300 transform translate-x-full max-w-sm ${
+            type === 'success' ? 'bg-green-500 text-white' : 
+            type === 'error' ? 'bg-red-500 text-white' : 
+            'bg-blue-500 text-white'
+        }`;
+        
+        notification.innerHTML = `
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    ${type === 'success' ? 
+                        '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>' :
+                        '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>'
+                    }
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium">${message}</p>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => {
+            notification.classList.remove('translate-x-full');
+        }, 100);
+        
+        // Remove after delay
+        setTimeout(() => {
+            notification.classList.add('translate-x-full');
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    document.body.removeChild(notification);
+                }
+            }, 300);
+        }, 4000);
+    }
+
+    // Auto-save draft functionality (optional)
+    let saveTimeout;
+    function saveDraft() {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            const formData = {};
+            inputs.forEach(input => {
+                if (input.value.trim()) {
+                    formData[input.name] = input.value;
+                }
+            });
+            localStorage.setItem('scene_draft', JSON.stringify(formData));
+        }, 1000);
+    }
+
+    // Load draft on page load
+    const savedDraft = localStorage.getItem('scene_draft');
+    if (savedDraft) {
+        try {
+            const draftData = JSON.parse(savedDraft);
+            Object.keys(draftData).forEach(key => {
+                const input = form.querySelector(`[name="${key}"]`);
+                if (input) {
+                    input.value = draftData[key];
+                }
+            });
+            validateForm();
+        } catch (e) {
+            console.log('Could not load draft');
+        }
+    }
+
+    // Save draft on input
+    inputs.forEach(input => {
+        input.addEventListener('input', saveDraft);
+    });
+
+    // Clear draft on successful submission
+    form.addEventListener('submit', () => {
+        localStorage.removeItem('scene_draft');
+    });
+});
 </script>
 {% endblock %}

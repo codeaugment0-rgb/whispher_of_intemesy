@@ -8,7 +8,7 @@ class HeroCarousel {
     this.currentSlide = 0;
     this.isPlaying = true;
     this.interval = null;
-    this.intervalDuration = 5000; // 5 seconds
+    this.intervalDuration = 3000; // 5 seconds
 
     // Touch/swipe support
     this.touchStartX = 0;

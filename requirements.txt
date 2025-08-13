@@ -7,3 +7,4 @@ python-decouple
 django-tailwind
 django-redis
 redis
+Pillow

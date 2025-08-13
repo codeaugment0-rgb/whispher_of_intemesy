@@ -84,6 +84,10 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'scenes_project' / 'scenes_app' / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# Media files (uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {

@@ -403,5 +403,90 @@ e-Optimized Edit Scene Page */
   }
 }
 
+/* Enhanced Image Gallery Mobile Styles */
+@media (max-width: 768px) {
+  /* Image grid optimizations */
+  .image-item {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Better touch targets for image actions */
+  .image-item button {
+    min-width: 44px;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Improve image loading on mobile */
+  .image-item img {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  /* Mobile image modal improvements */
+  #image-modal {
+    touch-action: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #image-modal img {
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100vh - 8rem);
+    touch-action: pan-x pan-y;
+  }
+
+  /* Better checkbox visibility on mobile */
+  .image-checkbox {
+    transform: scale(1.2);
+    border-width: 2px;
+  }
+
+  /* Upload area mobile improvements */
+  #upload-area {
+    touch-action: manipulation;
+  }
+
+  #browse-btn {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  /* Bulk actions mobile layout */
+  #bulk-actions {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    padding: 1rem;
+    margin: 0.5rem 0;
+  }
+
+  /* Image grid responsive adjustments */
+  #images-grid {
+    gap: 0.5rem;
+  }
+
+  /* Better spacing for mobile buttons */
+  .mobile-btn {
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+    font-size: 16px;
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-btn:active {
+    transform: scale(0.96);
+    transition: transform 0.1s ease;
+  }
+
+  /* Prevent zoom on double tap for images */
+  .image-item img {
+    touch-action: manipulation;
+    -ms-touch-action: manipulation;
+  }
+}
+
 /* Duplicate mobile menu styles removed - consolidated above */
 /* All mobile menu button and navigation styles are now consolidated in the Enhanced Mobile Menu Styles section above */
