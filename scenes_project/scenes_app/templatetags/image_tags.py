@@ -3,6 +3,13 @@ from django import template
 register = template.Library()
 
 @register.filter
+def primary_image(scene):
+    """Get the primary image for a scene"""
+    if not scene:
+        return None
+    return scene.primary_image
+
+@register.filter
 def image_url(scene_image, size='medium'):
     """Get image URL for specific size"""
     if not scene_image:

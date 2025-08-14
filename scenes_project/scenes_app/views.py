@@ -937,6 +937,9 @@ def update_image_metadata(request: HttpRequest, image_id: int) -> JsonResponse:
         if 'description' in data:
             image.description = data['description']
         if 'is_primary' in data:
+            # If setting as primary, first unset any existing primary images for this scene
+            if data['is_primary']:
+                SceneImage.objects.filter(scene=image.scene, is_primary=True).update(is_primary=False)
             image.is_primary = data['is_primary']
         
         image.save()

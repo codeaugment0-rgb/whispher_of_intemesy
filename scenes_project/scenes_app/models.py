@@ -48,6 +48,15 @@ class Scene(models.Model):
     def images(self):
         """Get all images for this scene"""
         return self.scene_images.all().order_by('order', 'uploaded_at')
+    
+    @property
+    def primary_image(self):
+        """Get the primary image for this scene"""
+        primary = self.scene_images.filter(is_primary=True).first()
+        if primary:
+            return primary
+        # Fallback to first image if no primary is set
+        return self.scene_images.first()
 
 
 class FavoriteScene(models.Model):

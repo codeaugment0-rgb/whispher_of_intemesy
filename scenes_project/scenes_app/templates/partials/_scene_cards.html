@@ -8,7 +8,7 @@
     aria-labelledby="scene-{{ scene.id }}-title">
     
     <!-- Image Thumbnail -->
-    {% with primary_image=scene.scene_images.all|first %}
+    {% with primary_image=scene.primary_image %}
     {% if primary_image %}
     <div class="scene-card-image relative overflow-hidden">
       <img src="{{ primary_image|image_url:'medium' }}" 
