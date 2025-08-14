@@ -7,6 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='dev-secret-key-change-me')
 DEBUG = config('DEBUG', cast=bool, default=True)
 ALLOWED_HOSTS = [host.strip() for host in config('ALLOWED_HOSTS', default='').split(',') if host.strip()] or []
+NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
 
 INSTALLED_APPS = [
     'django.contrib.admin',
