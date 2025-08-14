@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load image_tags %}
 {% block content %}
 
 <!-- Navigation Header -->
@@ -39,6 +40,17 @@
       </span>
     </button>
 
+    <!-- Gallery Button -->
+    <a href="{% url 'scene_gallery' scene.id %}"
+      class="mobile-btn group inline-flex items-center justify-center px-4 sm:px-6 py-3 rounded-lg sm:rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-medium hover:from-green-700 hover:to-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base touch-target mobile-px-4 mobile-py-3 mobile-text-sm">
+      <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 group-hover:scale-110 transition-transform duration-200 flex-shrink-0"
+        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+      <span class="truncate">Gallery ({{ scene.scene_images.count }})</span>
+    </a>
+
     <!-- Edit Button -->
     <a href="{% url 'edit_scene' scene.id %}"
       class="mobile-btn group inline-flex items-center justify-center px-4 sm:px-6 py-3 rounded-lg sm:rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base touch-target mobile-px-4 mobile-py-3 mobile-text-sm">
@@ -75,6 +87,31 @@
     </div>
 
     <div class="max-w-4xl">
+      <!-- Primary Image Display -->
+      {% with primary_image=scene.scene_images.all|first %}
+      {% if primary_image %}
+      <div class="mb-6 sm:mb-8">
+        <div class="relative rounded-2xl overflow-hidden shadow-lg bg-gray-100">
+          <img src="{{ primary_image|image_url:'large' }}" 
+               alt="{{ primary_image.alt_text|default:primary_image.caption|default:scene.title }}"
+               class="w-full h-64 sm:h-80 lg:h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
+               onclick="openImageModal('{{ primary_image|image_url:'large' }}', '{{ primary_image.caption|default:scene.title }}')">
+          
+          <!-- Image overlay info -->
+          <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+            {% if primary_image.caption %}
+            <p class="text-white text-sm font-medium">{{ primary_image.caption }}</p>
+            {% endif %}
+            <div class="flex items-center justify-between mt-2">
+              <span class="text-white/80 text-xs">Primary Image</span>
+              <span class="text-white/80 text-xs">{{ scene.scene_images.count }} image{{ scene.scene_images.count|pluralize }} total</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% endwith %}
+
       <h1 class="text-2xl sm:text-3xl lg:text-4xl font-light text-gray-900 mb-4 sm:mb-6 leading-tight">
         {{ scene.title }}
       </h1>
@@ -346,4 +383,48 @@
       </div>
     </div>
 </article>
+
+<!-- Image Modal -->
+<div id="imageModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex items-center justify-center p-4">
+  <div class="relative max-w-4xl max-h-full">
+    <button onclick="closeImageModal()" class="absolute -top-10 right-0 text-white hover:text-gray-300 text-2xl font-bold z-10">
+      ✕
+    </button>
+    <img id="modalImage" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
+    <div id="modalCaption" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white text-center"></div>
+  </div>
+</div>
+
+<script>
+function openImageModal(imageUrl, caption) {
+  const modal = document.getElementById('imageModal');
+  const modalImage = document.getElementById('modalImage');
+  const modalCaption = document.getElementById('modalCaption');
+  
+  modalImage.src = imageUrl;
+  modalCaption.textContent = caption || '';
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeImageModal() {
+  const modal = document.getElementById('imageModal');
+  modal.classList.add('hidden');
+  document.body.style.overflow = 'auto';
+}
+
+// Close modal when clicking outside the image
+document.getElementById('imageModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeImageModal();
+  }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeImageModal();
+  }
+});
+</script>
 {% endblock %}

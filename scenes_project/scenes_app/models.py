@@ -5,9 +5,10 @@ from django.core.files.storage import default_storage
 from django.conf import settings
 import re
 import os
-from PIL import Image
+from PIL import Image, ImageOps
 from io import BytesIO
 from django.core.files.base import ContentFile
+import uuid
 
 
 class Scene(models.Model):
@@ -274,3 +275,186 @@ class SearchQuery(models.Model):
 
     def __str__(self):
         return f"'{self.query}' - {self.results_count} results"
+
+
+class SceneImage(models.Model):
+    """Model for storing multiple images per scene with metadata and optimization"""
+    scene = models.ForeignKey(Scene, on_delete=models.CASCADE, related_name='scene_images')
+    
+    # Image files
+    original_image = models.ImageField(upload_to='scene_images/originals/')
+    large_image = models.ImageField(upload_to='scene_images/large/', blank=True, null=True)
+    medium_image = models.ImageField(upload_to='scene_images/medium/', blank=True, null=True)
+    small_image = models.ImageField(upload_to='scene_images/small/', blank=True, null=True)
+    thumbnail = models.ImageField(upload_to='scene_images/thumbnails/', blank=True, null=True)
+    
+    # Metadata
+    caption = models.CharField(max_length=500, blank=True, help_text="Image caption or title")
+    alt_text = models.CharField(max_length=255, blank=True, help_text="Alt text for accessibility")
+    description = models.TextField(blank=True, help_text="Detailed description of the image")
+    
+    # Organization
+    order = models.PositiveIntegerField(default=0, help_text="Order of image in gallery")
+    is_primary = models.BooleanField(default=False, help_text="Primary image for the scene")
+    
+    # Technical metadata
+    file_size = models.PositiveIntegerField(default=0, help_text="Original file size in bytes")
+    width = models.PositiveIntegerField(default=0)
+    height = models.PositiveIntegerField(default=0)
+    format = models.CharField(max_length=10, blank=True, help_text="Image format (JPEG, PNG, etc.)")
+    
+    # Timestamps
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    # Unique identifier for API operations
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+
+    class Meta:
+        ordering = ['order', 'uploaded_at']
+        indexes = [
+            models.Index(fields=['scene', 'order']),
+            models.Index(fields=['scene', 'is_primary']),
+            models.Index(fields=['uploaded_at']),
+        ]
+
+    def __str__(self):
+        return f"{self.scene.title} - Image {self.order + 1}"
+
+    def save(self, *args, **kwargs):
+        """Override save to generate optimized images and metadata"""
+        if self.original_image and not self.pk:  # New image
+            self._process_image()
+        
+        # Ensure only one primary image per scene
+        if self.is_primary:
+            SceneImage.objects.filter(scene=self.scene, is_primary=True).exclude(pk=self.pk).update(is_primary=False)
+        
+        super().save(*args, **kwargs)
+
+    def _process_image(self):
+        """Process the original image to create optimized versions"""
+        if not self.original_image:
+            return
+
+        try:
+            # Open the original image
+            with Image.open(self.original_image) as img:
+                # Convert to RGB if necessary (handles RGBA, P mode images)
+                if img.mode in ('RGBA', 'P', 'LA'):
+                    # Create white background for transparency
+                    background = Image.new('RGB', img.size, (255, 255, 255))
+                    if img.mode == 'P':
+                        img = img.convert('RGBA')
+                    background.paste(img, mask=img.split()[-1] if img.mode == 'RGBA' else None)
+                    img = background
+                elif img.mode != 'RGB':
+                    img = img.convert('RGB')
+
+                # Store original dimensions and metadata
+                self.width = img.width
+                self.height = img.height
+                self.format = img.format or 'JPEG'
+                
+                # Calculate file size
+                if hasattr(self.original_image, 'size'):
+                    self.file_size = self.original_image.size
+
+                # Generate optimized versions
+                self._create_image_variant(img, 'large', (1920, 1080), 85)
+                self._create_image_variant(img, 'medium', (800, 600), 80)
+                self._create_image_variant(img, 'small', (400, 300), 75)
+                self._create_image_variant(img, 'thumbnail', (150, 150), 70, crop=True)
+
+        except Exception as e:
+            print(f"Error processing image {self.original_image.name}: {str(e)}")
+
+    def _create_image_variant(self, img, variant_name, max_size, quality, crop=False):
+        """Create an optimized image variant"""
+        try:
+            # Create a copy of the image
+            variant_img = img.copy()
+            
+            if crop:
+                # For thumbnails, crop to square
+                variant_img = ImageOps.fit(variant_img, max_size, Image.Resampling.LANCZOS)
+            else:
+                # Resize maintaining aspect ratio
+                variant_img.thumbnail(max_size, Image.Resampling.LANCZOS)
+            
+            # Save to BytesIO
+            output = BytesIO()
+            variant_img.save(output, format='JPEG', quality=quality, optimize=True)
+            output.seek(0)
+            
+            # Generate filename
+            original_name = os.path.splitext(self.original_image.name)[0]
+            filename = f"{original_name}_{variant_name}.jpg"
+            
+            # Save to the appropriate field
+            field = getattr(self, f"{variant_name}_image")
+            field.save(
+                filename,
+                ContentFile(output.getvalue()),
+                save=False
+            )
+            
+        except Exception as e:
+            print(f"Error creating {variant_name} variant: {str(e)}")
+
+    def delete(self, *args, **kwargs):
+        """Override delete to clean up all image files"""
+        # Delete all image files
+        for field_name in ['original_image', 'large_image', 'medium_image', 'small_image', 'thumbnail']:
+            field = getattr(self, field_name)
+            if field:
+                try:
+                    if default_storage.exists(field.name):
+                        default_storage.delete(field.name)
+                except Exception as e:
+                    print(f"Error deleting {field_name}: {str(e)}")
+        
+        super().delete(*args, **kwargs)
+
+    @property
+    def file_size_human(self):
+        """Return human-readable file size"""
+        if self.file_size == 0:
+            return "0 B"
+        
+        size_names = ["B", "KB", "MB", "GB"]
+        size = self.file_size
+        i = 0
+        while size >= 1024 and i < len(size_names) - 1:
+            size /= 1024.0
+            i += 1
+        return f"{size:.1f} {size_names[i]}"
+
+    @property
+    def aspect_ratio(self):
+        """Return aspect ratio as a decimal"""
+        if self.height == 0:
+            return 1.0
+        return self.width / self.height
+
+    def get_image_url(self, size='medium'):
+        """Get URL for specific image size"""
+        size_field_map = {
+            'original': 'original_image',
+            'large': 'large_image',
+            'medium': 'medium_image',
+            'small': 'small_image',
+            'thumbnail': 'thumbnail'
+        }
+        
+        field_name = size_field_map.get(size, 'medium_image')
+        field = getattr(self, field_name)
+        
+        if field and hasattr(field, 'url'):
+            return field.url
+        
+        # Fallback to original if requested size doesn't exist
+        if self.original_image and hasattr(self.original_image, 'url'):
+            return self.original_image.url
+        
+        return None

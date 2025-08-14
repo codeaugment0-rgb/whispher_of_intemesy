@@ -17,7 +17,7 @@ import os
 import sys
 from django.conf import settings
 
-from .models import Scene, FavoriteScene, SearchSuggestion, SearchQuery # SceneImage
+from .models import Scene, FavoriteScene, SearchSuggestion, SearchQuery, SceneImage
 from .static.py.analytics import analyze_scenes
 
 import logging
@@ -757,70 +757,245 @@ def search_results(request: HttpRequest) -> HttpResponse:
             Q(full_text__icontains=query)
         )
 
-    # Order by most recent first
-    scenes_qs = scenes_qs.order_by('-id')
-
-    # Pagination
+    # Get pagination
     paginator = Paginator(scenes_qs, page_size)
     try:
         page_obj = paginator.get_page(page_number)
-    except:
+    except Exception:
         page_obj = paginator.get_page(1)
 
-    # Smart pagination range calculation (same as home page)
-    current_page = page_obj.number
-    total_pages = paginator.num_pages
-
-    if total_pages <= 7:
-        page_range = range(1, total_pages + 1)
-    else:
-        if current_page <= 4:
-            page_range = list(range(1, 6)) + ['...', total_pages]
-        elif current_page >= total_pages - 3:
-            page_range = [1, '...'] + list(range(total_pages - 4, total_pages + 1))
-        else:
-            page_range = [1, '...'] + list(range(current_page - 1, current_page + 2)) + ['...', total_pages]
-
-    # Get favorites for current session
+    # Get user's favorite scene IDs for this session
     if not request.session.session_key:
         request.session.create()
-
-    favorite_scene_ids = list(
-        FavoriteScene.objects.filter(
-            session_key=request.session.session_key
-        ).values_list('scene_id', flat=True)
-    )
+    
+    user_favorites = set(FavoriteScene.objects.filter(
+        session_key=request.session.session_key
+    ).values_list('scene_id', flat=True))
 
     context = {
         'page_obj': page_obj,
-        'page_range': page_range,
         'query': query,
+        'user_favorites': user_favorites,
         'page_size': page_size,
-        'favorite_scene_ids': favorite_scene_ids,
-        'total_results': paginator.count,
     }
 
-    # Handle AJAX requests for pagination (same as home page)
-    if is_ajax(request):
-        current_page = page_obj.number
-        total_pages = paginator.num_pages
-
-        # Render the regular scene cards partial
-        html = render_to_string('partials/_scene_cards.html', context, request=request)
-
-        # Render pagination
-        pagination_html = render_to_string('partials/_pagination.html', context, request=request)
-
-        return JsonResponse({
-            'html': html,
-            'pagination_html': pagination_html,
-            'current_page': current_page,
-            'total_pages': total_pages,
-            'total_items': paginator.count,
-            'page_size': page_size,
-        })
-
     return render(request, 'search_results.html', context)
+
+
+# Image Management Views
+
+@csrf_exempt
+def upload_scene_images(request: HttpRequest, pk: int) -> JsonResponse:
+    """Upload multiple images for a scene"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    scene = get_object_or_404(Scene, pk=pk)
+    
+    try:
+        uploaded_images = []
+        files = request.FILES.getlist('images')
+        
+        if not files:
+            return JsonResponse({'error': 'No images provided'}, status=400)
+        
+        # Get the current max order for this scene
+        max_order = SceneImage.objects.filter(scene=scene).aggregate(
+            max_order=models.Max('order')
+        )['max_order'] or -1
+        
+        for i, file in enumerate(files):
+            # Validate file type
+            if not file.content_type.startswith('image/'):
+                continue
+                
+            # Create SceneImage instance
+            scene_image = SceneImage(
+                scene=scene,
+                original_image=file,
+                order=max_order + i + 1,
+                caption=request.POST.get(f'caption_{i}', ''),
+                alt_text=request.POST.get(f'alt_text_{i}', ''),
+                description=request.POST.get(f'description_{i}', ''),
+            )
+            
+            # Set as primary if it's the first image and scene has no primary
+            if i == 0 and not scene.scene_images.filter(is_primary=True).exists():
+                scene_image.is_primary = True
+            
+            scene_image.save()
+            
+            uploaded_images.append({
+                'id': scene_image.id,
+                'uuid': str(scene_image.uuid),
+                'caption': scene_image.caption,
+                'thumbnail_url': scene_image.get_image_url('thumbnail'),
+                'medium_url': scene_image.get_image_url('medium'),
+                'order': scene_image.order,
+                'is_primary': scene_image.is_primary,
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Successfully uploaded {len(uploaded_images)} images',
+            'images': uploaded_images
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+def scene_images_api(request: HttpRequest, pk: int) -> JsonResponse:
+    """Get all images for a scene"""
+    scene = get_object_or_404(Scene, pk=pk)
+    
+    images = []
+    for img in scene.scene_images.all():
+        images.append({
+            'id': img.id,
+            'uuid': str(img.uuid),
+            'caption': img.caption,
+            'alt_text': img.alt_text,
+            'description': img.description,
+            'order': img.order,
+            'is_primary': img.is_primary,
+            'file_size': img.file_size_human,
+            'dimensions': f"{img.width}x{img.height}",
+            'aspect_ratio': img.aspect_ratio,
+            'uploaded_at': img.uploaded_at.isoformat(),
+            'urls': {
+                'original': img.get_image_url('original'),
+                'large': img.get_image_url('large'),
+                'medium': img.get_image_url('medium'),
+                'small': img.get_image_url('small'),
+                'thumbnail': img.get_image_url('thumbnail'),
+            }
+        })
+    
+    return JsonResponse({
+        'success': True,
+        'scene_id': scene.id,
+        'scene_title': scene.title,
+        'images': images,
+        'total_images': len(images)
+    })
+
+
+@csrf_exempt
+def update_image_order(request: HttpRequest, pk: int) -> JsonResponse:
+    """Update the order of images for a scene"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    scene = get_object_or_404(Scene, pk=pk)
+    
+    try:
+        import json
+        data = json.loads(request.body)
+        image_orders = data.get('image_orders', [])
+        
+        if not image_orders:
+            return JsonResponse({'error': 'No image orders provided'}, status=400)
+        
+        # Update each image's order
+        for item in image_orders:
+            image_id = item.get('id')
+            new_order = item.get('order')
+            
+            if image_id is not None and new_order is not None:
+                SceneImage.objects.filter(
+                    id=image_id, 
+                    scene=scene
+                ).update(order=new_order)
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Image order updated successfully'
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@csrf_exempt
+def update_image_metadata(request: HttpRequest, image_id: int) -> JsonResponse:
+    """Update image metadata (caption, alt text, description)"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    image = get_object_or_404(SceneImage, id=image_id)
+    
+    try:
+        import json
+        data = json.loads(request.body)
+        
+        # Update metadata fields
+        if 'caption' in data:
+            image.caption = data['caption']
+        if 'alt_text' in data:
+            image.alt_text = data['alt_text']
+        if 'description' in data:
+            image.description = data['description']
+        if 'is_primary' in data:
+            image.is_primary = data['is_primary']
+        
+        image.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Image metadata updated successfully',
+            'image': {
+                'id': image.id,
+                'caption': image.caption,
+                'alt_text': image.alt_text,
+                'description': image.description,
+                'is_primary': image.is_primary,
+            }
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+def delete_scene_image(request: HttpRequest, image_id: int) -> JsonResponse:
+    """Delete a scene image"""
+    if request.method != 'DELETE':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    image = get_object_or_404(SceneImage, id=image_id)
+    scene_id = image.scene.id
+    was_primary = image.is_primary
+    
+    try:
+        image.delete()
+        
+        # If this was the primary image, set another image as primary
+        if was_primary:
+            next_primary = SceneImage.objects.filter(scene_id=scene_id).first()
+            if next_primary:
+                next_primary.is_primary = True
+                next_primary.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Image deleted successfully'
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+def scene_gallery(request: HttpRequest, pk: int) -> HttpResponse:
+    """Display scene image gallery management page"""
+    scene = get_object_or_404(Scene, pk=pk)
+    
+    context = {
+        'scene': scene,
+        'images': scene.scene_images.all(),
+        'total_images': scene.scene_images.count(),
+    }
+    
+    return render(request, 'scene_gallery.html', context)
 
 
 def search_suggestions_api(request: HttpRequest) -> JsonResponse:

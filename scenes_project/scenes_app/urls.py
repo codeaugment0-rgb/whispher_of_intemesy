@@ -22,4 +22,12 @@ urlpatterns = [
     path('analytics/', views.analytics, name='analytics'),
     path('api/analytics/', views.analytics_api, name='analytics_api'),
     path('api/debug/', views.debug_api, name='debug_api'),
+    
+    # Image management URLs
+    path('scene/<int:pk>/gallery/', views.scene_gallery, name='scene_gallery'),
+    path('api/scene/<int:pk>/images/', views.scene_images_api, name='scene_images_api'),
+    path('api/scene/<int:pk>/upload-images/', views.upload_scene_images, name='upload_scene_images'),
+    path('api/scene/<int:pk>/update-image-order/', views.update_image_order, name='update_image_order'),
+    path('api/image/<int:image_id>/update/', views.update_image_metadata, name='update_image_metadata'),
+    path('api/image/<int:image_id>/delete/', views.delete_scene_image, name='delete_scene_image'),
 ]

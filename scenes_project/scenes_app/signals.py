@@ -1,9 +1,11 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from .models import Scene, SearchSuggestion
+from .models import Scene, SearchSuggestion, SceneImage
 import re
 from collections import Counter
 import logging
+import os
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -20,15 +22,47 @@ def update_search_suggestions_on_scene_save(sender, instance, created, **kwargs)
 
 
 @receiver(post_delete, sender=Scene)
-def cleanup_search_suggestions_on_scene_delete(sender, instance, **kwargs):
-    """Clean up search suggestions when a scene is deleted"""
+def cleanup_scene_images_on_delete(sender, instance, **kwargs):
+    """Clean up scene images and folders when a scene is deleted"""
     try:
-        # Note: We don't automatically remove suggestions when a scene is deleted
-        # because the same terms might exist in other scenes.
-        # Instead, we could run a periodic cleanup task to remove unused suggestions.
-        logger.info(f"Scene deleted: {instance.title}. Consider running suggestion cleanup.")
+        # Delete all associated images (this will trigger SceneImage.delete() which cleans up files)
+        for image in instance.scene_images.all():
+            image.delete()
+        
+        # Clean up the scene's image folder if it exists and is empty
+        folder_path = os.path.join(settings.MEDIA_ROOT, instance.image_folder_path)
+        if os.path.exists(folder_path):
+            try:
+                # Remove folder if it's empty
+                os.rmdir(folder_path)
+                logger.info(f"Removed empty image folder: {folder_path}")
+            except OSError:
+                # Folder not empty or other error - that's okay
+                pass
+        
+        logger.info(f"Scene deleted: {instance.title}. Image cleanup completed.")
     except Exception as e:
         logger.error(f"Error during scene deletion cleanup: {str(e)}")
+
+
+@receiver(post_delete, sender=SceneImage)
+def cleanup_image_files_on_delete(sender, instance, **kwargs):
+    """Clean up image files when a SceneImage is deleted"""
+    try:
+        # Delete all image files
+        for field_name in ['original_image', 'large_image', 'medium_image', 'small_image', 'thumbnail']:
+            field = getattr(instance, field_name)
+            if field:
+                try:
+                    if field.storage.exists(field.name):
+                        field.storage.delete(field.name)
+                        logger.info(f"Deleted image file: {field.name}")
+                except Exception as e:
+                    logger.error(f"Error deleting {field_name}: {str(e)}")
+        
+        logger.info(f"Image cleanup completed for SceneImage {instance.id}")
+    except Exception as e:
+        logger.error(f"Error during image file cleanup: {str(e)}")
 
 
 def _train_suggestions_for_scene(scene):
