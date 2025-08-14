@@ -2,6 +2,11 @@
 {% load static %}
 {% load image_tags %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/gallery-responsive.css' %}">
+<!-- <link rel="stylesheet" href="{% static 'css/lightbox-fix.css' %}"> -->
+{% endblock %}
+
 {% block title %}{{ scene.title }} - Image Gallery{% endblock %}
 
 {% block content %}
@@ -71,25 +76,17 @@
 
         <!-- Upload Area -->
         <div id="uploadArea"
-            class="hidden border-2 border-dashed border-gray-300 rounded-xl p-12 text-center mb-8 hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
-            <div class="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
-                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            class="hidden border-2 border-dashed border-gray-300 rounded-lg sm:rounded-xl p-6 sm:p-8 lg:p-12 text-center mb-6 sm:mb-8 hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
+            <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+                <svg class="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
             </div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">Upload Images</h3>
-            <p class="text-gray-600 mb-1">Drop images here or click to select files</p>
-            <p class="text-sm text-gray-500 mb-4">Supports JPEG, PNG, WebP up to 10MB each</p>
+            <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Upload Images</h3>
+            <p class="text-sm sm:text-base text-gray-600 mb-1">Drop images here or click to select files</p>
+            <p class="text-xs sm:text-sm text-gray-500 mb-4">Supports JPEG, PNG, WebP up to 10MB each</p>
             <input type="file" id="fileInput" multiple accept="image/*" class="hidden">
-            <!-- <button type="button" onclick="document.getElementById('fileInput').click()"
-                class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                Choose Files
-            </button> -->
         </div>
 
         <!-- Loading -->
@@ -99,33 +96,34 @@
         </div>
 
         <!-- Image Grid -->
-        <div id="imageGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div id="imageGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
             {% for image in images %}
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300"
+            <div class="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300"
                 data-image-id="{{ image.id }}" data-order="{{ image.order }}">
                 <div class="relative">
                     <img src="{{ image|image_url:'medium' }}" alt="{{ image.alt_text|default:image.caption }}"
-                        class="w-full h-48 object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
-                        onclick="openLightbox(`{{ image|image_url:'large' }}`, `{{ image.caption|default:scene.title }}`)">
+                        class="w-full h-32 sm:h-40 md:h-48 lg:h-52 object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
+                        onclick="openLightbox(`{{ image|image_url:'large' }}`, `{{ image.caption|default:scene.title }}`, `{{ image.id }}`)"
+                        loading="lazy"
+                        decoding="async">
                     {% if image.is_primary %}
                     <span
-                        class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium">PRIMARY</span>
+                        class="absolute top-1 right-1 sm:top-2 sm:right-2 bg-green-500 text-white text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full font-medium">PRIMARY</span>
                     {% endif %}
                 </div>
-                <div class="p-4">
-                    <h3 class="font-semibold text-gray-900 text-sm mb-1 truncate">{{ image.caption|default:"Untitled" }}
+                <div class="p-2 sm:p-3 lg:p-4">
+                    <h3 class="font-semibold text-gray-900 text-xs sm:text-sm mb-1 truncate">{{ image.caption|default:"Untitled" }}
                     </h3>
-                    <p class="text-xs text-gray-500 mb-3">{{ image.file_size_human }} • {{ image.width }}x{{ image.height }}</p>
-                    <div class="flex gap-2 flex-wrap">
+                    <p class="text-xs text-gray-500 mb-2 sm:mb-3 truncate">{{ image.file_size_human }} • {{ image.width }}x{{ image.height }}</p>
+                    <div class="flex gap-1 sm:gap-2 flex-wrap">
                         <button onclick="editImage('{{ image.id | safe }}')"
-                            class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200 transition-colors">Edit</button>
+                            class="text-xs bg-blue-100 text-blue-700 px-1.5 py-1 sm:px-2 sm:py-1 rounded hover:bg-blue-200 transition-colors touch-target">Edit</button>
                         {% if not image.is_primary %}
                         <button onclick="setPrimary('{{ image.id }}')"
-                            class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200 transition-colors">Set
-                            Primary</button>
+                            class="text-xs bg-green-100 text-green-700 px-1.5 py-1 sm:px-2 sm:py-1 rounded hover:bg-green-200 transition-colors touch-target">Primary</button>
                         {% endif %}
                         <button onclick="deleteImage('{{ image.id }}')"
-                            class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200 transition-colors">Delete</button>
+                            class="text-xs bg-red-100 text-red-700 px-1.5 py-1 sm:px-2 sm:py-1 rounded hover:bg-red-200 transition-colors touch-target">Delete</button>
                     </div>
                 </div>
             </div>
@@ -151,14 +149,13 @@
             {% endfor %}
         </div>
     </div>
-</article><!-- Edit 
-Image Modal -->
-<div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl max-w-md w-full p-6">
+</article><!-- Edit Image Modal -->
+<div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-lg sm:rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 mx-2 sm:mx-0">
         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-bold text-gray-900">Edit Image</h2>
-            <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <h2 class="text-lg sm:text-xl font-bold text-gray-900">Edit Image</h2>
+            <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600 p-2 touch-target">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
@@ -167,19 +164,19 @@ Image Modal -->
             <div class="mb-4">
                 <label for="editCaption" class="block text-sm font-medium text-gray-700 mb-2">Caption</label>
                 <input type="text" id="editCaption" name="caption"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    class="w-full px-3 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Enter image caption">
             </div>
             <div class="mb-4">
                 <label for="editAltText" class="block text-sm font-medium text-gray-700 mb-2">Alt Text</label>
                 <input type="text" id="editAltText" name="alt_text"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    class="w-full px-3 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Enter alt text for accessibility">
             </div>
             <div class="mb-4">
                 <label for="editDescription" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
                 <textarea id="editDescription" name="description" rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    class="w-full px-3 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-vertical"
                     placeholder="Enter detailed description"></textarea>
             </div>
             <div class="mb-6">
@@ -188,26 +185,112 @@ Image Modal -->
                         class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                     <span class="ml-2 text-sm text-gray-700">Set as primary image for this scene</span>
                 </label>
+                <div class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p class="text-xs text-blue-800">
+                        <strong>Primary Image Purpose:</strong> This image will be used as the main representative for the scene in: • Scene thumbnails and previews • Social media sharing • Search results • Featured content displays
+                    </p>
+                </div>
             </div>
-            <div class="flex gap-3">
+            <div class="flex flex-col sm:flex-row gap-3">
                 <button type="submit"
-                    class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">Save
+                    class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors touch-target">Save
                     Changes</button>
                 <button type="button" onclick="closeEditModal()"
-                    class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors">Cancel</button>
+                    class="px-4 py-3 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors touch-target">Cancel</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Lightbox Modal -->
-<div id="lightboxModal" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex items-center justify-center p-4">
-    <div class="relative max-w-6xl max-h-full">
-        <button onclick="closeLightbox()"
-            class="absolute -top-10 right-0 text-white hover:text-gray-300 text-2xl font-bold">✕</button>
-        <img id="lightboxImage" class="max-w-full max-h-[80vh] object-contain rounded-lg">
-        <div id="lightboxCaption"
-            class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white text-center rounded-b-lg">
+<!-- Enhanced Image Viewer Modal -->
+<div id="lightboxModal" class="fixed inset-0 bg-black z-50 hidden">
+    <!-- Background overlay -->
+    <div class="absolute inset-0 bg-black bg-opacity-95 backdrop-blur-sm"></div>
+    
+    <!-- Main viewer container -->
+    <div class="relative w-full h-full flex items-center justify-center">
+        <!-- Close button -->
+        <button onclick="closeLightbox()" 
+            class="absolute top-4 right-4 z-20 w-12 h-12 bg-black bg-opacity-50 hover:bg-opacity-70 text-white rounded-full flex items-center justify-center transition-all duration-200 touch-target">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+
+        <!-- Previous button -->
+        <button id="prevImageBtn" onclick="navigateImage(-1)" 
+            class="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 w-12 h-12 bg-black bg-opacity-50 hover:bg-opacity-70 text-white rounded-full flex items-center justify-center transition-all duration-200 touch-target">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+
+        <!-- Next button -->
+        <button id="nextImageBtn" onclick="navigateImage(1)" 
+            class="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 w-12 h-12 bg-black bg-opacity-50 hover:bg-opacity-70 text-white rounded-full flex items-center justify-center transition-all duration-200 touch-target">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+
+        <!-- Image container with zoom support -->
+        <div id="imageContainer" class="relative w-full h-full flex items-center justify-center overflow-hidden cursor-grab">
+            <img id="lightboxImage" 
+                class="max-w-full max-h-full object-contain transition-all duration-300 ease-out select-none" 
+                style="transform: scale(1) translate(0px, 0px);"
+                draggable="false">
+        </div>
+
+        <!-- Image info overlay -->
+        <div id="imageInfoOverlay" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/50 to-transparent p-4 sm:p-6 text-white transform translate-y-0 transition-transform duration-300">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex-1">
+                        <h3 id="lightboxCaption" class="text-lg sm:text-xl font-semibold mb-2"></h3>
+                        <div class="flex items-center gap-4 text-sm text-gray-300">
+                            <span id="imageCounter">1 / 1</span>
+                            <span id="imageDimensions">1920 × 1080</span>
+                            <span id="imageSize">2.5 MB</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <!-- Zoom controls -->
+                        <button onclick="zoomImage(-0.2)" 
+                            class="w-10 h-10 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-lg flex items-center justify-center transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                            </svg>
+                        </button>
+                        <span id="zoomLevel" class="text-sm font-medium min-w-[3rem] text-center">100%</span>
+                        <button onclick="zoomImage(0.2)" 
+                            class="w-10 h-10 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-lg flex items-center justify-center transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </button>
+                        <button onclick="resetZoom()" 
+                            class="px-3 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-lg text-sm font-medium transition-all duration-200">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading indicator -->
+        <div id="imageLoader" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+            <div class="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+        </div>
+
+        <!-- Keyboard shortcuts help -->
+        <div id="keyboardHelp" class="absolute top-4 left-4 bg-black bg-opacity-70 text-white p-3 rounded-lg text-xs opacity-0 transition-opacity duration-300">
+            <div class="font-semibold mb-2">Keyboard Shortcuts:</div>
+            <div class="space-y-1">
+                <div><kbd class="bg-gray-600 px-1 rounded">←</kbd> <kbd class="bg-gray-600 px-1 rounded">→</kbd> Navigate</div>
+                <div><kbd class="bg-gray-600 px-1 rounded">+</kbd> <kbd class="bg-gray-600 px-1 rounded">-</kbd> Zoom</div>
+                <div><kbd class="bg-gray-600 px-1 rounded">0</kbd> Reset zoom</div>
+                <div><kbd class="bg-gray-600 px-1 rounded">Esc</kbd> Close</div>
+            </div>
         </div>
     </div>
 </div>
@@ -226,6 +309,12 @@ Image Modal -->
         const uploadBtn = document.getElementById('uploadBtn');
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
+
+        // Add responsive class to body for CSS targeting
+        document.body.classList.add('gallery-page');
+        
+        // Handle viewport changes for responsive behavior
+        handleViewportChanges();
 
         // Toggle upload area
         uploadBtn.addEventListener('click', function () {
@@ -288,6 +377,39 @@ Image Modal -->
             if (e.key === 'Escape') {
                 if (!document.getElementById('editModal').classList.contains('hidden')) closeEditModal();
                 if (!document.getElementById('lightboxModal').classList.contains('hidden')) closeLightbox();
+            }
+        });
+
+        // Improve touch handling for mobile
+        if ('ontouchstart' in window) {
+            // Add touch-friendly classes
+            document.body.classList.add('touch-device');
+            
+            // Improve button feedback on touch devices
+            const buttons = document.querySelectorAll('button, .touch-target');
+            buttons.forEach(button => {
+                button.addEventListener('touchstart', function() {
+                    this.classList.add('touch-active');
+                }, { passive: true });
+                
+                button.addEventListener('touchend', function() {
+                    setTimeout(() => {
+                        this.classList.remove('touch-active');
+                    }, 150);
+                }, { passive: true });
+            });
+        }
+
+        // Handle image loading states
+        const images = document.querySelectorAll('#imageGrid img[loading="lazy"]');
+        images.forEach(img => {
+            img.addEventListener('load', function() {
+                this.classList.add('loaded');
+            });
+            
+            // If image is already loaded (cached)
+            if (img.complete) {
+                img.classList.add('loaded');
             }
         });
     }
@@ -443,17 +565,275 @@ Image Modal -->
             .catch(error => showAlert('error', 'Failed to delete image'));
     }
 
-    function openLightbox(imageUrl, caption) {
-        console.log('Open lightbox:', imageUrl);
-        const modal = document.getElementById('lightboxModal');
-        const modalImage = document.getElementById('lightboxImage');
-        const modalCaption = document.getElementById('lightboxCaption');
+    // Enhanced Image Viewer Variables
+    let currentImageIndex = 0;
+    let imageList = [];
+    let currentZoom = 1;
+    let isDragging = false;
+    let dragStart = { x: 0, y: 0 };
+    let imagePosition = { x: 0, y: 0 };
 
-        if (modal && modalImage && modalCaption) {
-            modalImage.src = imageUrl;
-            modalCaption.textContent = caption || '';
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+    function openLightbox(imageUrl, caption, imageId) {
+        console.log('Open lightbox:', imageUrl);
+        
+        // Build image list from current gallery
+        buildImageList();
+        
+        // Find current image index
+        if (imageId) {
+            const index = imageList.findIndex(img => img.id == imageId);
+            if (index !== -1) currentImageIndex = index;
+        }
+        
+        // Show modal
+        const modal = document.getElementById('lightboxModal');
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        
+        // Load current image
+        loadCurrentImage();
+        
+        // Initialize viewer
+        initializeImageViewer();
+        
+        // Show keyboard help briefly
+        showKeyboardHelp();
+    }
+
+    function buildImageList() {
+        imageList = [];
+        const imageCards = document.querySelectorAll('#imageGrid [data-image-id]');
+        
+        imageCards.forEach((card, index) => {
+            const img = card.querySelector('img');
+            const imageId = card.getAttribute('data-image-id');
+            
+            if (img && imageId) {
+                // Extract image URLs (assuming template structure)
+                const mediumUrl = img.src;
+                const largeUrl = mediumUrl.replace('/medium/', '/large/');
+                const caption = img.alt || card.querySelector('h3')?.textContent || 'Untitled';
+                
+                imageList.push({
+                    id: imageId,
+                    mediumUrl: mediumUrl,
+                    largeUrl: largeUrl,
+                    caption: caption,
+                    index: index
+                });
+            }
+        });
+    }
+
+    function loadCurrentImage() {
+        if (imageList.length === 0) return;
+        
+        const currentImage = imageList[currentImageIndex];
+        const modalImage = document.getElementById('lightboxImage');
+        const loader = document.getElementById('imageLoader');
+        
+        // Show loader
+        loader.classList.remove('hidden');
+        
+        // Reset zoom and position
+        resetZoom();
+        
+        // Load image
+        const img = new Image();
+        img.onload = function() {
+            modalImage.src = this.src;
+            updateImageInfo(currentImage);
+            loader.classList.add('hidden');
+        };
+        
+        img.onerror = function() {
+            // Fallback to medium quality
+            modalImage.src = currentImage.mediumUrl;
+            updateImageInfo(currentImage);
+            loader.classList.add('hidden');
+        };
+        
+        img.src = currentImage.largeUrl;
+    }
+
+    function updateImageInfo(image) {
+        document.getElementById('lightboxCaption').textContent = image.caption;
+        document.getElementById('imageCounter').textContent = `${currentImageIndex + 1} / ${imageList.length}`;
+        
+        // Update navigation buttons
+        const prevBtn = document.getElementById('prevImageBtn');
+        const nextBtn = document.getElementById('nextImageBtn');
+        
+        prevBtn.style.opacity = currentImageIndex > 0 ? '1' : '0.5';
+        nextBtn.style.opacity = currentImageIndex < imageList.length - 1 ? '1' : '0.5';
+        
+        prevBtn.disabled = currentImageIndex === 0;
+        nextBtn.disabled = currentImageIndex === imageList.length - 1;
+    }
+
+    function navigateImage(direction) {
+        const newIndex = currentImageIndex + direction;
+        
+        if (newIndex >= 0 && newIndex < imageList.length) {
+            currentImageIndex = newIndex;
+            loadCurrentImage();
+        }
+    }
+
+    function zoomImage(delta) {
+        const newZoom = Math.max(0.5, Math.min(3, currentZoom + delta));
+        if (newZoom !== currentZoom) {
+            currentZoom = newZoom;
+            updateImageTransform();
+            updateZoomLevel();
+        }
+    }
+
+    function resetZoom() {
+        currentZoom = 1;
+        imagePosition = { x: 0, y: 0 };
+        updateImageTransform();
+        updateZoomLevel();
+    }
+
+    function updateImageTransform() {
+        const image = document.getElementById('lightboxImage');
+        image.style.transform = `scale(${currentZoom}) translate(${imagePosition.x}px, ${imagePosition.y}px)`;
+        
+        // Update cursor
+        const container = document.getElementById('imageContainer');
+        container.style.cursor = currentZoom > 1 ? 'grab' : 'grab';
+    }
+
+    function updateZoomLevel() {
+        document.getElementById('zoomLevel').textContent = Math.round(currentZoom * 100) + '%';
+    }
+
+    function initializeImageViewer() {
+        const container = document.getElementById('imageContainer');
+        const image = document.getElementById('lightboxImage');
+        
+        // Mouse wheel zoom
+        container.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+            zoomImage(delta);
+        }, { passive: false });
+        
+        // Double click to zoom
+        container.addEventListener('dblclick', function(e) {
+            if (currentZoom === 1) {
+                zoomImage(1); // Zoom to 200%
+            } else {
+                resetZoom();
+            }
+        });
+        
+        // Drag to pan when zoomed
+        container.addEventListener('mousedown', startDrag);
+        container.addEventListener('mousemove', drag);
+        container.addEventListener('mouseup', endDrag);
+        container.addEventListener('mouseleave', endDrag);
+        
+        // Touch events for mobile
+        container.addEventListener('touchstart', handleTouchStart, { passive: false });
+        container.addEventListener('touchmove', handleTouchMove, { passive: false });
+        container.addEventListener('touchend', handleTouchEnd, { passive: false });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', handleKeydown);
+    }
+
+    function startDrag(e) {
+        if (currentZoom <= 1) return;
+        isDragging = true;
+        dragStart = { x: e.clientX - imagePosition.x, y: e.clientY - imagePosition.y };
+        document.getElementById('imageContainer').style.cursor = 'grabbing';
+    }
+
+    function drag(e) {
+        if (!isDragging || currentZoom <= 1) return;
+        e.preventDefault();
+        imagePosition = {
+            x: e.clientX - dragStart.x,
+            y: e.clientY - dragStart.y
+        };
+        updateImageTransform();
+    }
+
+    function endDrag() {
+        isDragging = false;
+        document.getElementById('imageContainer').style.cursor = currentZoom > 1 ? 'grab' : 'grab';
+    }
+
+    // Touch handling for mobile
+    let touchStart = null;
+    let lastTouchDistance = 0;
+
+    function handleTouchStart(e) {
+        if (e.touches.length === 1) {
+            touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        } else if (e.touches.length === 2) {
+            // Pinch zoom start
+            lastTouchDistance = getTouchDistance(e.touches);
+        }
+    }
+
+    function handleTouchMove(e) {
+        e.preventDefault();
+        
+        if (e.touches.length === 1 && touchStart && currentZoom > 1) {
+            // Pan
+            const touch = e.touches[0];
+            imagePosition = {
+                x: touch.clientX - touchStart.x,
+                y: touch.clientY - touchStart.y
+            };
+            updateImageTransform();
+        } else if (e.touches.length === 2) {
+            // Pinch zoom
+            const distance = getTouchDistance(e.touches);
+            const scale = distance / lastTouchDistance;
+            zoomImage((scale - 1) * 0.5);
+            lastTouchDistance = distance;
+        }
+    }
+
+    function handleTouchEnd(e) {
+        if (e.touches.length === 0) {
+            touchStart = null;
+        }
+    }
+
+    function getTouchDistance(touches) {
+        const dx = touches[0].clientX - touches[1].clientX;
+        const dy = touches[0].clientY - touches[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    function handleKeydown(e) {
+        if (!document.getElementById('lightboxModal').classList.contains('hidden')) {
+            switch(e.key) {
+                case 'Escape':
+                    closeLightbox();
+                    break;
+                case 'ArrowLeft':
+                    navigateImage(-1);
+                    break;
+                case 'ArrowRight':
+                    navigateImage(1);
+                    break;
+                case '+':
+                case '=':
+                    zoomImage(0.2);
+                    break;
+                case '-':
+                    zoomImage(-0.2);
+                    break;
+                case '0':
+                    resetZoom();
+                    break;
+            }
         }
     }
 
@@ -462,7 +842,35 @@ Image Modal -->
         if (modal) {
             modal.classList.add('hidden');
             document.body.style.overflow = 'auto';
+            
+            // Reset viewer state
+            currentZoom = 1;
+            imagePosition = { x: 0, y: 0 };
+            currentImageIndex = 0;
+            
+            // Remove event listeners
+            document.removeEventListener('keydown', handleKeydown);
         }
+    }
+
+    function showKeyboardHelp() {
+        const help = document.getElementById('keyboardHelp');
+        help.style.opacity = '1';
+        
+        setTimeout(() => {
+            help.style.opacity = '0';
+        }, 3000);
+        
+        // Show on mouse movement
+        document.addEventListener('mousemove', function showOnMove() {
+            help.style.opacity = '1';
+            setTimeout(() => {
+                help.style.opacity = '0';
+            }, 2000);
+            
+            // Remove this listener after first use
+            document.removeEventListener('mousemove', showOnMove);
+        });
     }
 
     function showAlert(type, message) {
@@ -487,6 +895,51 @@ Image Modal -->
         } else {
             alert('Upload button NOT found!');
         }
+    }
+
+    // Handle viewport changes for responsive behavior
+    function handleViewportChanges() {
+        function updateViewport() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+            
+            // Update grid layout based on screen size
+            updateGridLayout();
+        }
+
+        function updateGridLayout() {
+            const grid = document.getElementById('imageGrid');
+            if (!grid) return;
+
+            const width = window.innerWidth;
+            let columns = 1;
+            
+            if (width >= 1537) columns = 6;
+            else if (width >= 1281) columns = 5;
+            else if (width >= 1025) columns = 4;
+            else if (width >= 769) columns = 3;
+            else if (width >= 641) columns = 2;
+            else columns = 1;
+
+            // Apply responsive classes
+            grid.className = grid.className.replace(/grid-cols-\d+/g, '');
+            grid.classList.add(`grid-cols-${columns}`);
+        }
+
+        // Initial call
+        updateViewport();
+        
+        // Update on resize with debouncing
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(updateViewport, 100);
+        });
+
+        // Update on orientation change
+        window.addEventListener('orientationchange', function() {
+            setTimeout(updateViewport, 100);
+        });
     }
 
     // Make test function available globally
