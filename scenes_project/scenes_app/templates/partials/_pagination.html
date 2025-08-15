@@ -138,18 +138,6 @@
           <div class="text-xs text-gray-400 hidden lg:block">{{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ page_obj.paginator.count }} items</div>
         </div>
       </div>
-
-      <!-- Progress Bar -->
-      <div class="mt-4 sm:mt-6">
-        <div class="flex items-center justify-between text-xs text-gray-500 mb-2">
-          <span>Progress</span>
-          <span>{{ page_obj.number }} of {{ page_obj.paginator.num_pages }} pages</span>
-        </div>
-        <div class="pagination-progress">
-          {% widthratio page_obj.number page_obj.paginator.num_pages 100 as progress_width %}
-          <div class="pagination-progress-bar" style="width: {{ progress_width }}%"></div>
-        </div>
-      </div>
     </div>
   </div>
 </div>
