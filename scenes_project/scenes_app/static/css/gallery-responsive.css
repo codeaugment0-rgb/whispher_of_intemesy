@@ -1,3 +1,19 @@
+a.btn-standard {
+    display: inline-flex !important;
+    align-items: center !important;
+    font-size: 0.875rem !important;
+    color: #374151 !important;
+    background-color: #f9fafb !important;
+    border-radius: 0.5rem !important;
+    transition: all 0.2s ease !important;
+    border: 1px solid #e5e7eb !important;
+}
+  
+a.btn-standard:hover {
+    color: #111827 !important;
+    background-color: #f3f4f6 !important;
+}
+
 /* Enhanced Gallery Responsive Styles */
 
 /* Touch-friendly interactions */
@@ -381,27 +397,6 @@
     max-height: calc(100vh - 8rem);
 }
 
-/* Navigation buttons - Visible on all screen sizes */
-/* #lightboxModal button {
-    background-color: rgba(0, 0, 0, 0.8) !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    width: 50px;
-    height: 50px;
-}
-
-#lightboxModal button:hover {
-    background-color: rgba(0, 0, 0, 0.9) !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
-}
-
-#lightboxModal button:disabled {
-    opacity: 0.5 !important;
-    cursor: not-allowed;
-} */
-
 /* Info overlay */
 #imageInfoOverlay {
     backdrop-filter: blur(8px);
@@ -531,15 +526,6 @@
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
 }
-
-/* FIXED: Buttons visible on ALL screen sizes */
-/* #lightboxModal button {
-    background-color: rgba(0, 0, 0, 0.8) !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
-} */
 
 /* Desktop buttons */
 @media (min-width: 769px) {

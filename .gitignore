@@ -128,7 +128,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Django specific
+# Jupyter Notebook
+.ipynb_checkpoints
 media/
 staticfiles/
 static_root/

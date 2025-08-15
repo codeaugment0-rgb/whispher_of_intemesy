@@ -37,110 +37,132 @@
       <div class="carousel-slide scene-30" role="img" aria-label="Romantic forest scene"></div>
     </div>
   </div>
-  
+
   <!-- Hero Content Below Carousel -->
   <div class="relative px-3 sm:px-4 lg:px-8 py-6 sm:py-8 lg:py-12 text-center mobile-px-4 mobile-py-6">
-    <h1 class="hero-title text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-light text-gray-900 mb-2 sm:mb-3 tracking-tight mobile-text-xl mobile-mb-3">
+    <h1
+      class="hero-title text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-light text-gray-900 mb-2 sm:mb-3 tracking-tight mobile-text-xl mobile-mb-3">
       Romantic <span class="font-semibold text-primary">Scenes</span>
     </h1>
-    <p class="hero-description text-sm sm:text-base lg:text-lg text-gray-600 mb-4 sm:mb-6 lg:mb-8 max-w-xl sm:max-w-2xl mx-auto leading-relaxed px-2 sm:px-4 mobile-text-sm mobile-mb-6 mobile-px-3">
-      Discover beautifully crafted romantic scenes from around the world, each telling a unique story of love and intimacy
+    <p
+      class="hero-description text-sm sm:text-base lg:text-lg text-gray-600 mb-4 sm:mb-6 lg:mb-8 max-w-xl sm:max-w-2xl mx-auto leading-relaxed px-2 sm:px-4 mobile-text-sm mobile-mb-6 mobile-px-3">
+      Discover beautifully crafted romantic scenes from around the world, each telling a unique story of love and
+      intimacy
     </p>
-    
+
     <!-- Enhanced Controls -->
-    <div class="hero-controls flex flex-col items-center justify-center gap-3 sm:gap-4 px-2 sm:px-4 mobile-gap-3 mobile-px-3">
-      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full max-w-sm sm:max-w-none sm:justify-center mobile-gap-3">
+    <div
+      class="hero-controls flex flex-col items-center justify-center gap-3 sm:gap-4 px-2 sm:px-4 mobile-gap-3 mobile-px-3">
+      <div
+        class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full max-w-sm sm:max-w-none sm:justify-center mobile-gap-3">
         <a href="{% url 'random_scene' %}" 
-           class="hero-button group inline-flex items-center px-4 sm:px-6 py-3 rounded-lg sm:rounded-xl bg-gradient-to-r from-purple-600 to-purple-700 text-white font-medium hover:from-purple-700 hover:to-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl w-full sm:w-auto justify-center touch-target mobile-px-4 mobile-py-3 mobile-text-sm">
-          <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 group-hover:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+           class="inline-flex items-center px-4 sm:px-5 py-3 text-gray-700 bg-gray-200 border border-gray-200 hover:text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-colors w-full sm:w-auto justify-center touch-target mobile-px-4 mobile-py-3 mobile-text-sm">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+            </path>
           </svg>
-          <span class="mobile-text-sm">Random Scene</span>
+          <span>Random Scene</span>
           <span class="ml-2 text-xs opacity-75 hidden sm:inline">(R)</span>
         </a>
-        
+
         {% if favorites_only %}
-          <a href="?" 
-             class="hero-button inline-flex items-center px-4 sm:px-5 py-3 rounded-lg sm:rounded-xl bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all duration-200 w-full sm:w-auto justify-center touch-target mobile-px-4 mobile-py-3 mobile-text-sm">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path>
-            </svg>
-            <span class="mobile-text-sm">Show All Scenes</span>
-          </a>
+        <a href="?"
+          class="inline-flex items-center px-4 sm:px-5 py-3 text-gray-700 bg-gray-200 border border-gray-200 hover:bg-gray-100 rounded-lg transition-colors w-full sm:w-auto justify-center touch-target mobile-px-4 mobile-py-3 mobile-text-sm">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path>
+          </svg>
+          <span>Show All Scenes</span>
+        </a>
         {% else %}
-          {% if total_favorites > 0 %}
-            <a href="?favorites=true" 
-               class="hero-button inline-flex items-center px-4 sm:px-5 py-3 rounded-lg sm:rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white font-medium hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg w-full sm:w-auto justify-center touch-target mobile-px-4 mobile-py-3 mobile-text-sm">
-              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-              </svg>
-              <span class="mobile-text-sm">My Favorites ({{ total_favorites }})</span>
-            </a>
-          {% endif %}
+        {% if total_favorites > 0 %}
+        <a href="?favorites=true"
+          class="inline-flex items-center px-4 sm:px-5 py-3 text-pink-700 bg-gray-200 border border-gray-200 hover:bg-gray-100 rounded-lg transition-colors w-full sm:w-auto justify-center touch-target mobile-px-4 mobile-py-3 mobile-text-sm">
+          <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd"
+              d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <span>My Favorites ({{ total_favorites }})</span>
+        </a>
         {% endif %}
-        
+        {% endif %}
+
         {% if not favorites_only %}
-          {% if random_order %}
-            <a href="?" 
-               class="hero-button inline-flex items-center px-4 sm:px-5 py-3 rounded-lg sm:rounded-xl bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all duration-200 w-full sm:w-auto justify-center touch-target mobile-px-4 mobile-py-3 mobile-text-sm">
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path>
-              </svg>
-              <span class="mobile-text-sm">Sequential Order</span>
-            </a>
-          {% else %}
-            <a href="?random=true" 
-               class="hero-button inline-flex items-center px-4 sm:px-5 py-3 rounded-lg sm:rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-medium hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg w-full sm:w-auto justify-center touch-target mobile-px-4 mobile-py-3 mobile-text-sm">
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-              </svg>
-              <span class="mobile-text-sm">Random Order</span>
-            </a>
-          {% endif %}
+        {% if random_order %}
+        <a href="?"
+          class="inline-flex items-center px-4 sm:px-5 py-3 text-gray-700 bg-gray-200 border border-gray-200 hover:text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-colors w-full sm:w-auto justify-center touch-target mobile-px-4 mobile-py-3 mobile-text-sm"">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path>
+          </svg>
+          <span>Sequential Order</span>
+        </a>
+        {% else %}
+        <a href="?random=true" 
+           class="inline-flex items-center px-4 sm:px-5 py-3 text-gray-700 bg-gray-200 border border-gray-200 hover:text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-colors w-full sm:w-auto justify-center touch-target mobile-px-4 mobile-py-3 mobile-text-sm">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+            </path>
+          </svg>
+          <span class="mobile-text-sm">Random Order</span>
+        </a>
+        {% endif %}
         {% endif %}
       </div>
-      
+
       {% if random_order %}
-        <div class="hero-status-badge flex items-center px-3 sm:px-4 py-2 rounded-full bg-purple-50 border border-purple-200 mobile-px-3 mobile-py-2">
-          <div class="w-2 h-2 bg-purple-500 rounded-full mr-2 animate-pulse flex-shrink-0"></div>
-          <span class="text-xs sm:text-sm font-medium text-purple-700 mobile-text-xs">Random Mode Active</span>
-        </div>
+      <div
+        class="hero-status-badge flex items-center px-3 sm:px-4 py-2 rounded-full bg-purple-50 border border-purple-200 mobile-px-3 mobile-py-2">
+        <div class="w-2 h-2 bg-purple-500 rounded-full mr-2 animate-pulse flex-shrink-0"></div>
+        <span class="text-xs sm:text-sm font-medium text-purple-700 mobile-text-xs">Random Mode Active</span>
+      </div>
       {% elif favorites_only %}
-        <div class="hero-status-badge flex items-center px-3 sm:px-4 py-2 rounded-full bg-red-50 border border-red-200 mobile-px-3 mobile-py-2">
-          <div class="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse flex-shrink-0"></div>
-          <span class="text-xs sm:text-sm font-medium text-red-700 mobile-text-xs">Favorites Only</span>
-        </div>
+      <div
+        class="hero-status-badge flex items-center px-3 sm:px-4 py-2 rounded-full bg-red-50 border border-gray-200 mobile-px-3 mobile-py-2">
+        <div class="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse flex-shrink-0"></div>
+        <span class="text-xs sm:text-sm font-medium text-red-700 mobile-text-xs">Favorites Only</span>
+      </div>
       {% endif %}
     </div>
   </div>
 </div>
 
 <!-- Stats Bar -->
-<div class="stats-bar mb-4 sm:mb-6 lg:mb-8 bg-white rounded-lg sm:rounded-xl border border-gray-200 shadow-sm mobile-mb-6">
+<div
+  class="stats-bar mb-4 sm:mb-6 lg:mb-8 bg-white rounded-lg sm:rounded-xl border border-gray-200 shadow-sm mobile-mb-6">
   <div class="stats-container px-3 sm:px-4 lg:px-6 py-3 sm:py-4 mobile-px-4 mobile-py-4">
     <div class="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 mobile-gap-4">
-      <div class="stats-group flex items-center space-x-3 sm:space-x-4 lg:space-x-6 w-full sm:w-auto justify-center sm:justify-start mobile-gap-4">
+      <div
+        class="stats-group flex items-center space-x-3 sm:space-x-4 lg:space-x-6 w-full sm:w-auto justify-center sm:justify-start mobile-gap-4">
         <div class="stat-item text-center">
-          <div class="stat-number text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mobile-text-lg" data-stat="total-scenes">{{ page_obj.paginator.count }}</div>
+          <div class="stat-number text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mobile-text-lg"
+            data-stat="total-scenes">{{ page_obj.paginator.count }}</div>
           <div class="stat-label text-xs text-gray-500 uppercase tracking-wide mobile-text-xs">Total Scenes</div>
         </div>
         <div class="w-px h-6 sm:h-8 bg-gray-200 hidden sm:block"></div>
         <div class="stat-item text-center">
-          <div class="stat-number text-lg sm:text-xl lg:text-2xl font-bold text-primary mobile-text-lg" data-stat="current-page">{{ page_obj.number }}</div>
+          <div class="stat-number text-lg sm:text-xl lg:text-2xl font-bold text-primary mobile-text-lg"
+            data-stat="current-page">{{ page_obj.number }}</div>
           <div class="stat-label text-xs text-gray-500 uppercase tracking-wide mobile-text-xs">Current Page</div>
         </div>
         <div class="w-px h-6 sm:h-8 bg-gray-200 hidden sm:block"></div>
         <div class="stat-item text-center">
-          <div class="stat-number text-lg sm:text-xl lg:text-2xl font-bold text-accent mobile-text-lg" data-stat="total-pages">{{ page_obj.paginator.num_pages }}</div>
+          <div class="stat-number text-lg sm:text-xl lg:text-2xl font-bold text-accent mobile-text-lg"
+            data-stat="total-pages">{{ page_obj.paginator.num_pages }}</div>
           <div class="stat-label text-xs text-gray-500 uppercase tracking-wide mobile-text-xs">Total Pages</div>
         </div>
       </div>
-      
+
       <div class="stats-info hidden sm:flex items-center text-sm text-gray-500 mobile-text-center mobile-text-xs">
         <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
-        <span class="truncate">Showing {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ page_obj.paginator.count }}</span>
+        <span class="truncate">Showing {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{
+          page_obj.paginator.count }}</span>
       </div>
     </div>
   </div>
@@ -148,5 +170,3 @@
 
 {% include 'partials/_scene_cards.html' %}
 {% endblock %}
-
-

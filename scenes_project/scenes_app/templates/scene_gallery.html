@@ -4,7 +4,6 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/gallery-responsive.css' %}">
-<!-- <link rel="stylesheet" href="{% static 'css/lightbox-fix.css' %}"> -->
 {% endblock %}
 
 {% block title %}{{ scene.title }} - Image Gallery{% endblock %}
@@ -14,9 +13,8 @@
 <div class="mb-6 sm:mb-8 flex flex-col gap-4">
     <nav class="flex items-center space-x-2 sm:space-x-4">
         <a href="/"
-            class="group inline-flex items-center px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl bg-gray-50 text-gray-600 font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all duration-200 text-sm">
-            <svg class="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform flex-shrink-0" fill="currentColor"
-                viewBox="0 0 20 20">
+            class="inline-flex items-center px-2 py-1 text-sm text-gray-600 bg-gray-50 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors">
+            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd"
                     d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
                     clip-rule="evenodd"></path>
@@ -25,7 +23,7 @@
         </a>
         <div class="text-gray-300">/</div>
         <a href="{% url 'scene_detail' scene.pk %}"
-            class="inline-flex items-center px-3 sm:px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200">
+            class="px-2 py-1 text-sm text-gray-600 bg-gray-50 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors">
             {{ scene.title }}
         </a>
         <div class="text-gray-300">/</div>
@@ -56,13 +54,12 @@
             </div>
             <div class="flex gap-3">
                 <button id="uploadBtn"
-                    class="group inline-flex items-center justify-center px-4 sm:px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 group-hover:scale-110 transition-transform duration-200"
-                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="inline-flex items-center px-3 py-2 text-sm text-gray-700 bg-gray-200 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
-                    Upload Images
+                    Upload
                 </button>
             </div>
         </div>
@@ -103,7 +100,11 @@
                 <div class="relative">
                     <img src="{{ image|image_url:'medium' }}" alt="{{ image.alt_text|default:image.caption }}"
                         class="w-full h-32 sm:h-40 md:h-48 lg:h-52 object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
-                        onclick="openLightbox(`{{ image|image_url:'large' }}`, `{{ image.caption|default:scene.title }}`, `{{ image.id }}`)"
+                        data-large-url="{{ image|image_url:'large' }}"
+                        data-width="{{ image.width }}"
+                        data-height="{{ image.height }}"
+                        data-file-size="{{ image.file_size_human }}"
+                        onclick="Lightbox.open('{{ image.id }}')"
                         loading="lazy"
                         decoding="async">
                     {% if image.is_primary %}
@@ -115,15 +116,15 @@
                     <h3 class="font-semibold text-gray-900 text-xs sm:text-sm mb-1 truncate">{{ image.caption|default:"Untitled" }}
                     </h3>
                     <p class="text-xs text-gray-500 mb-2 sm:mb-3 truncate">{{ image.file_size_human }} • {{ image.width }}x{{ image.height }}</p>
-                    <div class="flex gap-1 sm:gap-2 flex-wrap">
+                    <div class="flex gap-1 flex-wrap">
                         <button onclick="editImage('{{ image.id | safe }}')"
-                            class="text-xs bg-blue-100 text-blue-700 px-1.5 py-1 sm:px-2 sm:py-1 rounded hover:bg-blue-200 transition-colors touch-target">Edit</button>
+                            class="text-xs text-gray-600 bg-gray-50 hover:text-blue-700 hover:bg-blue-50 px-2 py-1 rounded transition-colors">Edit</button>
                         {% if not image.is_primary %}
                         <button onclick="setPrimary('{{ image.id }}')"
-                            class="text-xs bg-green-100 text-green-700 px-1.5 py-1 sm:px-2 sm:py-1 rounded hover:bg-green-200 transition-colors touch-target">Primary</button>
+                            class="text-xs text-gray-600 bg-gray-50 hover:text-green-700 hover:bg-green-50 px-2 py-1 rounded transition-colors">Primary</button>
                         {% endif %}
                         <button onclick="deleteImage('{{ image.id }}')"
-                            class="text-xs bg-red-100 text-red-700 px-1.5 py-1 sm:px-2 sm:py-1 rounded hover:bg-red-200 transition-colors touch-target">Delete</button>
+                            class="text-xs text-gray-600 bg-gray-50 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors">Delete</button>
                     </div>
                 </div>
             </div>
@@ -137,14 +138,6 @@
                 </div>
                 <h3 class="text-lg font-semibold text-gray-900 mb-2">No images yet</h3>
                 <p class="text-gray-600 mb-6">Upload some images to get started with your gallery</p>
-                <!-- <button onclick="document.getElementById('uploadBtn').click()"
-                    class="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
-                    Upload First Image
-                </button> -->
             </div>
             {% endfor %}
         </div>
@@ -154,8 +147,8 @@
     <div class="bg-white rounded-lg sm:rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 mx-2 sm:mx-0">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-lg sm:text-xl font-bold text-gray-900">Edit Image</h2>
-            <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600 p-2 touch-target">
-                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button onclick="closeEditModal()" class="text-gray-500 bg-gray-50 hover:text-gray-700 hover:bg-gray-100 p-2 rounded transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
@@ -191,12 +184,11 @@
                     </p>
                 </div>
             </div>
-            <div class="flex flex-col sm:flex-row gap-3">
+            <div class="flex gap-3">
                 <button type="submit"
-                    class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors touch-target">Save
-                    Changes</button>
+                    class="px-4 py-2 text-sm text-blue-700 bg-blue-50 hover:text-blue-800 hover:bg-blue-100 rounded border border-blue-200 transition-colors">Save</button>
                 <button type="button" onclick="closeEditModal()"
-                    class="px-4 py-3 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors touch-target">Cancel</button>
+                    class="px-4 py-2 text-sm text-gray-600 bg-gray-50 hover:text-gray-800 hover:bg-gray-100 rounded border border-gray-200 transition-colors">Cancel</button>
             </div>
         </form>
     </div>
@@ -210,24 +202,24 @@
     <!-- Main viewer container -->
     <div class="relative w-full h-full flex items-center justify-center">
         <!-- Close button -->
-        <button onclick="closeLightbox()" 
-            class="absolute top-4 right-4 z-20 w-12 h-12 bg-black bg-opacity-50 hover:bg-opacity-70 text-white rounded-full flex items-center justify-center transition-all duration-200 touch-target">
+        <button onclick="Lightbox.close()" 
+            class="absolute top-4 right-4 z-20 w-10 h-10 text-white bg-black bg-opacity-20 hover:bg-opacity-40 rounded-full flex items-center justify-center transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
 
         <!-- Previous button -->
-        <button id="prevImageBtn" onclick="navigateImage(-1)" 
-            class="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 w-12 h-12 bg-black bg-opacity-50 hover:bg-opacity-70 text-white rounded-full flex items-center justify-center transition-all duration-200 touch-target">
+        <button id="prevImageBtn" onclick="Lightbox.navigateImage(-1)" 
+            class="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 w-10 h-10 text-white bg-black bg-opacity-20 hover:bg-opacity-40 rounded-full flex items-center justify-center transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
         </button>
 
         <!-- Next button -->
-        <button id="nextImageBtn" onclick="navigateImage(1)" 
-            class="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 w-12 h-12 bg-black bg-opacity-50 hover:bg-opacity-70 text-white rounded-full flex items-center justify-center transition-all duration-200 touch-target">
+        <button id="nextImageBtn" onclick="Lightbox.navigateImage(1)" 
+            class="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 w-10 h-10 text-white bg-black bg-opacity-20 hover:bg-opacity-40 rounded-full flex items-center justify-center transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
@@ -255,21 +247,21 @@
                     </div>
                     <div class="flex items-center gap-2">
                         <!-- Zoom controls -->
-                        <button onclick="zoomImage(-0.2)" 
-                            class="w-10 h-10 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-lg flex items-center justify-center transition-all duration-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button onclick="Lightbox.zoomImage(-0.2)" 
+                            class="w-8 h-8 text-white bg-white bg-opacity-10 hover:bg-opacity-20 rounded flex items-center justify-center transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
                             </svg>
                         </button>
-                        <span id="zoomLevel" class="text-sm font-medium min-w-[3rem] text-center">100%</span>
-                        <button onclick="zoomImage(0.2)" 
-                            class="w-10 h-10 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-lg flex items-center justify-center transition-all duration-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <span id="zoomLevel" class="text-sm text-white min-w-[3rem] text-center">100%</span>
+                        <button onclick="Lightbox.zoomImage(0.2)" 
+                            class="w-8 h-8 text-white bg-white bg-opacity-10 hover:bg-opacity-20 rounded flex items-center justify-center transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                             </svg>
                         </button>
-                        <button onclick="resetZoom()" 
-                            class="px-3 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-lg text-sm font-medium transition-all duration-200">
+                        <button onclick="Lightbox.resetZoom()" 
+                            class="px-3 py-1 text-white bg-white bg-opacity-10 hover:bg-opacity-20 text-sm rounded transition-all">
                             Reset
                         </button>
                     </div>
@@ -284,22 +276,25 @@
 
         <!-- Keyboard shortcuts help -->
         <div id="keyboardHelp" class="absolute top-4 left-4 bg-black bg-opacity-70 text-white p-3 rounded-lg text-xs opacity-0 transition-opacity duration-300">
-            <div class="font-semibold mb-2">Keyboard Shortcuts:</div>
+            <div class="font-semibold mb-2">Controls:</div>
             <div class="space-y-1">
-                <div><kbd class="bg-gray-600 px-1 rounded">←</kbd> <kbd class="bg-gray-600 px-1 rounded">→</kbd> Navigate</div>
-                <div><kbd class="bg-gray-600 px-1 rounded">+</kbd> <kbd class="bg-gray-600 px-1 rounded">-</kbd> Zoom</div>
+                <div><kbd class="bg-gray-600 px-1 rounded">←</kbd> <kbd class="bg-gray-600 px-1 rounded">→</kbd> <kbd class="bg-gray-600 px-1 rounded">Space</kbd> Navigate</div>
+                <div><kbd class="bg-gray-600 px-1 rounded">+</kbd> <kbd class="bg-gray-600 px-1 rounded">-</kbd> Zoom in/out</div>
                 <div><kbd class="bg-gray-600 px-1 rounded">0</kbd> Reset zoom</div>
-                <div><kbd class="bg-gray-600 px-1 rounded">Esc</kbd> Close</div>
-            </div>
-        </div>
+                <div><kbd class="bg-gray-600 px-1 rounded">F</kbd> Toggle fullscreen</div>
+                <div><kbd class="bg-gray-600 px-1 rounded">Esc</kbd> Close viewer</div>
+                <div class="text-gray-300 mt-1">Double-click to zoom</div>
+                <div class="text-gray-300">Drag to pan when zoomed</div>
+                <div class="text-gray-300">Mouse wheel to zoom</div>
+                <div class="text-gray-300">Pinch to zoom (touch)</div>
+                <div class="text-gray-300">Click outside to close</div>
+        
     </div>
 </div>
 <script>
-    // Make scene data available globally
     const SCENE_ID = '{{ scene.pk }}';
     const CSRF_TOKEN = '{{ csrf_token }}';
 
-    // Gallery functionality - inline to ensure it works
     document.addEventListener('DOMContentLoaded', function () {
         initializeGallery();
     });
@@ -363,26 +358,21 @@
             editForm.addEventListener('submit', handleEditFormSubmit);
         }
 
-        // Close modals when clicking outside
+        // Close edit modal when clicking outside
         window.addEventListener('click', function (e) {
             const editModal = document.getElementById('editModal');
-            const lightboxModal = document.getElementById('lightboxModal');
-
             if (e.target === editModal) closeEditModal();
-            if (e.target === lightboxModal) closeLightbox();
         });
 
-        // Close with Escape key
+        // Close edit modal with Escape key
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 if (!document.getElementById('editModal').classList.contains('hidden')) closeEditModal();
-                if (!document.getElementById('lightboxModal').classList.contains('hidden')) closeLightbox();
             }
         });
 
         // Improve touch handling for mobile
         if ('ontouchstart' in window) {
-            // Add touch-friendly classes
             document.body.classList.add('touch-device');
             
             // Improve button feedback on touch devices
@@ -565,314 +555,6 @@
             .catch(error => showAlert('error', 'Failed to delete image'));
     }
 
-    // Enhanced Image Viewer Variables
-    let currentImageIndex = 0;
-    let imageList = [];
-    let currentZoom = 1;
-    let isDragging = false;
-    let dragStart = { x: 0, y: 0 };
-    let imagePosition = { x: 0, y: 0 };
-
-    function openLightbox(imageUrl, caption, imageId) {
-        console.log('Open lightbox:', imageUrl);
-        
-        // Build image list from current gallery
-        buildImageList();
-        
-        // Find current image index
-        if (imageId) {
-            const index = imageList.findIndex(img => img.id == imageId);
-            if (index !== -1) currentImageIndex = index;
-        }
-        
-        // Show modal
-        const modal = document.getElementById('lightboxModal');
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        
-        // Load current image
-        loadCurrentImage();
-        
-        // Initialize viewer
-        initializeImageViewer();
-        
-        // Show keyboard help briefly
-        showKeyboardHelp();
-    }
-
-    function buildImageList() {
-        imageList = [];
-        const imageCards = document.querySelectorAll('#imageGrid [data-image-id]');
-        
-        imageCards.forEach((card, index) => {
-            const img = card.querySelector('img');
-            const imageId = card.getAttribute('data-image-id');
-            
-            if (img && imageId) {
-                // Extract image URLs (assuming template structure)
-                const mediumUrl = img.src;
-                const largeUrl = mediumUrl.replace('/medium/', '/large/');
-                const caption = img.alt || card.querySelector('h3')?.textContent || 'Untitled';
-                
-                imageList.push({
-                    id: imageId,
-                    mediumUrl: mediumUrl,
-                    largeUrl: largeUrl,
-                    caption: caption,
-                    index: index
-                });
-            }
-        });
-    }
-
-    function loadCurrentImage() {
-        if (imageList.length === 0) return;
-        
-        const currentImage = imageList[currentImageIndex];
-        const modalImage = document.getElementById('lightboxImage');
-        const loader = document.getElementById('imageLoader');
-        
-        // Show loader
-        loader.classList.remove('hidden');
-        
-        // Reset zoom and position
-        resetZoom();
-        
-        // Load image
-        const img = new Image();
-        img.onload = function() {
-            modalImage.src = this.src;
-            updateImageInfo(currentImage);
-            loader.classList.add('hidden');
-        };
-        
-        img.onerror = function() {
-            // Fallback to medium quality
-            modalImage.src = currentImage.mediumUrl;
-            updateImageInfo(currentImage);
-            loader.classList.add('hidden');
-        };
-        
-        img.src = currentImage.largeUrl;
-    }
-
-    function updateImageInfo(image) {
-        document.getElementById('lightboxCaption').textContent = image.caption;
-        document.getElementById('imageCounter').textContent = `${currentImageIndex + 1} / ${imageList.length}`;
-        
-        // Update navigation buttons
-        const prevBtn = document.getElementById('prevImageBtn');
-        const nextBtn = document.getElementById('nextImageBtn');
-        
-        prevBtn.style.opacity = currentImageIndex > 0 ? '1' : '0.5';
-        nextBtn.style.opacity = currentImageIndex < imageList.length - 1 ? '1' : '0.5';
-        
-        prevBtn.disabled = currentImageIndex === 0;
-        nextBtn.disabled = currentImageIndex === imageList.length - 1;
-    }
-
-    function navigateImage(direction) {
-        const newIndex = currentImageIndex + direction;
-        
-        if (newIndex >= 0 && newIndex < imageList.length) {
-            currentImageIndex = newIndex;
-            loadCurrentImage();
-        }
-    }
-
-    function zoomImage(delta) {
-        const newZoom = Math.max(0.5, Math.min(3, currentZoom + delta));
-        if (newZoom !== currentZoom) {
-            currentZoom = newZoom;
-            updateImageTransform();
-            updateZoomLevel();
-        }
-    }
-
-    function resetZoom() {
-        currentZoom = 1;
-        imagePosition = { x: 0, y: 0 };
-        updateImageTransform();
-        updateZoomLevel();
-    }
-
-    function updateImageTransform() {
-        const image = document.getElementById('lightboxImage');
-        image.style.transform = `scale(${currentZoom}) translate(${imagePosition.x}px, ${imagePosition.y}px)`;
-        
-        // Update cursor
-        const container = document.getElementById('imageContainer');
-        container.style.cursor = currentZoom > 1 ? 'grab' : 'grab';
-    }
-
-    function updateZoomLevel() {
-        document.getElementById('zoomLevel').textContent = Math.round(currentZoom * 100) + '%';
-    }
-
-    function initializeImageViewer() {
-        const container = document.getElementById('imageContainer');
-        const image = document.getElementById('lightboxImage');
-        
-        // Mouse wheel zoom
-        container.addEventListener('wheel', function(e) {
-            e.preventDefault();
-            const delta = e.deltaY > 0 ? -0.1 : 0.1;
-            zoomImage(delta);
-        }, { passive: false });
-        
-        // Double click to zoom
-        container.addEventListener('dblclick', function(e) {
-            if (currentZoom === 1) {
-                zoomImage(1); // Zoom to 200%
-            } else {
-                resetZoom();
-            }
-        });
-        
-        // Drag to pan when zoomed
-        container.addEventListener('mousedown', startDrag);
-        container.addEventListener('mousemove', drag);
-        container.addEventListener('mouseup', endDrag);
-        container.addEventListener('mouseleave', endDrag);
-        
-        // Touch events for mobile
-        container.addEventListener('touchstart', handleTouchStart, { passive: false });
-        container.addEventListener('touchmove', handleTouchMove, { passive: false });
-        container.addEventListener('touchend', handleTouchEnd, { passive: false });
-        
-        // Keyboard navigation
-        document.addEventListener('keydown', handleKeydown);
-    }
-
-    function startDrag(e) {
-        if (currentZoom <= 1) return;
-        isDragging = true;
-        dragStart = { x: e.clientX - imagePosition.x, y: e.clientY - imagePosition.y };
-        document.getElementById('imageContainer').style.cursor = 'grabbing';
-    }
-
-    function drag(e) {
-        if (!isDragging || currentZoom <= 1) return;
-        e.preventDefault();
-        imagePosition = {
-            x: e.clientX - dragStart.x,
-            y: e.clientY - dragStart.y
-        };
-        updateImageTransform();
-    }
-
-    function endDrag() {
-        isDragging = false;
-        document.getElementById('imageContainer').style.cursor = currentZoom > 1 ? 'grab' : 'grab';
-    }
-
-    // Touch handling for mobile
-    let touchStart = null;
-    let lastTouchDistance = 0;
-
-    function handleTouchStart(e) {
-        if (e.touches.length === 1) {
-            touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-        } else if (e.touches.length === 2) {
-            // Pinch zoom start
-            lastTouchDistance = getTouchDistance(e.touches);
-        }
-    }
-
-    function handleTouchMove(e) {
-        e.preventDefault();
-        
-        if (e.touches.length === 1 && touchStart && currentZoom > 1) {
-            // Pan
-            const touch = e.touches[0];
-            imagePosition = {
-                x: touch.clientX - touchStart.x,
-                y: touch.clientY - touchStart.y
-            };
-            updateImageTransform();
-        } else if (e.touches.length === 2) {
-            // Pinch zoom
-            const distance = getTouchDistance(e.touches);
-            const scale = distance / lastTouchDistance;
-            zoomImage((scale - 1) * 0.5);
-            lastTouchDistance = distance;
-        }
-    }
-
-    function handleTouchEnd(e) {
-        if (e.touches.length === 0) {
-            touchStart = null;
-        }
-    }
-
-    function getTouchDistance(touches) {
-        const dx = touches[0].clientX - touches[1].clientX;
-        const dy = touches[0].clientY - touches[1].clientY;
-        return Math.sqrt(dx * dx + dy * dy);
-    }
-
-    function handleKeydown(e) {
-        if (!document.getElementById('lightboxModal').classList.contains('hidden')) {
-            switch(e.key) {
-                case 'Escape':
-                    closeLightbox();
-                    break;
-                case 'ArrowLeft':
-                    navigateImage(-1);
-                    break;
-                case 'ArrowRight':
-                    navigateImage(1);
-                    break;
-                case '+':
-                case '=':
-                    zoomImage(0.2);
-                    break;
-                case '-':
-                    zoomImage(-0.2);
-                    break;
-                case '0':
-                    resetZoom();
-                    break;
-            }
-        }
-    }
-
-    function closeLightbox() {
-        const modal = document.getElementById('lightboxModal');
-        if (modal) {
-            modal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
-            
-            // Reset viewer state
-            currentZoom = 1;
-            imagePosition = { x: 0, y: 0 };
-            currentImageIndex = 0;
-            
-            // Remove event listeners
-            document.removeEventListener('keydown', handleKeydown);
-        }
-    }
-
-    function showKeyboardHelp() {
-        const help = document.getElementById('keyboardHelp');
-        help.style.opacity = '1';
-        
-        setTimeout(() => {
-            help.style.opacity = '0';
-        }, 3000);
-        
-        // Show on mouse movement
-        document.addEventListener('mousemove', function showOnMove() {
-            help.style.opacity = '1';
-            setTimeout(() => {
-                help.style.opacity = '0';
-            }, 2000);
-            
-            // Remove this listener after first use
-            document.removeEventListener('mousemove', showOnMove);
-        });
-    }
-
     function showAlert(type, message) {
         const alertElement = document.getElementById(type === 'success' ? 'alertSuccess' : 'alertError');
         if (alertElement) {
@@ -883,21 +565,6 @@
         }
     }
 
-    // Test function to verify everything is working
-    function testGallery() {
-        console.log('Test function called');
-        alert('Test function works!');
-        const uploadBtn = document.getElementById('uploadBtn');
-        console.log('Upload button:', uploadBtn);
-        if (uploadBtn) {
-            uploadBtn.style.backgroundColor = 'red';
-            alert('Upload button found and colored red!');
-        } else {
-            alert('Upload button NOT found!');
-        }
-    }
-
-    // Handle viewport changes for responsive behavior
     function handleViewportChanges() {
         function updateViewport() {
             const vh = window.innerHeight * 0.01;
@@ -941,8 +608,6 @@
             setTimeout(updateViewport, 100);
         });
     }
-
-    // Make test function available globally
-    window.testGallery = testGallery;
 </script>
+<script src="{% static 'js/lightBox.js' %}"></script>
 {% endblock %}

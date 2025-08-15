@@ -50,9 +50,12 @@
 
 /* Enhanced animations */
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.5;
   }
@@ -63,6 +66,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -74,6 +78,7 @@
     opacity: 0;
     transform: translateX(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -158,7 +163,7 @@
   .no-print {
     display: none !important;
   }
-  
+
   .print-break {
     page-break-before: always;
   }
@@ -166,315 +171,316 @@
 
 /* Enhanced Mobile-first responsive utilities */
 @media (max-width: 640px) {
+
   /* Display utilities */
   .mobile-hidden {
     display: none !important;
   }
-  
+
   .mobile-block {
     display: block !important;
   }
-  
+
   .mobile-flex {
     display: flex !important;
   }
-  
+
   .mobile-grid {
     display: grid !important;
   }
-  
+
   .mobile-inline-flex {
     display: inline-flex !important;
   }
-  
+
   /* Typography utilities */
   .mobile-text-xs {
     font-size: 0.75rem !important;
     line-height: 1rem !important;
   }
-  
+
   .mobile-text-sm {
     font-size: 0.875rem !important;
     line-height: 1.25rem !important;
   }
-  
+
   .mobile-text-base {
     font-size: 1rem !important;
     line-height: 1.5rem !important;
   }
-  
+
   .mobile-text-lg {
     font-size: 1.125rem !important;
     line-height: 1.75rem !important;
   }
-  
+
   .mobile-text-xl {
     font-size: 1.25rem !important;
     line-height: 1.75rem !important;
   }
-  
+
   .mobile-text-2xl {
     font-size: 1.5rem !important;
     line-height: 2rem !important;
   }
-  
+
   .mobile-text-3xl {
     font-size: 1.875rem !important;
     line-height: 2.25rem !important;
   }
-  
+
   /* Spacing utilities */
   .mobile-p-1 {
     padding: 0.25rem !important;
   }
-  
+
   .mobile-p-2 {
     padding: 0.5rem !important;
   }
-  
+
   .mobile-p-3 {
     padding: 0.75rem !important;
   }
-  
+
   .mobile-p-4 {
     padding: 1rem !important;
   }
-  
+
   .mobile-p-5 {
     padding: 1.25rem !important;
   }
-  
+
   .mobile-p-6 {
     padding: 1.5rem !important;
   }
-  
+
   .mobile-px-2 {
     padding-left: 0.5rem !important;
     padding-right: 0.5rem !important;
   }
-  
+
   .mobile-px-3 {
     padding-left: 0.75rem !important;
     padding-right: 0.75rem !important;
   }
-  
+
   .mobile-px-4 {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
   }
-  
+
   .mobile-px-5 {
     padding-left: 1.25rem !important;
     padding-right: 1.25rem !important;
   }
-  
+
   .mobile-px-6 {
     padding-left: 1.5rem !important;
     padding-right: 1.5rem !important;
   }
-  
+
   .mobile-py-1 {
     padding-top: 0.25rem !important;
     padding-bottom: 0.25rem !important;
   }
-  
+
   .mobile-py-2 {
     padding-top: 0.5rem !important;
     padding-bottom: 0.5rem !important;
   }
-  
+
   .mobile-py-3 {
     padding-top: 0.75rem !important;
     padding-bottom: 0.75rem !important;
   }
-  
+
   .mobile-py-4 {
     padding-top: 1rem !important;
     padding-bottom: 1rem !important;
   }
-  
+
   .mobile-py-5 {
     padding-top: 1.25rem !important;
     padding-bottom: 1.25rem !important;
   }
-  
+
   /* Margin utilities */
   .mobile-m-2 {
     margin: 0.5rem !important;
   }
-  
+
   .mobile-m-3 {
     margin: 0.75rem !important;
   }
-  
+
   .mobile-m-4 {
     margin: 1rem !important;
   }
-  
+
   .mobile-mb-2 {
     margin-bottom: 0.5rem !important;
   }
-  
+
   .mobile-mb-3 {
     margin-bottom: 0.75rem !important;
   }
-  
+
   .mobile-mb-4 {
     margin-bottom: 1rem !important;
   }
-  
+
   .mobile-mb-5 {
     margin-bottom: 1.25rem !important;
   }
-  
+
   .mobile-mb-6 {
     margin-bottom: 1.5rem !important;
   }
-  
+
   .mobile-mb-8 {
     margin-bottom: 2rem !important;
   }
-  
+
   .mobile-mt-2 {
     margin-top: 0.5rem !important;
   }
-  
+
   .mobile-mt-3 {
     margin-top: 0.75rem !important;
   }
-  
+
   .mobile-mt-4 {
     margin-top: 1rem !important;
   }
-  
+
   .mobile-mx-auto {
     margin-left: auto !important;
     margin-right: auto !important;
   }
-  
+
   /* Gap utilities */
   .mobile-gap-1 {
     gap: 0.25rem !important;
   }
-  
+
   .mobile-gap-2 {
     gap: 0.5rem !important;
   }
-  
+
   .mobile-gap-3 {
     gap: 0.75rem !important;
   }
-  
+
   .mobile-gap-4 {
     gap: 1rem !important;
   }
-  
+
   .mobile-gap-5 {
     gap: 1.25rem !important;
   }
-  
+
   .mobile-gap-6 {
     gap: 1.5rem !important;
   }
-  
+
   /* Flexbox utilities */
   .mobile-flex-col {
     flex-direction: column !important;
   }
-  
+
   .mobile-flex-row {
     flex-direction: row !important;
   }
-  
+
   .mobile-flex-wrap {
     flex-wrap: wrap !important;
   }
-  
+
   .mobile-items-center {
     align-items: center !important;
   }
-  
+
   .mobile-items-start {
     align-items: flex-start !important;
   }
-  
+
   .mobile-items-stretch {
     align-items: stretch !important;
   }
-  
+
   .mobile-justify-center {
     justify-content: center !important;
   }
-  
+
   .mobile-justify-between {
     justify-content: space-between !important;
   }
-  
+
   .mobile-justify-start {
     justify-content: flex-start !important;
   }
-  
+
   /* Width utilities */
   .mobile-w-full {
     width: 100% !important;
   }
-  
+
   .mobile-w-auto {
     width: auto !important;
   }
-  
+
   .mobile-w-fit {
     width: fit-content !important;
   }
-  
+
   /* Grid utilities */
   .mobile-grid-cols-1 {
     grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
   }
-  
+
   .mobile-grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
-  
+
   /* Position utilities */
   .mobile-relative {
     position: relative !important;
   }
-  
+
   .mobile-absolute {
     position: absolute !important;
   }
-  
+
   .mobile-fixed {
     position: fixed !important;
   }
-  
+
   /* Text alignment */
   .mobile-text-center {
     text-align: center !important;
   }
-  
+
   .mobile-text-left {
     text-align: left !important;
   }
-  
+
   .mobile-text-right {
     text-align: right !important;
   }
-  
+
   /* Font weight */
   .mobile-font-normal {
     font-weight: 400 !important;
   }
-  
+
   .mobile-font-medium {
     font-weight: 500 !important;
   }
-  
+
   .mobile-font-semibold {
     font-weight: 600 !important;
   }
-  
+
   .mobile-font-bold {
     font-weight: 700 !important;
   }
@@ -485,15 +491,15 @@
   .tablet-hidden {
     display: none !important;
   }
-  
+
   .tablet-block {
     display: block !important;
   }
-  
+
   .tablet-flex {
     display: flex !important;
   }
-  
+
   .tablet-grid {
     display: grid !important;
   }
@@ -504,15 +510,15 @@
   .desktop-hidden {
     display: none !important;
   }
-  
+
   .desktop-block {
     display: block !important;
   }
-  
+
   .desktop-flex {
     display: flex !important;
   }
-  
+
   .desktop-grid {
     display: grid !important;
   }
@@ -583,6 +589,7 @@
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -604,6 +611,7 @@
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
@@ -614,15 +622,15 @@
   .analytics-card {
     margin-bottom: 1rem;
   }
-  
+
   .chart-container {
     height: 250px;
   }
-  
+
   .stat-number {
     font-size: 1.5rem;
   }
-  
+
   .data-table {
     max-height: 150px;
   }
@@ -632,15 +640,15 @@
   .chart-container {
     height: 200px;
   }
-  
+
   .stat-number {
     font-size: 1.25rem;
   }
-  
+
   .data-table {
     max-height: 120px;
   }
-  
+
   .analytics-card {
     padding: 1rem !important;
   }
@@ -653,11 +661,11 @@
     box-shadow: none;
     border: 1px solid #000;
   }
-  
+
   .chart-container {
     height: 200px;
   }
-  
+
   .no-print {
     display: none !important;
   }
@@ -677,12 +685,12 @@
     visibility: hidden;
     transition: all 0.3s ease-in-out;
   }
-  
+
   .mobile-nav-overlay.active {
     opacity: 1;
     visibility: visible;
   }
-  
+
   .mobile-nav-menu {
     position: fixed;
     top: 0;
@@ -697,11 +705,11 @@
     box-shadow: -10px 0 25px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
   }
-  
+
   .mobile-nav-menu.open {
     transform: translateX(0);
   }
-  
+
   .mobile-nav-header {
     padding: 1rem 1.5rem;
     border-bottom: 1px solid #e5e7eb;
@@ -710,7 +718,7 @@
     align-items: center;
     background: #f9fafb;
   }
-  
+
   .mobile-nav-close {
     padding: 0.5rem;
     border-radius: 0.5rem;
@@ -720,16 +728,16 @@
     cursor: pointer;
     transition: all 0.2s ease;
   }
-  
+
   .mobile-nav-close:hover {
     background: #e5e7eb;
     color: #374151;
   }
-  
+
   .mobile-nav-content {
     padding: 1rem 0;
   }
-  
+
   .mobile-nav-item {
     display: flex;
     align-items: center;
@@ -739,18 +747,18 @@
     transition: all 0.2s ease;
     border-left: 3px solid transparent;
   }
-  
+
   .mobile-nav-item:hover {
     background: #f3f4f6;
     border-left-color: #6366f1;
     color: #6366f1;
   }
-  
+
   .mobile-nav-item svg {
     margin-right: 0.75rem;
     flex-shrink: 0;
   }
-  
+
   .mobile-nav-divider {
     height: 1px;
     background: #e5e7eb;
@@ -764,11 +772,11 @@
     grid-template-columns: 1fr !important;
     gap: 1rem !important;
   }
-  
+
   .card-padding-mobile {
     padding: 1rem !important;
   }
-  
+
   .card-text-mobile {
     font-size: 0.875rem !important;
     line-height: 1.25rem !important;
@@ -781,8 +789,8 @@
     flex-direction: column !important;
     gap: 0.5rem !important;
   }
-  
-  .button-group-mobile > * {
+
+  .button-group-mobile>* {
     width: 100% !important;
   }
 }
@@ -793,7 +801,7 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  
+
   .table-responsive table {
     min-width: 600px;
   }
@@ -804,11 +812,11 @@
   .form-grid-mobile {
     grid-template-columns: 1fr !important;
   }
-  
+
   .form-section-mobile {
     margin-bottom: 1.5rem !important;
   }
-  
+
   .form-label-mobile {
     font-size: 0.875rem !important;
     margin-bottom: 0.5rem !important;
@@ -821,7 +829,7 @@
     outline: 2px solid #6366f1 !important;
     outline-offset: 2px !important;
   }
-  
+
   .sr-only-mobile {
     position: absolute !important;
     width: 1px !important;
@@ -841,62 +849,62 @@
     margin-bottom: 1rem !important;
     border-radius: 1rem !important;
   }
-  
+
   .scene-card-header {
     padding: 1rem !important;
     padding-bottom: 0.75rem !important;
   }
-  
+
   .scene-card-title {
     font-size: 1rem !important;
     line-height: 1.5rem !important;
     margin-bottom: 0.5rem !important;
   }
-  
+
   .scene-card-meta {
     font-size: 0.75rem !important;
     margin-bottom: 0.75rem !important;
   }
-  
+
   .scene-card-characters {
     padding: 0 1rem !important;
     margin-bottom: 0.75rem !important;
   }
-  
+
   .scene-card-character {
     padding: 0.5rem !important;
     border-radius: 0.5rem !important;
   }
-  
+
   .scene-card-character-title {
     font-size: 0.75rem !important;
     margin-bottom: 0.25rem !important;
   }
-  
+
   .scene-card-character-details {
     font-size: 0.6875rem !important;
   }
-  
+
   .scene-card-emotion {
     padding: 0 1rem !important;
     margin-bottom: 0.75rem !important;
   }
-  
+
   .scene-card-actions {
     padding: 0 1rem 1rem !important;
   }
-  
+
   .scene-card-button-group {
     gap: 0.5rem !important;
   }
-  
+
   .scene-card-icon-button {
     width: 2.5rem !important;
     height: 2.5rem !important;
     min-width: 2.5rem !important;
     min-height: 2.5rem !important;
   }
-  
+
   .scene-card-main-button {
     padding: 0.75rem 1rem !important;
     font-size: 0.875rem !important;
@@ -910,31 +918,31 @@
     margin-bottom: 1.5rem !important;
     padding: 1rem !important;
   }
-  
+
   .hero-title {
     font-size: 1.5rem !important;
     line-height: 2rem !important;
     margin-bottom: 0.75rem !important;
   }
-  
+
   .hero-description {
     font-size: 0.875rem !important;
     line-height: 1.25rem !important;
     margin-bottom: 1.5rem !important;
     padding: 0 0.5rem !important;
   }
-  
+
   .hero-controls {
     gap: 0.75rem !important;
   }
-  
+
   .hero-button {
     padding: 0.75rem 1rem !important;
     font-size: 0.875rem !important;
     border-radius: 0.75rem !important;
     min-height: 2.75rem !important;
   }
-  
+
   .hero-status-badge {
     padding: 0.5rem 0.75rem !important;
     font-size: 0.75rem !important;
@@ -949,31 +957,31 @@
     padding: 1rem !important;
     border-radius: 0.75rem !important;
   }
-  
+
   .stats-container {
     gap: 1rem !important;
   }
-  
+
   .stats-group {
     gap: 1rem !important;
     justify-content: space-around !important;
   }
-  
+
   .stat-item {
     text-align: center !important;
     min-width: 0 !important;
   }
-  
+
   .stat-number {
     font-size: 1.25rem !important;
     line-height: 1.75rem !important;
   }
-  
+
   .stat-label {
     font-size: 0.6875rem !important;
     margin-top: 0.25rem !important;
   }
-  
+
   .stats-info {
     font-size: 0.75rem !important;
     text-align: center !important;
@@ -986,30 +994,30 @@
   .pagination-container {
     padding: 1rem 0 !important;
   }
-  
+
   .pagination-wrapper {
     flex-direction: column !important;
     gap: 1rem !important;
   }
-  
+
   .pagination-info {
     text-align: center !important;
     order: 2 !important;
     font-size: 0.75rem !important;
   }
-  
+
   .pagination-nav {
     order: 1 !important;
     justify-content: center !important;
   }
-  
+
   .pagination-button {
     padding: 0.5rem 0.75rem !important;
     font-size: 0.75rem !important;
     min-width: 2rem !important;
     min-height: 2rem !important;
   }
-  
+
   .pagination-ellipsis {
     padding: 0.5rem 0.25rem !important;
   }
@@ -1020,28 +1028,28 @@
   .form-container {
     padding: 1rem !important;
   }
-  
+
   .form-section {
     margin-bottom: 1.5rem !important;
   }
-  
+
   .form-group {
     margin-bottom: 1rem !important;
   }
-  
+
   .form-label {
     font-size: 0.875rem !important;
     margin-bottom: 0.5rem !important;
     font-weight: 500 !important;
   }
-  
+
   .form-input {
     padding: 0.75rem !important;
     font-size: 1rem !important;
     border-radius: 0.5rem !important;
     min-height: 2.75rem !important;
   }
-  
+
   .form-textarea {
     padding: 0.75rem !important;
     font-size: 1rem !important;
@@ -1049,20 +1057,20 @@
     min-height: 6rem !important;
     resize: vertical !important;
   }
-  
+
   .form-select {
     padding: 0.75rem !important;
     font-size: 1rem !important;
     border-radius: 0.5rem !important;
     min-height: 2.75rem !important;
   }
-  
+
   .form-button-group {
     flex-direction: column !important;
     gap: 0.75rem !important;
     margin-top: 1.5rem !important;
   }
-  
+
   .form-button {
     width: 100% !important;
     padding: 0.875rem 1rem !important;
@@ -1077,7 +1085,7 @@
   .modal-overlay {
     padding: 1rem !important;
   }
-  
+
   .modal-container {
     width: 100% !important;
     max-width: none !important;
@@ -1086,28 +1094,28 @@
     max-height: calc(100vh - 2rem) !important;
     overflow-y: auto !important;
   }
-  
+
   .modal-header {
     padding: 1rem 1.5rem !important;
     border-bottom: 1px solid #e5e7eb !important;
   }
-  
+
   .modal-title {
     font-size: 1.125rem !important;
     line-height: 1.75rem !important;
   }
-  
+
   .modal-content {
     padding: 1.5rem !important;
   }
-  
+
   .modal-footer {
     padding: 1rem 1.5rem !important;
     border-top: 1px solid #e5e7eb !important;
     flex-direction: column !important;
     gap: 0.75rem !important;
   }
-  
+
   .modal-button {
     width: 100% !important;
     padding: 0.75rem 1rem !important;

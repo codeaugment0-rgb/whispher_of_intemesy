@@ -44,6 +44,7 @@ class Scene(models.Model):
         clean_title = re.sub(r'[-\s]+', '-', clean_title)
         return f"scene_images/{clean_title}_{self.id}"
     
+    
     @property
     def images(self):
         """Get all images for this scene"""
