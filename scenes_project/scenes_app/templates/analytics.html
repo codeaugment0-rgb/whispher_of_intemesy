@@ -387,12 +387,23 @@
   </div>
 </div>
 
+<!-- {% if cache_info %}
+<div class="cache-info" style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px;">
+    <h4>🚀 Performance Info:</h4>
+    <p><strong>Data Source:</strong> {{ cache_info.source|title }}</p>
+    <p><strong>Cached:</strong> {{ cache_info.cached|yesno:"Yes,No" }}</p>
+    {% if cache_info.generation_time %}
+        <p><strong>Generation Time:</strong> {{ cache_info.generation_time|floatformat:2 }}s</p>
+    {% endif %}
+    <p><strong>Cache Key:</strong> <code>{{ cache_info.cache_key }}</code></p>
+</div>
+{% endif %} -->
+
 <!-- Chart.js Library -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <script src="{% static 'js/analytics-filters.js' %}"></script>
 <script src="{% static 'js/analytics-comparison.js' %}"></script>
 <script src="{% static 'js/analytics.js' %}"></script>
-
 
 {% endblock %}

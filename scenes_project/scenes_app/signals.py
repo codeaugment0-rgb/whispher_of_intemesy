@@ -6,8 +6,28 @@ from collections import Counter
 import logging
 import os
 from django.conf import settings
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+from .models import Scene, FavoriteScene
+from .utils.cached_analytics import cached_analytics
 
 logger = logging.getLogger(__name__)
+
+
+@receiver(post_save, sender=Scene)
+@receiver(post_delete, sender=Scene)
+def invalidate_analytics_cache_on_scene_change(sender, **kwargs):
+    """Invalidate analytics cache when scenes are added/updated/deleted"""
+    cached_analytics.invalidate_cache('all')
+    print("🗑️ Analytics cache invalidated due to scene change")
+
+
+@receiver(post_save, sender=FavoriteScene)
+@receiver(post_delete, sender=FavoriteScene)
+def invalidate_analytics_cache_on_favorite_change(sender, **kwargs):
+    """Invalidate analytics cache when favorites change"""
+    cached_analytics.invalidate_cache('all')
+    print("🗑️ Analytics cache invalidated due to favorite change")
 
 
 @receiver(post_save, sender=Scene)

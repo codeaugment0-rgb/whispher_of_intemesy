@@ -181,24 +181,40 @@ class AnalyticsDashboard {
   }
 
   updateUI(data) {
-    // Update statistics
-    this.updateElement('total-scenes', data.stats.total_scenes);
-    this.updateElement('total-favorites', data.stats.total_favorites);
-    this.updateElement('avg-effeminate-age', data.stats.avg_effeminate_age);
-    this.updateElement('avg-masculine-age', data.stats.avg_masculine_age);
+    // Update statistics with null checks
+    if (data.stats) {
+      this.updateElement('total-scenes', data.stats.total_scenes || 0);
+      this.updateElement('total-favorites', data.stats.total_favorites || 0);
+      this.updateElement('avg-effeminate-age', data.stats.avg_effeminate_age || 0);
+      this.updateElement('avg-masculine-age', data.stats.avg_masculine_age || 0);
+    } else {
+      // Fallback to legacy structure
+      this.updateElement('total-scenes', data.total_scenes || 0);
+      this.updateElement('total-favorites', data.total_favorites || 0);
+      this.updateElement('avg-effeminate-age', data.avg_effeminate_age || 0);
+      this.updateElement('avg-masculine-age', data.avg_masculine_age || 0);
+    }
 
     // Update most favorited scenes
-    this.updateMostFavorited(data.most_favorited);
+    this.updateMostFavorited(data.most_favorited || []);
 
-    // Update insights
-    if (data.charts.countries.labels.length > 0) {
+    // Update insights with null checks
+    if (data.charts && data.charts.countries && data.charts.countries.labels && data.charts.countries.labels.length > 0) {
       this.updateElement('popular-country', data.charts.countries.labels[0]);
+    } else if (data.country_data && data.country_data.length > 0) {
+      this.updateElement('popular-country', data.country_data[0].country);
     }
-    if (data.charts.emotions.labels.length > 0) {
+    
+    if (data.charts && data.charts.emotions && data.charts.emotions.labels && data.charts.emotions.labels.length > 0) {
       this.updateElement('popular-emotion', data.charts.emotions.labels[0]);
+    } else if (data.emotion_data && data.emotion_data.length > 0) {
+      this.updateElement('popular-emotion', data.emotion_data[0].emotion);
     }
-    if (data.charts.settings.labels.length > 0) {
+    
+    if (data.charts && data.charts.settings && data.charts.settings.labels && data.charts.settings.labels.length > 0) {
       this.updateElement('popular-setting', data.charts.settings.labels[0]);
+    } else if (data.setting_data && data.setting_data.length > 0) {
+      this.updateElement('popular-setting', data.setting_data[0].setting);
     }
   }
 
@@ -212,6 +228,11 @@ class AnalyticsDashboard {
   updateMostFavorited(scenes) {
     const container = document.getElementById('most-favorited-scenes');
     if (!container) return;
+
+    // Ensure scenes is an array
+    if (!Array.isArray(scenes)) {
+      scenes = [];
+    }
 
     if (scenes.length === 0) {
       container.innerHTML = `
@@ -274,158 +295,186 @@ class AnalyticsDashboard {
       return;
     }
 
-    // Create country chart
-    if (data.charts.countries && data.charts.countries.labels) {
-      if (data.charts.countries.labels.length > 0) {
-        console.log('Creating countries chart with:', data.charts.countries);
-        this.charts.countries = this.createChart('countries-chart', {
-          type: 'doughnut',
-          data: {
-            labels: data.charts.countries.labels,
-            datasets: [{
-              data: data.charts.countries.data,
-              backgroundColor: this.colorSchemes.primary.slice(0, data.charts.countries.labels.length),
-              borderWidth: 2,
-              borderColor: '#ffffff'
-            }]
-          },
-          options: this.getChartOptions('doughnut')
-        });
-      } else {
-        // Create empty chart with "No data" message
-        console.log('Creating empty countries chart - no data after filtering');
-        this.charts.countries = this.createChart('countries-chart', {
-          type: 'doughnut',
-          data: {
-            labels: ['No Data'],
-            datasets: [{
-              data: [1],
-              backgroundColor: ['#e5e7eb'],
-              borderWidth: 2,
-              borderColor: '#ffffff'
-            }]
-          },
-          options: this.getChartOptions('doughnut')
-        });
-      }
+    // Create country chart with fallback support
+    let countryLabels = [];
+    let countryData = [];
+    
+    if (data.charts && data.charts.countries && data.charts.countries.labels) {
+      countryLabels = data.charts.countries.labels;
+      countryData = data.charts.countries.data;
+    } else if (data.country_data && Array.isArray(data.country_data)) {
+      countryLabels = data.country_data.map(item => item.country);
+      countryData = data.country_data.map(item => item.count);
+    }
+    
+    if (countryLabels.length > 0) {
+      console.log('Creating countries chart with labels:', countryLabels);
+      this.charts.countries = this.createChart('countries-chart', {
+        type: 'doughnut',
+        data: {
+          labels: countryLabels,
+          datasets: [{
+            data: countryData,
+            backgroundColor: this.colorSchemes.primary.slice(0, countryLabels.length),
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: this.getChartOptions('doughnut')
+      });
     } else {
-      console.warn('No countries data structure available');
+      // Create empty chart with "No data" message
+      console.log('Creating empty countries chart - no data available');
+      this.charts.countries = this.createChart('countries-chart', {
+        type: 'doughnut',
+        data: {
+          labels: ['No Data'],
+          datasets: [{
+            data: [1],
+            backgroundColor: ['#e5e7eb'],
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: this.getChartOptions('doughnut')
+      });
     }
 
-    // Create settings chart
-    if (data.charts.settings && data.charts.settings.labels) {
-      if (data.charts.settings.labels.length > 0) {
-        console.log('Creating settings chart with:', data.charts.settings);
-        this.charts.settings = this.createChart('settings-chart', {
-          type: 'doughnut',
-          data: {
-            labels: data.charts.settings.labels,
-            datasets: [{
-              data: data.charts.settings.data,
-              backgroundColor: this.colorSchemes.primary.slice(0, data.charts.settings.labels.length),
-              borderWidth: 2,
-              borderColor: '#ffffff'
-            }]
-          },
-          options: this.getChartOptions('doughnut')
-        });
-      } else {
-        // Create empty chart with "No data" message
-        console.log('Creating empty settings chart - no data after filtering');
-        this.charts.settings = this.createChart('settings-chart', {
-          type: 'doughnut',
-          data: {
-            labels: ['No Data'],
-            datasets: [{
-              data: [1],
-              backgroundColor: ['#e5e7eb'],
-              borderWidth: 2,
-              borderColor: '#ffffff'
-            }]
-          },
-          options: this.getChartOptions('doughnut')
-        });
-      }
+    // Create settings chart with fallback support
+    let settingLabels = [];
+    let settingData = [];
+    
+    if (data.charts && data.charts.settings && data.charts.settings.labels) {
+      settingLabels = data.charts.settings.labels;
+      settingData = data.charts.settings.data;
+    } else if (data.setting_data && Array.isArray(data.setting_data)) {
+      settingLabels = data.setting_data.map(item => item.setting);
+      settingData = data.setting_data.map(item => item.count);
+    }
+    
+    if (settingLabels.length > 0) {
+      console.log('Creating settings chart with labels:', settingLabels);
+      this.charts.settings = this.createChart('settings-chart', {
+        type: 'doughnut',
+        data: {
+          labels: settingLabels,
+          datasets: [{
+            data: settingData,
+            backgroundColor: this.colorSchemes.primary.slice(0, settingLabels.length),
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: this.getChartOptions('doughnut')
+      });
     } else {
-      console.warn('No settings data structure available');
+      // Create empty chart with "No data" message
+      console.log('Creating empty settings chart - no data available');
+      this.charts.settings = this.createChart('settings-chart', {
+        type: 'doughnut',
+        data: {
+          labels: ['No Data'],
+          datasets: [{
+            data: [1],
+            backgroundColor: ['#e5e7eb'],
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: this.getChartOptions('doughnut')
+      });
     }
 
-    // Create emotions chart
-    if (data.charts.emotions && data.charts.emotions.labels) {
-      if (data.charts.emotions.labels.length > 0) {
-        console.log('Creating emotions chart with:', data.charts.emotions);
-        this.charts.emotions = this.createChart('emotions-chart', {
-          type: 'doughnut',
-          data: {
-            labels: data.charts.emotions.labels,
-            datasets: [{
-              data: data.charts.emotions.data,
-              backgroundColor: this.colorSchemes.primary.slice(0, data.charts.emotions.labels.length),
-              borderWidth: 2,
-              borderColor: '#ffffff'
-            }]
-          },
-          options: this.getChartOptions('doughnut')
-        });
-      } else {
-        // Create empty chart with "No data" message
-        console.log('Creating empty emotions chart - no data after filtering');
-        this.charts.emotions = this.createChart('emotions-chart', {
-          type: 'doughnut',
-          data: {
-            labels: ['No Data'],
-            datasets: [{
-              data: [1],
-              backgroundColor: ['#e5e7eb'],
-              borderWidth: 2,
-              borderColor: '#ffffff'
-            }]
-          },
-          options: this.getChartOptions('doughnut')
-        });
-      }
+    // Create emotions chart with fallback support
+    let emotionLabels = [];
+    let emotionData = [];
+    
+    if (data.charts && data.charts.emotions && data.charts.emotions.labels) {
+      emotionLabels = data.charts.emotions.labels;
+      emotionData = data.charts.emotions.data;
+    } else if (data.emotion_data && Array.isArray(data.emotion_data)) {
+      emotionLabels = data.emotion_data.map(item => item.emotion);
+      emotionData = data.emotion_data.map(item => item.count);
+    }
+    
+    if (emotionLabels.length > 0) {
+      console.log('Creating emotions chart with labels:', emotionLabels);
+      this.charts.emotions = this.createChart('emotions-chart', {
+        type: 'doughnut',
+        data: {
+          labels: emotionLabels,
+          datasets: [{
+            data: emotionData,
+            backgroundColor: this.colorSchemes.primary.slice(0, emotionLabels.length),
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: this.getChartOptions('doughnut')
+      });
     } else {
-      console.warn('No emotions data structure available');
+      // Create empty chart with "No data" message
+      console.log('Creating empty emotions chart - no data available');
+      this.charts.emotions = this.createChart('emotions-chart', {
+        type: 'doughnut',
+        data: {
+          labels: ['No Data'],
+          datasets: [{
+            data: [1],
+            backgroundColor: ['#e5e7eb'],
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: this.getChartOptions('doughnut')
+      });
     }
 
-    // Create age ranges chart
-    if (data.charts.age_ranges && data.charts.age_ranges.labels) {
-      if (data.charts.age_ranges.labels.length > 0) {
-        console.log('Creating age ranges chart with:', data.charts.age_ranges);
-        this.charts['age-ranges'] = this.createChart('age-ranges-chart', {
-          type: 'bar',
-          data: {
-            labels: data.charts.age_ranges.labels,
-            datasets: [{
-              label: 'Number of Scenes',
-              data: data.charts.age_ranges.data,
-              backgroundColor: this.colorSchemes.primary[0],
-              borderColor: this.colorSchemes.primary[0],
-              borderWidth: 1
-            }]
-          },
-          options: this.getChartOptions('bar')
-        });
-      } else {
-        // Create empty chart with "No data" message
-        console.log('Creating empty age ranges chart - no data after filtering');
-        this.charts['age-ranges'] = this.createChart('age-ranges-chart', {
-          type: 'bar',
-          data: {
-            labels: ['No Data'],
-            datasets: [{
-              label: 'Number of Scenes',
-              data: [0],
-              backgroundColor: '#e5e7eb',
-              borderColor: '#e5e7eb',
-              borderWidth: 1
-            }]
-          },
-          options: this.getChartOptions('bar')
-        });
-      }
+    // Create age ranges chart with fallback support
+    let ageLabels = [];
+    let ageData = [];
+    
+    if (data.charts && data.charts.age_ranges && data.charts.age_ranges.labels) {
+      ageLabels = data.charts.age_ranges.labels;
+      ageData = data.charts.age_ranges.data;
+    } else if (data.age_ranges && typeof data.age_ranges === 'object') {
+      ageLabels = Object.keys(data.age_ranges);
+      ageData = Object.values(data.age_ranges);
+    }
+    
+    if (ageLabels.length > 0) {
+      console.log('Creating age ranges chart with labels:', ageLabels);
+      this.charts['age-ranges'] = this.createChart('age-ranges-chart', {
+        type: 'bar',
+        data: {
+          labels: ageLabels,
+          datasets: [{
+            label: 'Number of Scenes',
+            data: ageData,
+            backgroundColor: this.colorSchemes.primary[0],
+            borderColor: this.colorSchemes.primary[0],
+            borderWidth: 1
+          }]
+        },
+        options: this.getChartOptions('bar')
+      });
     } else {
-      console.warn('No age ranges data structure available');
+      // Create empty chart with "No data" message
+      console.log('Creating empty age ranges chart - no data available');
+      this.charts['age-ranges'] = this.createChart('age-ranges-chart', {
+        type: 'bar',
+        data: {
+          labels: ['No Data'],
+          datasets: [{
+            label: 'Number of Scenes',
+            data: [0],
+            backgroundColor: '#e5e7eb',
+            borderColor: '#e5e7eb',
+            borderWidth: 1
+          }]
+        },
+        options: this.getChartOptions('bar')
+      });
     }
 
     console.log('Charts created:', Object.keys(this.charts));
@@ -620,31 +669,50 @@ class AnalyticsDashboard {
     // Create CSV content
     let csvContent = "data:text/csv;charset=utf-8,";
 
-    // Add summary statistics
+    // Add summary statistics with fallback
     csvContent += "Analytics Summary\n";
-    csvContent += "Total Scenes," + this.analyticsData.stats.total_scenes + "\n";
-    csvContent += "Total Favorites," + this.analyticsData.stats.total_favorites + "\n";
-    csvContent += "Average Effeminate Age," + this.analyticsData.stats.avg_effeminate_age + "\n";
-    csvContent += "Average Masculine Age," + this.analyticsData.stats.avg_masculine_age + "\n\n";
+    const stats = this.analyticsData.stats || this.analyticsData;
+    csvContent += "Total Scenes," + (stats.total_scenes || 0) + "\n";
+    csvContent += "Total Favorites," + (stats.total_favorites || 0) + "\n";
+    csvContent += "Average Effeminate Age," + (stats.avg_effeminate_age || 0) + "\n";
+    csvContent += "Average Masculine Age," + (stats.avg_masculine_age || 0) + "\n\n";
 
-    // Add country data
+    // Add country data with fallback
     csvContent += "Country Distribution\n";
     csvContent += "Country,Count\n";
-    this.analyticsData.charts.countries.labels.forEach((label, index) => {
-      csvContent += label + "," + this.analyticsData.charts.countries.data[index] + "\n";
-    });
+    if (this.analyticsData.charts && this.analyticsData.charts.countries) {
+      this.analyticsData.charts.countries.labels.forEach((label, index) => {
+        csvContent += label + "," + this.analyticsData.charts.countries.data[index] + "\n";
+      });
+    } else if (this.analyticsData.country_data) {
+      this.analyticsData.country_data.forEach(item => {
+        csvContent += item.country + "," + item.count + "\n";
+      });
+    }
 
     csvContent += "\nSetting Distribution\n";
     csvContent += "Setting,Count\n";
-    this.analyticsData.charts.settings.labels.forEach((label, index) => {
-      csvContent += label + "," + this.analyticsData.charts.settings.data[index] + "\n";
-    });
+    if (this.analyticsData.charts && this.analyticsData.charts.settings) {
+      this.analyticsData.charts.settings.labels.forEach((label, index) => {
+        csvContent += label + "," + this.analyticsData.charts.settings.data[index] + "\n";
+      });
+    } else if (this.analyticsData.setting_data) {
+      this.analyticsData.setting_data.forEach(item => {
+        csvContent += item.setting + "," + item.count + "\n";
+      });
+    }
 
     csvContent += "\nEmotion Distribution\n";
     csvContent += "Emotion,Count\n";
-    this.analyticsData.charts.emotions.labels.forEach((label, index) => {
-      csvContent += label + "," + this.analyticsData.charts.emotions.data[index] + "\n";
-    });
+    if (this.analyticsData.charts && this.analyticsData.charts.emotions) {
+      this.analyticsData.charts.emotions.labels.forEach((label, index) => {
+        csvContent += label + "," + this.analyticsData.charts.emotions.data[index] + "\n";
+      });
+    } else if (this.analyticsData.emotion_data) {
+      this.analyticsData.emotion_data.forEach(item => {
+        csvContent += item.emotion + "," + item.count + "\n";
+      });
+    }
 
     // Create and download file
     const encodedUri = encodeURI(csvContent);

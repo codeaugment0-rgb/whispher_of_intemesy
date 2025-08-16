@@ -119,4 +119,36 @@ LOGGING = {
     },
 }
 
+# Redis Cache Configuration
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'CONNECTION_POOL_KWARGS': {
+                'max_connections': 20,
+                'retry_on_timeout': True,
+            },
+            'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
+            'SERIALIZER': 'django_redis.serializers.json.JSONSerializer',
+        },
+        'KEY_PREFIX': 'scenes_analytics',
+        'TIMEOUT': 1800,  # 30 minutes default
+    }
+}
 
+# Cache timeouts for different analytics components
+ANALYTICS_CACHE_TIMEOUTS = {
+    'full_analytics': 1800,      # 30 minutes - full analytics data
+    'filtered_analytics': 900,   # 15 minutes - filtered results
+    'field_distributions': 600,  # 10 minutes - country/setting/emotion data
+    'age_ranges': 1200,         # 20 minutes - age range calculations
+    'details_analysis': 1800,   # 30 minutes - appearance/hair/clothing
+    'sync_check': 300,          # 5 minutes - database sync status
+}
+
+# Session configuration (optional - for better session management)
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
+SESSION_COOKIE_AGE = 86400  # 24 hours

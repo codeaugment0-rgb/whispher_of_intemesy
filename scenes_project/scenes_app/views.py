@@ -19,6 +19,7 @@ from django.conf import settings
 
 from .models import Scene, FavoriteScene, SearchSuggestion, SearchQuery, SceneImage
 from .static.py.analytics import analyze_scenes
+from .utils.cached_analytics import cached_analytics
 
 import logging
 logger = logging.getLogger(__name__)
@@ -299,9 +300,20 @@ def add_scene(request: HttpRequest) -> HttpResponse:
     return render(request, 'add_scene.html')
 
 
+# def analytics(request: HttpRequest) -> HttpResponse:
+#     try:
+#         analytics_data = analyze_scenes()
+#         if analytics_data.get('error'):
+#             raise Exception(analytics_data['error'])
+#         return render(request, 'analytics.html', analytics_data)
+#     except Exception as e:
+#         return render(request, 'analytics.html', {'error': str(e)})
+
+
 def analytics(request: HttpRequest) -> HttpResponse:
     try:
-        analytics_data = analyze_scenes()
+        # Use cached analytics instead of original
+        analytics_data = cached_analytics.analyze_scenes_cached()
         if analytics_data.get('error'):
             raise Exception(analytics_data['error'])
         return render(request, 'analytics.html', analytics_data)
@@ -309,46 +321,78 @@ def analytics(request: HttpRequest) -> HttpResponse:
         return render(request, 'analytics.html', {'error': str(e)})
 
 
+# def analytics_api(request: HttpRequest) -> JsonResponse:
+#     """Flexible API endpoint for analytics data with optional filtering and limits"""
+#     try:
+#         from .static.py.analytics import get_analytics_api_data, get_filtered_analytics_data
+        
+#         # Get flexible parameters - Default to 0 (no limit) to show ALL data
+#         chart_limit = int(request.GET.get('chart_limit', 0))  # Default to 0 = show ALL data
+        
+#         # Check if any filters are applied
+#         filters = {}
+#         for param in ['country', 'setting', 'emotion', 'ageRange']:
+#             value = request.GET.get(param)
+#             if value and value != 'all':
+#                 filters[param] = value
+        
+#         # Additional flexible filters
+#         if request.GET.get('min_age'):
+#             try:
+#                 filters['min_age'] = int(request.GET.get('min_age'))
+#             except ValueError:
+#                 pass
+                
+#         if request.GET.get('max_age'):
+#             try:
+#                 filters['max_age'] = int(request.GET.get('max_age'))
+#             except ValueError:
+#                 pass
+        
+#         # Get analytics data
+#         if filters:
+#             analytics_data = get_filtered_analytics_data(filters, chart_limit)
+#         else:
+#             analytics_data = get_analytics_api_data(chart_limit)
+        
+#         # Add request metadata
+#         analytics_data['request_info'] = {
+#             'filters_applied': len(filters),
+#             'chart_limit': chart_limit,
+#             'timestamp': timezone.now().isoformat(),
+#             'total_params': len(request.GET)
+#         }
+            
+#         return JsonResponse(analytics_data)
+#     except Exception as e:
+#         return JsonResponse({'error': str(e)}, status=500)
+
+
 def analytics_api(request: HttpRequest) -> JsonResponse:
-    """Flexible API endpoint for analytics data with optional filtering and limits"""
+    """Cached API endpoint for analytics data"""
     try:
-        from .static.py.analytics import get_analytics_api_data, get_filtered_analytics_data
+        chart_limit = int(request.GET.get('chart_limit', 0))
         
-        # Get flexible parameters - Default to 0 (no limit) to show ALL data
-        chart_limit = int(request.GET.get('chart_limit', 0))  # Default to 0 = show ALL data
-        
-        # Check if any filters are applied
+        # Get filters
         filters = {}
         for param in ['country', 'setting', 'emotion', 'ageRange']:
             value = request.GET.get(param)
             if value and value != 'all':
                 filters[param] = value
         
-        # Additional flexible filters
-        if request.GET.get('min_age'):
-            try:
-                filters['min_age'] = int(request.GET.get('min_age'))
-            except ValueError:
-                pass
-                
-        if request.GET.get('max_age'):
-            try:
-                filters['max_age'] = int(request.GET.get('max_age'))
-            except ValueError:
-                pass
-        
-        # Get analytics data
-        if filters:
-            analytics_data = get_filtered_analytics_data(filters, chart_limit)
-        else:
-            analytics_data = get_analytics_api_data(chart_limit)
+        # Use cached analytics
+        analytics_data = cached_analytics.analyze_scenes_cached(
+            limit_charts=chart_limit,
+            limit_favorites=0,
+            filters=filters if filters else None
+        )
         
         # Add request metadata
         analytics_data['request_info'] = {
             'filters_applied': len(filters),
             'chart_limit': chart_limit,
             'timestamp': timezone.now().isoformat(),
-            'total_params': len(request.GET)
+            'optimization': 'redis_cached'
         }
             
         return JsonResponse(analytics_data)

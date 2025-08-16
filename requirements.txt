@@ -8,3 +8,5 @@ django-tailwind
 django-redis
 redis
 Pillow
+django-redis
+redis
