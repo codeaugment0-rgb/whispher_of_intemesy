@@ -18,7 +18,6 @@ import sys
 from django.conf import settings
 
 from .models import Scene, FavoriteScene, SearchSuggestion, SearchQuery, SceneImage
-from .static.py.analytics import analyze_scenes
 from .utils.cached_analytics import cached_analytics
 
 import logging
@@ -61,9 +60,7 @@ def scene_list(request: HttpRequest) -> HttpResponse:
         )
     else:
         scenes_qs = Scene.objects.all()
-    
-
-    
+        
     paginator = Paginator(scenes_qs, page_size)
     
     # Handle invalid page numbers gracefully - redirect to last page if page is too high
@@ -117,6 +114,8 @@ def scene_list(request: HttpRequest) -> HttpResponse:
             'total_pages': total_pages,
             'total_items': paginator.count,
             'page_size': page_size,
+            'start_index': page_obj.start_index(),
+            'end_index': page_obj.end_index(),
         })
 
     return render(request, 'scene_list.html', context)
@@ -300,16 +299,6 @@ def add_scene(request: HttpRequest) -> HttpResponse:
     return render(request, 'add_scene.html')
 
 
-# def analytics(request: HttpRequest) -> HttpResponse:
-#     try:
-#         analytics_data = analyze_scenes()
-#         if analytics_data.get('error'):
-#             raise Exception(analytics_data['error'])
-#         return render(request, 'analytics.html', analytics_data)
-#     except Exception as e:
-#         return render(request, 'analytics.html', {'error': str(e)})
-
-
 def analytics(request: HttpRequest) -> HttpResponse:
     try:
         # Use cached analytics instead of original
@@ -319,53 +308,6 @@ def analytics(request: HttpRequest) -> HttpResponse:
         return render(request, 'analytics.html', analytics_data)
     except Exception as e:
         return render(request, 'analytics.html', {'error': str(e)})
-
-
-# def analytics_api(request: HttpRequest) -> JsonResponse:
-#     """Flexible API endpoint for analytics data with optional filtering and limits"""
-#     try:
-#         from .static.py.analytics import get_analytics_api_data, get_filtered_analytics_data
-        
-#         # Get flexible parameters - Default to 0 (no limit) to show ALL data
-#         chart_limit = int(request.GET.get('chart_limit', 0))  # Default to 0 = show ALL data
-        
-#         # Check if any filters are applied
-#         filters = {}
-#         for param in ['country', 'setting', 'emotion', 'ageRange']:
-#             value = request.GET.get(param)
-#             if value and value != 'all':
-#                 filters[param] = value
-        
-#         # Additional flexible filters
-#         if request.GET.get('min_age'):
-#             try:
-#                 filters['min_age'] = int(request.GET.get('min_age'))
-#             except ValueError:
-#                 pass
-                
-#         if request.GET.get('max_age'):
-#             try:
-#                 filters['max_age'] = int(request.GET.get('max_age'))
-#             except ValueError:
-#                 pass
-        
-#         # Get analytics data
-#         if filters:
-#             analytics_data = get_filtered_analytics_data(filters, chart_limit)
-#         else:
-#             analytics_data = get_analytics_api_data(chart_limit)
-        
-#         # Add request metadata
-#         analytics_data['request_info'] = {
-#             'filters_applied': len(filters),
-#             'chart_limit': chart_limit,
-#             'timestamp': timezone.now().isoformat(),
-#             'total_params': len(request.GET)
-#         }
-            
-#         return JsonResponse(analytics_data)
-#     except Exception as e:
-#         return JsonResponse({'error': str(e)}, status=500)
 
 
 def analytics_api(request: HttpRequest) -> JsonResponse:
@@ -462,35 +404,6 @@ def toggle_favorite(request: HttpRequest, pk: int) -> JsonResponse:
         'favorite_count': scene.favorite_count,
         'message': f'Scene {action} {"to" if action == "added" else "from"} favorites'
     })
-
-
-def debug_api(request: HttpRequest) -> JsonResponse:
-    """Debug API to check data counts and sync status"""
-    try:
-        from .static.py.analytics import check_data_sync
-        from .models import Scene, FavoriteScene
-        
-        sync_info = check_data_sync()
-        
-        # Get sample data
-        countries = list(Scene.objects.values_list('country', flat=True).distinct())
-        settings = list(Scene.objects.values_list('setting', flat=True).distinct())
-        emotions = list(Scene.objects.values_list('emotion', flat=True).distinct())
-        
-        return JsonResponse({
-            'database_count': Scene.objects.count(),
-            'favorites_count': FavoriteScene.objects.count(),
-            'sync_info': sync_info,
-            'unique_countries': len(countries),
-            'unique_settings': len(settings),
-            'unique_emotions': len(emotions),
-            'sample_countries': countries[:10],
-            'sample_settings': settings[:10],
-            'sample_emotions': emotions[:10],
-            'timestamp': timezone.now().isoformat()
-        })
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
 
 
 def edit_scene(request: HttpRequest, pk: int) -> HttpResponse:
@@ -805,6 +718,9 @@ def search_results(request: HttpRequest) -> HttpResponse:
     paginator = Paginator(scenes_qs, page_size)
     try:
         page_obj = paginator.get_page(page_number)
+        # Handle invalid page number - Redirect to last page
+        if int(page_number) > paginator.num_pages and paginator.num_pages > 0:
+            page_obj = paginator.get_page(paginator.num_pages)
     except Exception:
         page_obj = paginator.get_page(1)
 
@@ -816,18 +732,50 @@ def search_results(request: HttpRequest) -> HttpResponse:
         session_key=request.session.session_key
     ).values_list('scene_id', flat=True))
 
+    # ADD PAGINATION RANGE CALCULATION (same as scene_list)
+    current_page = page_obj.number
+    total_pages = paginator.num_pages
+
+    if total_pages <= 7:
+        page_range = range(1, total_pages + 1)
+    else:
+        if current_page <= 4:
+            page_range = list(range(1, 6)) + ['...', total_pages]
+        elif current_page >= total_pages - 3:
+            page_range = [1, '...'] + list(range(total_pages - 4, total_pages + 1))
+        else:
+            page_range = [1, '...'] + list(range(current_page - 1, current_page + 2)) + ['...', total_pages]
+    
+
     context = {
         'page_obj': page_obj,
+        'page_range': page_range,
         'query': query,
         'user_favorites': user_favorites,
         'page_size': page_size,
+        'total_results': paginator.count,
     }
+
+    # Add ajax support (same as scene list)
+    if is_ajax(request):
+        from django.template.loader import render_to_string
+        html = render_to_string('partials/_scene_cards.html', context, request=request)
+        pagination_html = render_to_string('partials/_pagination.html', context, request=request)
+        return JsonResponse({
+            'html': html,
+            'pagination_html': pagination_html,
+            'current_page': current_page,
+            'total_pages': total_pages,
+            'total_items': paginator.count,
+            'page_size': page_size,
+            'start_index': page_obj.start_index(),
+            'end_index': page_obj.end_index(),
+        })
 
     return render(request, 'search_results.html', context)
 
 
 # Image Management Views
-
 @csrf_exempt
 def upload_scene_images(request: HttpRequest, pk: int) -> JsonResponse:
     """Upload multiple images for a scene"""

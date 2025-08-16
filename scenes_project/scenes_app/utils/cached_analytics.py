@@ -127,10 +127,15 @@ class CachedAnalytics:
             else:
                 total_favorites = FavoriteScene.objects.count()
             
-            # Field distributions with caching
+            # Field distributions with caching (for charts - uses filtered queryset)
             country_data = self._get_cached_field_distribution('country', queryset)
             setting_data = self._get_cached_field_distribution('setting', queryset)
             emotion_data = self._get_cached_field_distribution('emotion', queryset)
+            
+            # Get ALL available options for filter dropdowns (always unfiltered)
+            all_country_data = self._get_cached_field_distribution('country', None)
+            all_setting_data = self._get_cached_field_distribution('setting', None)
+            all_emotion_data = self._get_cached_field_distribution('emotion', None)
             
             # Age ranges with caching
             age_ranges = self._get_cached_age_ranges(queryset)
@@ -181,6 +186,13 @@ class CachedAnalytics:
                     }
                 },
                 
+                # Filters object expected by JavaScript for dropdown population (ALWAYS ALL OPTIONS)
+                'filters': {
+                    'countries': [item['country'] for item in all_country_data if item['country']],
+                    'settings': [item['setting'] for item in all_setting_data if item['setting']],
+                    'emotions': [item['emotion'] for item in all_emotion_data if item['emotion']]
+                },
+                
                 # Most favorited scenes
                 'most_favorited': most_favorited,
                 
@@ -216,19 +228,26 @@ class CachedAnalytics:
             return {'error': f'Cached analytics error: {str(e)}'}
     
     def _get_cached_field_distribution(self, field_name, queryset=None):
-        """Get field distribution with caching"""
-        cache_key = self._generate_cache_key('field_dist', {'field': field_name})
+        """Get field distribution with caching - respects filtered queryset"""
+        # Generate cache key that includes queryset info for proper filtering
+        if queryset is None:
+            from django.apps import apps
+            Scene = apps.get_model('scenes_app', 'Scene')
+            queryset = Scene.objects.all()
+            cache_key = self._generate_cache_key('field_dist', {'field': field_name})
+        else:
+            # Include queryset hash in cache key to ensure filtered data is cached separately
+            queryset_sql = str(queryset.query)
+            cache_key = self._generate_cache_key('field_dist', {
+                'field': field_name, 
+                'query_hash': hash(queryset_sql)
+            })
         
         cached_data = cache.get(cache_key)
         if cached_data:
             return cached_data
         
-        # Generate fresh data
-        if queryset is None:
-            from django.apps import apps
-            Scene = apps.get_model('scenes_app', 'Scene')
-            queryset = Scene.objects.all()
-        
+        # Generate fresh data using the provided queryset
         data = list(queryset.values(field_name)
                    .annotate(count=Count(field_name))
                    .order_by('-count'))
@@ -237,19 +256,23 @@ class CachedAnalytics:
         return data
     
     def _get_cached_age_ranges(self, queryset=None):
-        """Get age ranges with caching"""
-        cache_key = self._generate_cache_key('age_ranges', {})
+        """Get age ranges with caching - respects filtered queryset"""
+        # Generate cache key that includes queryset info for proper filtering
+        if queryset is None:
+            from django.apps import apps
+            Scene = apps.get_model('scenes_app', 'Scene')
+            queryset = Scene.objects.all()
+            cache_key = self._generate_cache_key('age_ranges', {})
+        else:
+            # Include queryset hash in cache key to ensure filtered data is cached separately
+            queryset_sql = str(queryset.query)
+            cache_key = self._generate_cache_key('age_ranges', {'query_hash': hash(queryset_sql)})
         
         cached_data = cache.get(cache_key)
         if cached_data:
             return cached_data
         
-        # Generate fresh age ranges (preserving your original logic)
-        if queryset is None:
-            from django.apps import apps
-            Scene = apps.get_model('scenes_app', 'Scene')
-            queryset = Scene.objects.all()
-        
+        # Generate fresh age ranges using the provided queryset
         age_stats = queryset.aggregate(
             min_age=Min('effeminate_age'),
             max_age=Max('effeminate_age')
@@ -288,8 +311,16 @@ class CachedAnalytics:
         return ranges
     
     def _get_cached_details_analysis(self, field_type, queryset=None):
-        """Get details analysis with caching (appearance, hair, clothing)"""
-        cache_key = self._generate_cache_key('details', {'field': field_type})
+        """Get details analysis with caching (appearance, hair, clothing) - respects filtered queryset"""
+        # Generate cache key that includes queryset info for proper filtering
+        if queryset is None:
+            cache_key = self._generate_cache_key('details', {'field': field_type})
+        else:
+            queryset_sql = str(queryset.query)
+            cache_key = self._generate_cache_key('details', {
+                'field': field_type,
+                'query_hash': hash(queryset_sql)
+            })
         
         cached_data = cache.get(cache_key)
         if cached_data:
@@ -346,8 +377,13 @@ class CachedAnalytics:
         return result
     
     def _get_cached_atmosphere_analysis(self, queryset=None):
-        """Get atmosphere analysis with caching"""
-        cache_key = self._generate_cache_key('atmosphere', {})
+        """Get atmosphere analysis with caching - respects filtered queryset"""
+        # Generate cache key that includes queryset info for proper filtering
+        if queryset is None:
+            cache_key = self._generate_cache_key('atmosphere', {})
+        else:
+            queryset_sql = str(queryset.query)
+            cache_key = self._generate_cache_key('atmosphere', {'query_hash': hash(queryset_sql)})
         
         cached_data = cache.get(cache_key)
         if cached_data:
@@ -487,6 +523,13 @@ class CachedAnalytics:
                 'settings': {'labels': [], 'data': []},
                 'emotions': {'labels': [], 'data': []},
                 'age_ranges': {'labels': [], 'data': []}
+            },
+            
+            # Filters object expected by JavaScript for dropdown population
+            'filters': {
+                'countries': [],
+                'settings': [],
+                'emotions': []
             },
             
             # Most favorited scenes

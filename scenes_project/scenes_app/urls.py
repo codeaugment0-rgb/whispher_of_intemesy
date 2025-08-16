@@ -21,7 +21,7 @@ urlpatterns = [
     path('api/scene/<int:pk>/delete/', views.delete_scene_api, name='delete_scene_api'),
     path('analytics/', views.analytics, name='analytics'),
     path('api/analytics/', views.analytics_api, name='analytics_api'),
-    path('api/debug/', views.debug_api, name='debug_api'),
+    # path('api/debug/', views.debug_api, name='debug_api'),
     
     # Image management URLs
     path('scene/<int:pk>/gallery/', views.scene_gallery, name='scene_gallery'),

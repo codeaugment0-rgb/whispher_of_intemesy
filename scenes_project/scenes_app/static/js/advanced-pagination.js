@@ -12,7 +12,7 @@ class AdvancedPagination {
         this.loadingTimeout = null;
         this.baseUrl = window.location.pathname;
         this.urlParams = new URLSearchParams(window.location.search);
-        
+
         this.init();
     }
 
@@ -113,7 +113,7 @@ class AdvancedPagination {
         const urlParams = new URLSearchParams(window.location.search);
         this.currentPage = parseInt(urlParams.get('page')) || 1;
         this.pageSize = parseInt(urlParams.get('page_size')) || 10;
-        
+
         // Update page size selector if it exists
         const pageSizeSelector = document.getElementById('page-size-selector');
         if (pageSizeSelector) {
@@ -125,7 +125,7 @@ class AdvancedPagination {
         if (pageSize === null) {
             pageSize = this.pageSize;
         }
-        
+
         this.loadPage(page, pageSize, true);
     }
 
@@ -133,7 +133,7 @@ class AdvancedPagination {
         // Calculate what page we should be on with the new page size
         const currentItemIndex = (this.currentPage - 1) * this.pageSize;
         const newPage = Math.floor(currentItemIndex / newPageSize) + 1;
-        
+
         this.pageSize = newPageSize;
         this.goToPage(newPage, newPageSize);
     }
@@ -151,7 +151,7 @@ class AdvancedPagination {
             params.set('page_size', pageSize);
 
             const url = `${this.baseUrl}?${params.toString()}`;
-            
+
             const response = await fetch(url, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
@@ -164,16 +164,16 @@ class AdvancedPagination {
             }
 
             const data = await response.json();
-            
+
             // Update page content
             this.updateContent(data);
-            
+
             // Update URL and browser history
             if (updateHistory) {
                 const newUrl = `${this.baseUrl}?${params.toString()}`;
                 history.pushState(
-                    { page: page, pageSize: pageSize }, 
-                    '', 
+                    { page: page, pageSize: pageSize },
+                    '',
                     newUrl
                 );
             }
@@ -196,7 +196,7 @@ class AdvancedPagination {
             // Always ensure loading is hidden and state is reset
             this.isLoading = false;
             this.hideLoading();
-            
+
             // Force cleanup any remaining loading states
             setTimeout(() => {
                 this.forceCleanupLoading();
@@ -210,21 +210,21 @@ class AdvancedPagination {
         // Find the main content container (either grid or no-results div)
         const contentContainer = document.querySelector('.grid') || document.querySelector('.text-center.py-12');
         const parentContainer = contentContainer ? contentContainer.parentElement : null;
-        
+
         if (parentContainer && data.html) {
             // Create a temporary container to parse the new HTML
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = data.html;
-            
+
             // Find the new content (grid or no-results)
             const newContent = tempDiv.querySelector('.grid') || tempDiv.querySelector('.text-center.py-12');
-            
+
             if (newContent) {
                 // Replace the old content with new content
                 contentContainer.replaceWith(newContent);
             }
         }
-        
+
         // Update pagination separately if provided
         if (data.pagination_html) {
             const currentPagination = document.querySelector('.pagination-container');
@@ -260,14 +260,18 @@ class AdvancedPagination {
         totalPagesEls.forEach(el => {
             el.textContent = data.total_pages;
         });
+
+        // Update the showing of X-Y of Z text
+        const showingInfoEl = document.querySelector('.stats-info span');
+        if (showingInfoEl && data.start_index && data.end_index) {
+            showingInfoEl.textContent = `Showing ${data.start_index}-${data.end_index} of ${data.total_items}`;
+        }
     }
-
-
 
     showLoading() {
         // Create or show loading overlay
         this.createLoadingOverlay();
-        
+
         // Add loading state to pagination buttons
         const paginationBtns = document.querySelectorAll('.pagination-btn');
         paginationBtns.forEach(btn => {
@@ -337,7 +341,7 @@ class AdvancedPagination {
                 </div>
             </div>
         `;
-        
+
         document.body.appendChild(loadingOverlay);
     }
 
@@ -366,14 +370,14 @@ class AdvancedPagination {
     scrollToTop() {
         const mainContent = document.getElementById('main');
         if (mainContent) {
-            mainContent.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'start' 
+            mainContent.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
             });
         } else {
-            window.scrollTo({ 
-                top: 0, 
-                behavior: 'smooth' 
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
         }
     }
@@ -383,14 +387,14 @@ class AdvancedPagination {
         const indicator = document.createElement('div');
         indicator.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
         indicator.textContent = `Page ${data.current_page} loaded`;
-        
+
         document.body.appendChild(indicator);
-        
+
         // Animate in
         setTimeout(() => {
             indicator.classList.remove('translate-x-full');
         }, 100);
-        
+
         // Animate out and remove
         setTimeout(() => {
             indicator.classList.add('translate-x-full');
