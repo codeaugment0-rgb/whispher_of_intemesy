@@ -78,12 +78,12 @@ class AnalyticsComparison {
 
   saveCurrentSnapshot() {
     if (this.comparisonData.length >= this.maxComparisons) {
-      this.dashboard.showToast('Maximum 3 comparisons allowed. Remove one first.', 'error');
+      showToast('Maximum 3 comparisons allowed. Remove one first.', 'error');
       return;
     }
 
     if (!this.dashboard.analyticsData) {
-      this.dashboard.showToast('No data to save. Load analytics first.', 'error');
+      showToast('No data to save. Load analytics first.', 'error');
       return;
     }
 
@@ -99,7 +99,7 @@ class AnalyticsComparison {
     this.renderSnapshots();
     this.updateComparisonCharts();
     
-    this.dashboard.showToast('Snapshot saved successfully!', 'success');
+    showToast('Snapshot saved successfully!', 'success');
   }
 
   generateSnapshotLabel() {
@@ -175,14 +175,14 @@ class AnalyticsComparison {
     this.comparisonData = this.comparisonData.filter(snapshot => snapshot.id !== id);
     this.renderSnapshots();
     this.updateComparisonCharts();
-    this.dashboard.showToast('Snapshot removed', 'info');
+    showToast('Snapshot removed', 'info');
   }
 
   clearAllComparisons() {
     this.comparisonData = [];
     this.renderSnapshots();
     this.updateComparisonCharts();
-    this.dashboard.showToast('All comparisons cleared', 'info');
+    showToast('All comparisons cleared', 'info');
   }
 
   createComparisonChart(canvasId, dataKey, label) {
@@ -319,7 +319,7 @@ class AnalyticsInsights {
 
   generateInsights() {
     if (!this.dashboard.analyticsData) {
-      this.dashboard.showToast('No data available for insights', 'error');
+      showToast('No data available for insights', 'error');
       return;
     }
 
@@ -402,7 +402,7 @@ class AnalyticsInsights {
       </div>
     `).join('');
 
-    this.dashboard.showToast('Insights generated successfully!', 'success');
+    showToast('Insights generated successfully!', 'success');
   }
 
   getInsightColor(type) {

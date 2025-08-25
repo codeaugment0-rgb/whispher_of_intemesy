@@ -77,7 +77,7 @@ class SceneManager {
 
     } catch (error) {
       console.error('Error showing quick edit modal:', error);
-      this.showToast('Error loading edit form', 'error');
+      showToast('Error loading edit form', 'error');
     }
   }
 
@@ -136,7 +136,7 @@ class SceneManager {
 
     } catch (error) {
       console.error('Error loading quick edit form:', error);
-      this.showToast('Error loading form data', 'error');
+      showToast('Error loading form data', 'error');
     }
   }
 
@@ -157,7 +157,7 @@ class SceneManager {
       const result = await response.json();
 
       if (result.status === 'success') {
-        this.showToast('Scene updated successfully!', 'success');
+        showToast('Scene updated successfully!', 'success');
         document.body.removeChild(modal);
         // Refresh the page or update the scene card
         window.location.reload();
@@ -167,7 +167,7 @@ class SceneManager {
 
     } catch (error) {
       console.error('Error saving scene:', error);
-      this.showToast('Error saving changes: ' + error.message, 'error');
+      showToast('Error saving changes: ' + error.message, 'error');
     }
   }
 
@@ -285,7 +285,7 @@ class SceneManager {
         const result = await response.json();
 
         if (result.status === 'success') {
-          this.showToast('Scene deleted successfully!', 'success');
+          showToast('Scene deleted successfully!', 'success');
           closeModal2();
 
           // Remove the scene card from the page with animation
@@ -309,7 +309,7 @@ class SceneManager {
 
       } catch (error) {
         console.error('Error deleting scene:', error);
-        this.showToast('Error deleting scene: ' + error.message, 'error');
+        showToast('Error deleting scene: ' + error.message, 'error');
         closeModal2();
       }
     });
@@ -334,27 +334,6 @@ class SceneManager {
   getCsrfToken() {
     return document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
            document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-  }
-
-  showToast(message, type = 'info') {
-    if (typeof Toastify !== 'undefined') {
-      const colors = {
-        success: '#10b981',
-        error: '#ef4444',
-        info: '#6366f1'
-      };
-      
-      Toastify({
-        text: message,
-        duration: 3000,
-        gravity: "top",
-        position: "right",
-        backgroundColor: colors[type] || colors.info,
-      }).showToast();
-    } else {
-      // Fallback to alert if Toastify is not available
-      alert(message);
-    }
   }
 }
 

@@ -3,6 +3,7 @@
  * Features: AJAX loading, keyboard navigation, page size control, jump to page
  */
 
+
 class AdvancedPagination {
     constructor() {
         this.currentPage = 1;
@@ -23,6 +24,7 @@ class AdvancedPagination {
     }
 
     bindEvents() {
+        console.log('Pagination bindEvents called');
         // Pagination button clicks
         document.addEventListener('click', (e) => {
             if (e.target.closest('.pagination-btn')) {
@@ -383,12 +385,9 @@ class AdvancedPagination {
     }
 
     showSuccessFeedback(data) {
-        // Create a subtle success indicator
-        const indicator = document.createElement('div');
-        indicator.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
-        indicator.textContent = `Page ${data.current_page} loaded`;
-
-        document.body.appendChild(indicator);
+        if (typeof showToast === 'function') {
+            showToast(`Page ${data.current_page} Loaded`)
+        }
 
         // Animate in
         setTimeout(() => {
@@ -405,16 +404,15 @@ class AdvancedPagination {
     }
 
     showErrorFeedback() {
-        // Show error toast
-        if (window.Toastify) {
-            Toastify({
-                text: "Failed to load page. Please try again.",
-                duration: 3000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#ef4444",
-            }).showToast();
+        console.log('showErrorFeedback called');
+        console.log('showToast type:', typeof showToast);
+        console.log('showToast function:', showToast);
+        
+        if (typeof showToast === 'function') {
+            console.log('Using showToast');
+            showToast("Failed to load page. Please try again.", 'error');
         } else {
+            console.log('showToast not available, using alert');
             alert('Failed to load page. Please try again.');
         }
     }
@@ -437,6 +435,7 @@ class AdvancedPagination {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
+    // Test showToast availability
     // Only initialize on pages with pagination
     if (document.querySelector('.pagination-btn') || document.getElementById('page-size-selector')) {
         window.advancedPagination = new AdvancedPagination();

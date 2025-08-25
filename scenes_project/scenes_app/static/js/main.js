@@ -1,4 +1,46 @@
 /* global Toastify */
+function showToast(message, type = "info") {
+  const toast = document.createElement("div");
+
+  // Base styles
+  toast.className = `
+    fixed bottom-5 left-1/2 transform -translate-x-1/2
+    px-4 py-2 rounded-xl shadow-lg
+    text-white text-sm font-medium
+    opacity-0 translate-y-4
+    transition-all duration-300 ease-out
+    z-50
+  `;
+
+  // Colors for different types
+  const colors = {
+    info: "bg-gray-800",
+    success: "bg-green-600",
+    error: "bg-red-600",
+    warning: "bg-yellow-500 text-black"
+  };
+
+  toast.classList.add(colors[type] || colors.info);
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  // Animate in
+  setTimeout(() => {
+    toast.classList.remove("opacity-0", "translate-y-4");
+    toast.classList.add("opacity-100", "translate-y-0");
+  }, 10);
+
+  // Animate out
+  setTimeout(() => {
+    toast.classList.remove("opacity-100", "translate-y-0");
+    toast.classList.add("opacity-0", "translate-y-4");
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
+
+// Make showToast globally available
+window.showToast = showToast;
+
 (function () {
   // Copy prompt on detail page
   const copyBtn = document.getElementById('copy-btn');
@@ -29,23 +71,9 @@
         const res = await fetch(`/api/scene/${id}/prompt/`);
         const data = await res.json();
         await navigator.clipboard.writeText(data.full_text || '');
-        Toastify({
-          text: 'Prompt copied to clipboard',
-          duration: 2500,
-          gravity: 'top',
-          position: 'right',
-          backgroundColor: '#10b981',
-          close: true
-        }).showToast();
+        showToast('Prompt copied to clipboard');
       } catch (err) {
-        Toastify({
-          text: 'Failed to copy prompt',
-          duration: 2500,
-          gravity: 'top',
-          position: 'right',
-          backgroundColor: '#ef4444',
-          close: true
-        }).showToast();
+        showToast('Failed to copy prompt', 'error');
       }
     });
   }
@@ -60,14 +88,7 @@
       }
       return data;
     } catch (err) {
-      Toastify({
-        text: 'Failed to get random scene',
-        duration: 2500,
-        gravity: 'top',
-        position: 'right',
-        backgroundColor: '#ef4444',
-        close: true
-      }).showToast();
+      showToast('Failed to fetch random scene', 'error');
       throw err;
     }
   }
@@ -90,15 +111,7 @@
         <span class="text-gray-700 hidden lg:inline">Copied!</span>
       `;
       button.classList.add('text-gray-100');
-
-      Toastify({
-        text: `Copied "${scene.title}" to clipboard`,
-        duration: 3000,
-        gravity: 'top',
-        position: 'right',
-        backgroundColor: '#10b981',
-        close: true
-      }).showToast();
+      showToast(`Copied "${scene.title}" to clipboard`);
 
       // Reset button after 2 seconds
       setTimeout(() => {
@@ -256,14 +269,7 @@
         updateNavFavoriteCount(data.is_favorited);
 
         // Show toast notification
-        Toastify({
-          text: data.message,
-          duration: 2500,
-          gravity: 'top',
-          position: 'right',
-          backgroundColor: data.is_favorited ? '#ef4444' : '#6b7280',
-          close: true
-        }).showToast();
+        showToast(data.message)
 
         // If we're on the favorites page and item was removed, fade it out
         if (!data.is_favorited && window.location.pathname.includes('favorites')) {
@@ -280,14 +286,7 @@
       }
     } catch (error) {
       console.error('Error toggling favorite:', error);
-      Toastify({
-        text: 'Failed to update favorite',
-        duration: 2500,
-        gravity: 'top',
-        position: 'right',
-        backgroundColor: '#ef4444',
-        close: true
-      }).showToast();
+      showToast("Failed to update favorites", 'error')
     }
   }
 

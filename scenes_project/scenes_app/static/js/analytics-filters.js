@@ -263,9 +263,9 @@ class AnalyticsFilters {
       // Show success message
       const filterCount = Object.keys(params).filter(key => key !== 'chart_limit').length;
       if (filterCount > 0) {
-        this.dashboard.showToast(`${filterCount} filter(s) applied successfully!`, 'success');
+        showToast(`${filterCount} filter(s) applied successfully!`, 'success');
       } else {
-        this.dashboard.showToast('All filters cleared!', 'info');
+        showToast('All filters cleared!', 'info');
       }
 
     } catch (error) {
@@ -360,7 +360,7 @@ class RealTimeAnalytics {
       this.updateLastUpdatedTime();
     }, interval);
 
-    this.dashboard.showToast('Real-time updates enabled', 'success');
+    showToast('Real-time updates enabled', 'success');
   }
 
   stopRealTimeUpdates() {
@@ -371,7 +371,7 @@ class RealTimeAnalytics {
       this.updateInterval = null;
     }
 
-    this.dashboard.showToast('Real-time updates disabled', 'info');
+    showToast('Real-time updates disabled', 'info');
   }
 
   updateLastUpdatedTime() {

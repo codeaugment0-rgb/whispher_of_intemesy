@@ -171,12 +171,12 @@ class AnalyticsDashboard {
 
       // Show message if no data after filtering
       if (data.message) {
-        this.showToast(data.message, 'info');
+        showToast(data.message, 'info');
       }
 
     } catch (error) {
       console.error('Error loading analytics:', error);
-      this.showError(error.message);
+      showError(error.message);
     }
   }
 
@@ -662,7 +662,7 @@ class AnalyticsDashboard {
 
   exportAnalytics() {
     if (!this.analyticsData) {
-      this.showToast('No data to export. Please load analytics first.', 'error');
+      showToast('No data to export. Please load analytics first.', 'error');
       return;
     }
 
@@ -724,28 +724,7 @@ class AnalyticsDashboard {
     document.body.removeChild(link);
 
     // Show success message
-    this.showToast('Analytics report exported successfully!', 'success');
-  }
-
-  showToast(message, type = 'info') {
-    if (typeof Toastify !== 'undefined') {
-      const colors = {
-        success: '#10b981',
-        error: '#ef4444',
-        info: '#6366f1'
-      };
-
-      Toastify({
-        text: message,
-        duration: 3000,
-        gravity: "top",
-        position: "right",
-        backgroundColor: colors[type] || colors.info,
-      }).showToast();
-    } else {
-      // Fallback to alert if Toastify is not available
-      alert(message);
-    }
+    showToast('Analytics report exported successfully!', 'success');
   }
 
   escapeHtml(text) {
